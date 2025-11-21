@@ -55,4 +55,3 @@ class Alquilado(EstadoVehiculo):
     def devolver(self) -> str:
         self.context.transition_to(Disponible())
         return "El vehiculo fue devuelto"
-
