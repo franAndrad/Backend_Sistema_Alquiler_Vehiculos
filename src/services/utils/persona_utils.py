@@ -36,7 +36,6 @@ def validar_email_formato(body: dict):
     if "email" not in body or body["email"] is None:
         return
     email = body["email"]
-    # ya viene en minúsculas por normalización
     if "@" not in email or "." not in email.split("@")[-1]:
         raise ValidationException("El email no tiene un formato válido")
 
