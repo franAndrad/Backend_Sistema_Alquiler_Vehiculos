@@ -4,6 +4,7 @@ from ..models.alquiler import Alquiler
 from ..models.reserva import Reserva
 from ..models.empleado import Empleado
 from ..models.enums import RolEmpleado
+from ..models.enums import TipoVehiculo
 
 from ..dto.cliente_dto import ClienteResponseDTO
 from ..dto.vehiculo_dto import VehiculoResponseDTO
@@ -39,7 +40,7 @@ def vehiculo_to_response_dto(vehiculo: Vehiculo) -> VehiculoResponseDTO:
         modelo=vehiculo.modelo.descripcion,
         marca=vehiculo.modelo.marca.nombre,
         anio=vehiculo.anio,
-        tipo=vehiculo.tipo.value,
+        tipo=vehiculo.tipo.value if isinstance(vehiculo.tipo, TipoVehiculo) else str(vehiculo.tipo),
         estado=vehiculo.estado,
         costo_diario=vehiculo.costo_diario,
     )

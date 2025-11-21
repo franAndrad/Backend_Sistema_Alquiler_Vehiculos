@@ -1,4 +1,5 @@
 from ...exceptions.domain_exceptions import ValidationException
+from ...models.enums import TipoVehiculo
 from datetime import datetime
 
 
@@ -11,15 +12,14 @@ def normalizar_campos(body: dict) -> dict:
     return body
 
 
-def validar_obligatorios(body: dict):
-    faltan = [
-        c for c in ["id_modelo", "anio", "tipo", "patente", "costo_diario"]
-        if c not in body or body[c] is None
-    ]
-
-    if faltan:
-        raise ValidationException(f"Faltan campos obligatorios: {', '.join(faltan)}")
-
+def validar_campos_obligatorios(body: dict, campos_obligatorios: list[str], entidad: str):
+    faltantes = [
+        c for c in campos_obligatorios if c not in body or not body[c]]
+    if faltantes:
+        raise ValidationException(
+            f"Faltan campos obligatorios para {entidad}: {', '.join(faltantes)}"
+        )
+        
 
 def validar_anio(body: dict):
     anio = body.get("anio")
@@ -40,10 +40,17 @@ def validar_costo(body: dict):
     costo = body.get("costo_diario")
     if not isinstance(costo, (int, float)) or costo <= 0:
         raise ValidationException("El costo diario debe ser un número mayor a cero")
+    
 
+def validar_tipo(body: dict):
+    if "tipo" not in body or not body["tipo"]:
+        raise ValidationException("El tipo de vehículo es obligatorio")
 
-def validar_vehiculo_create(body: dict):
-    validar_obligatorios(body)
-    validar_anio(body)
-    validar_patente(body)
-    validar_costo(body)
+    try:
+        TipoVehiculo(body["tipo"])
+    except ValueError:
+        raise ValidationException(
+            f"El tipo '{body['tipo']}' no es válido. Tipos válidos: "
+            + ", ".join([t.value for t in TipoVehiculo])
+        )
+    

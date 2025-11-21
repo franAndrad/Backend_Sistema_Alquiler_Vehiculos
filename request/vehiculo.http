@@ -10,7 +10,7 @@ Content-Type: application/json
 {
     "id_modelo": 1,
     "anio": 2022,
-    "tipo": "Sedan",
+    "tipo": "SEDAN",
     "patente": "ABC123",
     "costo_diario": 15000
 }

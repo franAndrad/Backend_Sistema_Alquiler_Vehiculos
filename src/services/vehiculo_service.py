@@ -1,7 +1,5 @@
 from ..repository.vehiculo_repository import VehiculoRepository
 from ..repository.modelo_repository import ModeloRepository
-
-from ..dto.vehiculo_dto import VehiculoCreateDTO, VehiculoResponseDTO
 from ..exceptions.domain_exceptions import ValidationException, NotFoundException, BusinessException
 from ..models.vehiculo import Vehiculo
 from ..utils.mappers import vehiculo_to_response_dto
@@ -25,14 +23,14 @@ class VehiculoService:
         self.modelo_repo = ModeloRepository()
 
     def listar_vehiculos(self):
-        vehiculos = self.vehiculo_repo.get_all()
-        return [VehiculoResponseDTO.from_entity(v) for v in vehiculos]
+        vehiculos = self.vehiculo_repo.list_all()
+        return [vehiculo_to_response_dto.from_entity(v) for v in vehiculos]
 
     def obtener_vehiculo(self, vehiculo_id):
         vehiculo = self.vehiculo_repo.get_by_id(vehiculo_id)
         if not vehiculo:
             raise ValidationException("El vehículo no existe")
-        return VehiculoResponseDTO.from_entity(vehiculo)
+        return vehiculo_to_response_dto.from_entity(vehiculo)
 
     def crear_vehiculo(self, body):
         body = dict(body)
