@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-from ..models.enums import EstadoVehiculo
-
+from .modelo_dto import ModeloResponseDTO
 @dataclass
 class VehiculoCreateDTO:
     id_modelo: int
@@ -14,7 +13,8 @@ class VehiculoCreateDTO:
 class VehiculoResponseDTO:
     id: int
     patente: str
-    modelo: str
-    marca: str
-    estado: EstadoVehiculo
+    modelo: ModeloResponseDTO
+    anio: int
+    tipo: str
+    estado: str
     costo_diario: float

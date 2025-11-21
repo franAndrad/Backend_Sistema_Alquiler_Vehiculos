@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+from .cliente_dto import ClienteResponseDTO
+from .vehiculo_dto import VehiculoResponseDTO
+from .empleado_dto import EmpleadoResponseDTO
 from datetime import date
 
 @dataclass
@@ -13,9 +16,9 @@ class AlquilerCreateDTO:
 @dataclass
 class AlquilerResponseDTO:
     id: int
-    cliente: str
-    vehiculo: str
-    empleado: str
+    cliente: ClienteResponseDTO
+    vehiculo: VehiculoResponseDTO
+    empleado: EmpleadoResponseDTO
     fecha_inicio: date
     fecha_fin: date | None
     costo_total: float | None

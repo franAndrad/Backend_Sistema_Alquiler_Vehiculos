@@ -26,3 +26,10 @@ class RolEmpleado(enum.Enum):
 class TipoMantenimiento(enum.Enum):
     PREVENTIVO = "PREVENTIVO"
     CORRECTIVO = "CORRECTIVO"
+
+class TipoVehiculo(enum.Enum):
+    SEDAN = "SEDAN"
+    SUV = "SUV"
+    CAMIONETA = "CAMIONETA"
+    HATCHBACK = "HATCHBACK"
+    CONVERTIBLE = "CONVERTIBLE"

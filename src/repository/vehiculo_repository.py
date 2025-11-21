@@ -34,8 +34,7 @@ class VehiculoRepository(BaseRepository):
     def tiene_reserva_superpuesta(self, vehiculo_id, desde, hasta):
         q = Reserva.query.filter(
             Reserva.id_vehiculo == vehiculo_id,
-            Reserva.estado.in_(
-                [EstadoReserva.PENDIENTE, EstadoReserva.CONFIRMADA]),
+            Reserva.estado.in_([EstadoReserva.PENDIENTE, EstadoReserva.CONFIRMADA]),
             Reserva.fecha_inicio <= hasta,
             Reserva.fecha_fin >= desde
         )

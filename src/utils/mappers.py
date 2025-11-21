@@ -1,9 +1,9 @@
+from ..models.enums import TipoVehiculo, EstadoVehiculo, RolEmpleado
 from ..models.cliente import Cliente
 from ..models.vehiculo import Vehiculo
 from ..models.alquiler import Alquiler
 from ..models.reserva import Reserva
 from ..models.empleado import Empleado
-from ..models.enums import RolEmpleado
 from ..models.marca import Marca
 from ..models.modelo import Modelo
 from ..models.multa import Multa
@@ -43,9 +43,10 @@ def vehiculo_to_response_dto(vehiculo: Vehiculo) -> VehiculoResponseDTO:
     return VehiculoResponseDTO(
         id=vehiculo.id,
         patente=vehiculo.patente,
-        modelo=vehiculo.modelo.descripcion,
-        marca=vehiculo.modelo.marca.nombre,
-        estado=vehiculo.estado,
+        modelo=modelo_to_response_dto(vehiculo.modelo),
+        anio=vehiculo.anio,
+        tipo=vehiculo.tipo.value if isinstance(vehiculo.tipo, TipoVehiculo) else str(vehiculo.tipo),
+        estado=vehiculo.estado.value if isinstance(vehiculo.estado, EstadoVehiculo) else str(vehiculo.estado),
         costo_diario=vehiculo.costo_diario,
     )
 
@@ -53,9 +54,9 @@ def vehiculo_to_response_dto(vehiculo: Vehiculo) -> VehiculoResponseDTO:
 def alquiler_to_response_dto(alquiler: Alquiler) -> AlquilerResponseDTO:
     return AlquilerResponseDTO(
         id=alquiler.id,
-        cliente=f"{alquiler.cliente.nombre} {alquiler.cliente.apellido}",
-        vehiculo=alquiler.vehiculo.patente,
-        empleado=f"{alquiler.empleado.nombre} {alquiler.empleado.apellido}",
+        cliente=cliente_to_response_dto(alquiler.cliente),
+        vehiculo=vehiculo_to_response_dto(alquiler.vehiculo),
+        empleado=empleado_to_response_dto(alquiler.empleado),
         fecha_inicio=alquiler.fecha_inicio,
         fecha_fin=alquiler.fecha_fin,
         costo_total=alquiler.costo_total,
@@ -90,7 +91,7 @@ def modelo_to_response_dto(modelo: Modelo) -> ModeloResponseDTO:
     )
 
 
-def multa_to_response_dto(multa) -> dict:
+def multa_to_response_dto(multa: Multa) -> dict:
     return MultaResponseDTO(
         id=multa.id,
         id_alquiler=multa.id_alquiler,

@@ -135,7 +135,7 @@ class AlquilerService:
     
     
     def finalizar_alquiler(self, alquiler_id):
-        alquiler = self.repo.get_by_id(alquiler_id)
+        alquiler = self.alquiler_repo.get_by_id(alquiler_id)
         if not alquiler:
             raise NotFoundException("Alquiler no encontrado")
 
@@ -144,12 +144,12 @@ class AlquilerService:
         estado_enum.finalizar()
         alquiler.estado = estado_enum.estado_enum
 
-        self.repo.save_changes()
+        self.alquiler_repo.save_changes()
         return alquiler_to_response_dto(alquiler)
     
 
     def cancelar_alquiler(self, alquiler_id):
-        alquiler = self.repo.get_by_id(alquiler_id)
+        alquiler = self.alquiler_repo.get_by_id(alquiler_id)
         if not alquiler:
             raise NotFoundException("Alquiler no encontrado")
 
@@ -158,5 +158,5 @@ class AlquilerService:
         estado_enum.cancelar()
         alquiler.estado = estado_enum.estado_enum
 
-        self.repo.save_changes()
+        self.alquiler_repo.save_changes()
         return alquiler_to_response_dto(alquiler)

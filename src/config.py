@@ -5,4 +5,3 @@ class Config:
         "DATABASE_URL",
         "mysql+pymysql://root:11111010fa@localhost/tp"
     )
-    SQLALCHEMY_TRACK_MODIFICATIONS = False

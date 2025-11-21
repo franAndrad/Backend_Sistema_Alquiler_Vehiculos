@@ -13,8 +13,9 @@ class ReservaCreateDTO:
 @dataclass
 class ReservaResponseDTO:
     id: int
-    cliente: str
-    vehiculo: str
+    id_cliente: int
+    id_vehiculo: int
     fecha_inicio: date
     fecha_fin: date
     estado: str
+    
