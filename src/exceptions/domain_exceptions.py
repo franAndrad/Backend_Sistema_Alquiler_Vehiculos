@@ -3,7 +3,7 @@ class DomainException(Exception):
 
 
 class BusinessException(DomainException):
-    """Errores de reglas de negocio (vehículo no disponible, etc.)"""
+    """Error de reglas de negocio"""
     pass
 
 
@@ -13,5 +13,5 @@ class NotFoundException(DomainException):
 
 
 class ValidationException(DomainException):
-    """Errores de validación de entrada (más allá de Flask/Marshmallow)"""
+    """Error de validación de entrada"""
     status_code = 422

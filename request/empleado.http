@@ -3,6 +3,16 @@ GET http://localhost:5000/empleados
 Content-Type: application/json
 
 
+### Obtener empleado por email
+GET http://localhost:5000/empleados/email/laura.gomez@example.com
+Content-Type: application/json
+
+
+### Obtener empleado por DNI
+GET http://localhost:5000/empleados/dni/22322222
+Content-Type: application/json
+
+
 ### Crear empleado
 POST http://localhost:5000/empleados
 Content-Type: application/json
@@ -10,9 +20,29 @@ Content-Type: application/json
 {
     "nombre": "Laura",
     "apellido": "Gomez",
-    "dni": 22322222,
+    "dni": 22321222,
     "direccion": "Calle Falsa 123",
     "telefono": "1234567",
-    "email": "laura.gomezd@example.com",
+    "email": "laura.gomed@example.com",
     "rol": "ADMIN"
+}
+
+
+### Obtener empleado por ID
+GET http://localhost:5000/empleados/1
+Content-Type: application/json
+
+
+### Actualizar empleado
+PUT http://localhost:5000/empleados/1
+Content-Type: application/json
+
+{
+    "nombre": "Laura",
+    "apellido": "Gomez",
+    "dni": 22322122,
+    "direccion": "Calle Verdadera 456",
+    "telefono": "7684291",
+    "email": "laura.gomezs@example.com",
+    "rol": "VENDEDOR"
 }

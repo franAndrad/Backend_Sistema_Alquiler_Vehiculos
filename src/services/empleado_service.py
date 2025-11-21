@@ -1,83 +1,67 @@
+# services/empleado_service.py
 from ..repository.empleado_repository import EmpleadoRepository
 from ..exceptions.domain_exceptions import ValidationException, NotFoundException, BusinessException
 from ..models.empleado import Empleado
 from ..utils.mappers import empleado_to_response_dto
+from .utils.persona_utils import (
+    normalizar_campos_basicos,
+    validar_campos_obligatorios,
+    validar_nombre_apellido,
+    validar_email_formato,
+    validar_dni_formato,
+    validar_telefono,
+)
+
 
 class EmpleadoService:
-    
+
     def __init__(self, empleado_repository=None):
         self.empleado_repo = empleado_repository or EmpleadoRepository()
-        
-        
+
+
     def listar_empleados(self):
         empleados = self.empleado_repo.list_all()
         return [empleado_to_response_dto(e) for e in empleados]
-    
-    
+
+
     def listar_empleados_por_rol(self, empleado_rol):
         empleados = self.empleado_repo.find_by_rol(empleado_rol)
         return [empleado_to_response_dto(e) for e in empleados]
-    
-    
+
+
     def obtener_empleado(self, empleado_id):
         empleado = self.empleado_repo.get_by_id(empleado_id)
         if not empleado:
             raise NotFoundException("Empleado no encontrado")
         return empleado_to_response_dto(empleado)
-    
-    
+
+
     def obtener_empleado_por_dni(self, empleado_dni):
         empleado = self.empleado_repo.find_by_dni(empleado_dni)
         if not empleado:
             raise NotFoundException("Empleado no encontrado")
         return empleado_to_response_dto(empleado)
-    
-    
+
+
     def obtener_empleado_por_email(self, empleado_email):
         empleado = self.empleado_repo.find_by_email(empleado_email)
         if not empleado:
             raise NotFoundException("Empleado no encontrado")
         return empleado_to_response_dto(empleado)
-    
-    
+
+
     def crear_empleado(self, body):
-        campos_obligatorios = [
-            "nombre", "apellido", "dni", "email", "rol"
-        ]
-        
-        faltantes = []
-        for c in campos_obligatorios:
-            if c not in body or not body[c]:
-                faltantes.append(c)
-        
-        if faltantes:
-            raise ValidationException(f"Faltan campos obligatorios: {', '.join(faltantes)}")
-        
-        
-        body["nombre"] = body["nombre"].strip()
-        body["apellido"] = body["apellido"].strip()
-        email = body["email"].strip()
-        
-        if len(body["nombre"]) < 2:
-            raise ValidationException("El nombre debe tener al menos 2 caracteres")
-        
-        if len(body["apellido"]) < 2:
-            raise ValidationException("El apellido debe tener al menos 2 caracteres")
-        
-        if "@" not in email or "." not in email:
-            raise ValidationException("El email no tiene un formato válido")
-        body["email"] = email.lower()
-        
-        dni_str = str(body["dni"])
-        if not dni_str.isdigit() or not (len(dni_str) == 8):
-            raise ValidationException("El DNI debe ser un número de 8 dígitos")
-        
-        telefono = body.get("telefono")
-        if telefono:
-            tel_str = str(telefono)
-            if not tel_str.isdigit() or len(tel_str) < 7:
-                raise ValidationException("El teléfono no es válido")
-            
+        body = dict(body)
+        body = normalizar_campos_basicos(body)
+
+        campos_obligatorios = ["nombre", "apellido", "dni", "email", "rol"]
+        validar_campos_obligatorios(body, campos_obligatorios, "empleado")
+        validar_nombre_apellido(body)
+        validar_email_formato(body)
+        validar_dni_formato(body, longitud_exacto=8)
+        validar_telefono(body)
+
+
         if self.empleado_repo.find_by_dni(body["dni"]):
             raise BusinessException("Ya existe un empleado con ese DNI")
 
@@ -91,8 +75,51 @@ class EmpleadoService:
             direccion=body.get("direccion"),
             telefono=body.get("telefono"),
             email=body["email"],
-            rol=body["rol"]
+            rol=body["rol"],
         )
-        
+
         self.empleado_repo.add(empleado)
+        return empleado_to_response_dto(empleado)
+
+
+    def actualizar_empleado(self, empleado_id, body):
+        empleado = self.empleado_repo.get_by_id(empleado_id)
+        if not empleado:
+            raise NotFoundException("Empleado no encontrado")
+
+        body = dict(body)
+        body = normalizar_campos_basicos(body)
+
+        validar_nombre_apellido(body)
+        validar_email_formato(body)
+        validar_dni_formato(body, longitud_exacto=8)
+        validar_telefono(body)
+
+        if "dni" in body and body["dni"] is not None:
+            existente_dni = self.empleado_repo.find_by_dni(body["dni"])
+            if existente_dni and existente_dni.id != empleado.id:
+                raise BusinessException("Ya existe otro empleado con ese DNI")
+
+        if "email" in body and body["email"] is not None:
+            existente_email = self.empleado_repo.find_by_email(body["email"])
+            if existente_email and existente_email.id != empleado.id:
+                raise BusinessException(
+                    "Ya existe otro empleado con ese email")
+
+        if "nombre" in body:
+            empleado.nombre = body["nombre"]
+        if "apellido" in body:
+            empleado.apellido = body["apellido"]
+        if "direccion" in body:
+            empleado.direccion = body["direccion"]
+        if "telefono" in body:
+            empleado.telefono = body["telefono"]
+        if "dni" in body:
+            empleado.dni = body["dni"]
+        if "email" in body:
+            empleado.email = body["email"]
+        if "rol" in body:
+            empleado.rol = body["rol"]
+
+        self.empleado_repo.save_changes()
         return empleado_to_response_dto(empleado)

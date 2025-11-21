@@ -4,6 +4,15 @@ from ..repository.cliente_repository import ClienteRepository
 from ..exceptions.domain_exceptions import ValidationException, NotFoundException, BusinessException
 from ..models.cliente import Cliente
 from ..utils.mappers import cliente_to_response_dto
+from .utils.persona_utils import (
+    normalizar_campos_basicos,
+    validar_campos_obligatorios,
+    validar_nombre_apellido,
+    validar_email_formato,
+    validar_dni_formato,
+    validar_telefono,
+)
+from .utils.cliente_utils import parsear_licencia_vencimiento, validar_categoria_licencia
 
 
 class ClienteService:
@@ -22,87 +31,49 @@ class ClienteService:
         if not cliente:
             raise NotFoundException("Cliente no encontrado")
         return cliente_to_response_dto(cliente)
-    
-    
+
+
     def obtener_cliente_por_dni(self, cliente_dni):
         cliente = self.cliente_repo.find_by_dni(cliente_dni)
         if not cliente:
             raise NotFoundException("Cliente no encontrado")
         return cliente_to_response_dto(cliente)
-    
-    
+
+
     def obtener_cliente_por_email(self, cliente_email):
         cliente = self.cliente_repo.find_by_email(cliente_email)
         if not cliente:
             raise NotFoundException("Cliente no encontrado")
         return cliente_to_response_dto(cliente)
-    
+
+
     
     def eliminar_cliente(self, cliente_id):
         cliente = self.cliente_repo.get_by_id(cliente_id)
         if not cliente:
             raise NotFoundException("Cliente no encontrado")
-        
+
         self.cliente_repo.delete(cliente)
         return {"mensaje": "Cliente eliminado correctamente"}
 
 
-
     def crear_cliente(self, body):
+        body = dict(body)
+        body = normalizar_campos_basicos(body)
+
         campos_obligatorios = [
             "nombre", "apellido", "dni", "email",
             "licencia_numero", "licencia_categoria", "licencia_vencimiento"
         ]
-        
-        faltantes = []
-        for c in campos_obligatorios:
-            if c not in body or not body[c]:
-                faltantes.append(c)
-                
-        if faltantes:
-            raise ValidationException(
-                "Faltan campos obligatorios: " + ", ".join(faltantes))
+        validar_campos_obligatorios(body, campos_obligatorios, "cliente")
+        validar_nombre_apellido(body)
+        validar_email_formato(body)
+        validar_dni_formato(body, longitud_exacto=8)
+        validar_telefono(body)
+        validar_categoria_licencia(body)
 
-        # Normalizar y validar formato básico
-        body["nombre"] = body["nombre"].strip()
-        body["apellido"] = body["apellido"].strip()
-        email = body["email"].strip()
+        licencia_vencimiento = parsear_licencia_vencimiento(body)
 
-        if len(body["nombre"]) < 2:
-            raise ValidationException("El nombre es demasiado corto")
-
-        if len(body["apellido"]) < 2:
-            raise ValidationException("El apellido es demasiado corto")
-
-        if "@" not in email or "." not in email.split("@")[-1]:
-            raise ValidationException("El email no tiene un formato válido")
-        body["email"] = email.lower()
-
-        dni_str = str(body["dni"])
-        if not dni_str.isdigit() or not (len(dni_str) == 8):
-            raise ValidationException("El DNI debe tener 8 dígitos numéricos")
-
-        telefono = body.get("telefono")
-        if telefono:    
-            tel_str = str(telefono)
-            if not tel_str.isdigit() or len(tel_str) < 7:
-                raise ValidationException("El teléfono no es válido")
-
-        # Fecha
-        try:
-            licencia_vencimiento = date.fromisoformat(body["licencia_vencimiento"])
-        except ValueError:
-            raise ValidationException(
-                "Formato de fecha inválido para licencia_vencimiento (usar YYYY-MM-DD)")
-
-        if licencia_vencimiento < date.today():
-            raise BusinessException("La licencia se encuentra vencida")
-
-        categorias_validas = {"A", "B1", "B2", "C1", "C2"}
-        if body["licencia_categoria"] not in categorias_validas:
-            raise ValidationException("La categoría de licencia no es válida")
-
-        # Reglas de negocio existentes
         if self.cliente_repo.find_by_dni(body["dni"]):
             raise BusinessException("Ya existe un cliente con ese DNI")
 
@@ -122,71 +93,29 @@ class ClienteService:
         )
 
         self.cliente_repo.add(cliente)
-        return cliente_to_response_dto(cliente)  
+        return cliente_to_response_dto(cliente)
 
 
     def actualizar_cliente(self, cliente_id, body):
         cliente = self.cliente_repo.get_by_id(cliente_id)
         if not cliente:
             raise NotFoundException("Cliente no encontrado")
-        
+
+        body = dict(body)
+        body = normalizar_campos_basicos(body)
+
         campos_obligatorios = [
             "nombre", "apellido", "dni", "email",
             "licencia_numero", "licencia_categoria", "licencia_vencimiento"
         ]
-        
-        faltantes = []
-        for c in campos_obligatorios:
-            if c not in body or not body[c]:
-                faltantes.append(c)
-        if faltantes:
-            raise ValidationException(
-                "Faltan campos obligatorios: " + ", ".join(faltantes))  
-        
-        try:
-            licencia_vencimiento = date.fromisoformat(body["licencia_vencimiento"])
-        except ValueError:
-            raise ValidationException(
-                "Formato de fecha inválido para licencia_vencimiento (usar YYYY-MM-DD)")
-            
-        body["nombre"] = body["nombre"].strip()
-        body["apellido"] = body["apellido"].strip()
-        email = body["email"].strip()
+        validar_campos_obligatorios(body, campos_obligatorios, "cliente")
+        validar_nombre_apellido(body)
+        validar_email_formato(body)
+        validar_dni_formato(body, longitud_exacto=8)
+        validar_telefono(body)
+        validar_categoria_licencia(body)
 
-        if len(body["nombre"]) < 2:
-            raise ValidationException("El nombre es demasiado corto")
-
-        if len(body["apellido"]) < 2:
-            raise ValidationException("El apellido es demasiado corto")
-
-        if "@" not in email or "." not in email.split("@")[-1]:
-            raise ValidationException("El email no tiene un formato válido")
-        body["email"] = email.lower()
-
-        dni_str = str(body["dni"])
-        if not dni_str.isdigit() or not (7 <= len(dni_str) <= 8):
-            raise ValidationException(
-                "El DNI debe tener 7 u 8 dígitos numéricos")
-
-        telefono = body.get("telefono")
-        if telefono:
-            tel_str = str(telefono)
-            if not tel_str.isdigit() or len(tel_str) < 7:
-                raise ValidationException("El teléfono no es válido")
-        
-        try:
-            licencia_vencimiento = date.fromisoformat(
-                body["licencia_vencimiento"])
-        except ValueError:
-            raise ValidationException(
-                "Formato de fecha inválido para licencia_vencimiento (usar YYYY-MM-DD)")
-
-        if licencia_vencimiento < date.today():
-            raise BusinessException("La licencia se encuentra vencida")
-
-        categorias_validas = {"A", "B1", "B2", "C1", "C2"}
-        if body["licencia_categoria"] not in categorias_validas:
-            raise ValidationException("La categoría de licencia no es válida")
+        licencia_vencimiento = parsear_licencia_vencimiento(body)
 
         existente_dni = self.cliente_repo.find_by_dni(body["dni"])
         if existente_dni and existente_dni.id != cliente.id:
@@ -206,5 +135,5 @@ class ClienteService:
         cliente.licencia_categoria = body["licencia_categoria"]
         cliente.licencia_vencimiento = licencia_vencimiento
 
-        self.cliente_repo.add(cliente)
+        self.cliente_repo.save_changes()
         return cliente_to_response_dto(cliente)
