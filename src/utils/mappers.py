@@ -6,6 +6,7 @@ from ..models.empleado import Empleado
 from ..models.enums import RolEmpleado
 from ..models.marca import Marca
 from ..models.modelo import Modelo
+from ..models.multa import Multa
 
 from ..dto.cliente_dto import ClienteResponseDTO
 from ..dto.vehiculo_dto import VehiculoResponseDTO
@@ -14,6 +15,7 @@ from ..dto.reserva_dto import ReservaResponseDTO
 from ..dto.empleado_dto import EmpleadoResponseDTO
 from ..dto.marca_dto import MarcaResponseDTO
 from ..dto.modelo_dto import ModeloResponseDTO
+from ..dto.multa_dto import MultaResponseDTO   
 
 
 def cliente_to_response_dto(cliente: Cliente) -> ClienteResponseDTO:
@@ -85,4 +87,14 @@ def modelo_to_response_dto(modelo: Modelo) -> ModeloResponseDTO:
         nombre=modelo.nombre,
         descripcion=modelo.descripcion,
         marca=marca_to_response_dto(modelo.marca)
+    )
+
+
+def multa_to_response_dto(multa) -> dict:
+    return MultaResponseDTO(
+        id=multa.id,
+        id_alquiler=multa.id_alquiler,
+        descripcion=multa.descripcion,
+        monto=multa.monto,
+        fecha=multa.fecha
     )
