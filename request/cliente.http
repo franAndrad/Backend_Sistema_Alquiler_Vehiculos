@@ -1,0 +1,24 @@
+### Listar clientes
+GET http://localhost:5000/clientes
+Content-Type: application/json
+
+
+### Crear cliente
+POST http://localhost:5000/clientes
+Content-Type: application/json
+
+{
+    "nombre": "Francisco",
+    "apellido": "Andrade",
+    "dni": 11111111,
+    "email": "fran.eze.andrade@gmail.com",
+    "telefono": "3884216529",
+    "licencia_numero": "ABC123",
+    "licencia_categoria": "B1",
+    "licencia_vencimiento": "2026-05-01"
+}
+
+
+### Obtener cliente por ID
+GET http://localhost:5000/clientes/1
+Content-Type: application/json
