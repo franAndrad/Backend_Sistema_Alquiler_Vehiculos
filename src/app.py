@@ -6,6 +6,7 @@ from .controllers.health_controller import health_bp
 from .controllers.cliente_controller import cliente_bp
 from .controllers.empleado_controller import empleado_bp
 from .controllers.reserva_controller import reserva_bp
+from .controllers.vehiculo_controller import vehiculo_bp
 from . import models
 from .utils.utf8_json_provider import UTF8JSONProvider
 from .utils.db_initilizer import DBInitializer
@@ -31,6 +32,7 @@ def create_app():
     app.register_blueprint(cliente_bp)
     app.register_blueprint(empleado_bp)
     app.register_blueprint(reserva_bp)
+    app.register_blueprint(vehiculo_bp)
 
     return app
 

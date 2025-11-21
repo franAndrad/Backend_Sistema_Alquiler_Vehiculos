@@ -16,6 +16,14 @@ class VehiculoRepository(BaseRepository):
     def find_by_patente(self, patente):
         return Vehiculo.query.filter_by(patente=patente).first()
 
+    def existe_patente_en_otro_vehiculo(self, patente, vehiculo_id):
+        """Verifica si la patente ya existe en otro vehículo distinto al actual."""
+        return (
+            Vehiculo.query
+            .filter(Vehiculo.patente == patente, Vehiculo.id != vehiculo_id)
+            .first()
+        )
+
     def list_disponibles(self):
         return Vehiculo.query.filter_by(estado=EstadoVehiculo.DISPONIBLE).all()
 
@@ -34,8 +42,7 @@ class VehiculoRepository(BaseRepository):
     def tiene_reserva_superpuesta(self, vehiculo_id, desde, hasta):
         q = Reserva.query.filter(
             Reserva.id_vehiculo == vehiculo_id,
-            Reserva.estado.in_(
-                [EstadoReserva.PENDIENTE, EstadoReserva.CONFIRMADA]),
+            Reserva.estado.in_([EstadoReserva.PENDIENTE, EstadoReserva.CONFIRMADA]),
             Reserva.fecha_inicio <= hasta,
             Reserva.fecha_fin >= desde
         )
