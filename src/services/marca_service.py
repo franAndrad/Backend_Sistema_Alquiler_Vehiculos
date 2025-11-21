@@ -81,5 +81,5 @@ class MarcasService:
             
         marca.nombre = body["nombre"]
         
-        self.marca_repo.add(marca)
+        self.marca_repo.save_changes()
         return marca_to_response_dto(marca)

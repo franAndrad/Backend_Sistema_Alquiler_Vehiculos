@@ -1,0 +1,48 @@
+### Listar alquileres
+GET http://localhost:5000/alquileres
+Content-Type: application/json
+
+### Crear alquiler
+POST http://localhost:5000/alquileres
+Content-Type: application/json
+
+{
+    "id_cliente": 1,
+    "id_empleado": 1,
+    "id_vehiculo": 2,
+    "fecha_inicio": "2024-06-10",
+    "fecha_fin": "2024-06-15",
+    "costo_total": 500.00,
+    "estado": "ACTIVO"
+}
+
+
+### Actualizar alquiler
+PUT http://localhost:5000/alquileres/1
+Content-Type: application/json
+
+{
+    "id_cliente": 1,
+    "id_empleado": 2,
+    "id_vehiculo": 3,
+    "fecha_inicio": "2024-06-12",
+    "fecha_fin": "2024-06-18",
+    "costo_total": 600.00,
+    "estado": "FINALIZADO"
+}
+
+
+### Obtener alquiler por ID
+GET http://localhost:5000/alquileres/1
+
+
+### Eliminar alquiler
+DELETE http://localhost:5000/alquileres/1
+
+
+### Finalizar alquiler
+PATCH http://localhost:5000/alquileres/1/finalizar
+
+
+### Cancelar alquiler
+PATCH http://localhost:5000/alquileres/1/cancelar

@@ -31,6 +31,7 @@ def actualizar_multa(multa_id):
     dto = multa_service.actualizar_multa(multa_id, body)
     return jsonify(dto.__dict__), 200
 
+
 @multa_bp.delete("/<int:multa_id>")
 def eliminar_multa(multa_id):
     resultado = multa_service.eliminar_multa(multa_id)

@@ -1,4 +1,6 @@
 from ...exceptions.domain_exceptions import ValidationException
+
+
 from datetime import date
 
 def normalizar_campos_basicos(body: dict) -> dict:
@@ -23,14 +25,7 @@ def validar_id_alquiler(body: dict):
                 raise ValidationException("El id_alquiler debe ser un número entero positivo")
         except ValueError:
             raise ValidationException("El id_alquiler debe ser un número entero válido")
-
-def validar_id_existente_alquiler(body: dict, alquiler_service):
-    if "id_alquiler" in body:
-        alquiler_id = body["id_alquiler"]
-        try:
-            alquiler_service.obtener_alquiler(alquiler_id)
-        except ValidationException:
-            raise ValidationException("El id_alquiler no corresponde a un alquiler existente")
+        
         
 def validar_monto(body: dict):
     if "monto" in body:
@@ -55,3 +50,5 @@ def validar_descripcion(body: dict):
     if "descripcion" in body and body["descripcion"] is not None:
         if len(body["descripcion"]) < 5:
             raise ValidationException("La descripción debe tener al menos 5 caracteres")
+        
+

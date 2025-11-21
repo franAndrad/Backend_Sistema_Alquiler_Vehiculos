@@ -20,6 +20,18 @@ GET http://localhost:5000/multas/1
 Content-Type: application/json
 
 
+### Crear multa
+POST http://localhost:5000/multas
+Content-Type: application/json
+
+{
+    "id_alquiler": 2,
+    "monto": 100.00,
+    "fecha": "2024-06-14",
+    "descripcion": "Estacionamiento indebido"
+}
+
+
 ### Actualizar multa
 PUT http://localhost:5000/multas/1
 Content-Type: application/json

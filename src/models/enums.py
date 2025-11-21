@@ -3,7 +3,6 @@ import enum
 class EstadoVehiculo(enum.Enum):
     DISPONIBLE = "DISPONIBLE"
     ALQUILADO = "ALQUILADO"
-    MANTENIMIENTO = "MANTENIMIENTO"
 
 
 class EstadoAlquiler(enum.Enum):
