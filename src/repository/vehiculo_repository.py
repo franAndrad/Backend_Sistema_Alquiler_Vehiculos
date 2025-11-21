@@ -17,7 +17,6 @@ class VehiculoRepository(BaseRepository):
         return Vehiculo.query.filter_by(patente=patente).first()
 
     def existe_patente_en_otro_vehiculo(self, patente, vehiculo_id):
-        """Verifica si la patente ya existe en otro vehículo distinto al actual."""
         return (
             Vehiculo.query
             .filter(Vehiculo.patente == patente, Vehiculo.id != vehiculo_id)
