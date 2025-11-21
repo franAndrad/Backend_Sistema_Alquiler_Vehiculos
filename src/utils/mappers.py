@@ -15,7 +15,7 @@ from ..dto.reserva_dto import ReservaResponseDTO
 from ..dto.empleado_dto import EmpleadoResponseDTO
 from ..dto.marca_dto import MarcaResponseDTO
 from ..dto.modelo_dto import ModeloResponseDTO
-from ..dto.multa_dto import MultaResponseDTO   
+from ..dto.multa_dto import MultaResponseDTO
 
 
 def cliente_to_response_dto(cliente: Cliente) -> ClienteResponseDTO:
