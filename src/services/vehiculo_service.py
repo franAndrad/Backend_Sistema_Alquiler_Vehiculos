@@ -28,14 +28,11 @@ class VehiculoService:
     def crear_vehiculo(self, body):
         body = normalizar_campos(body)
 
-        # 🧪 Validaciones
         validar_vehiculo_create(body)
 
-        # 🔍 Verificar patente duplicada
         if self.repo.find_by_patente(body["patente"]):
             raise ValidationException("Ya existe un vehículo con esa patente")
 
-        # Crear
         vehiculo = self.repo.create(body)
         return VehiculoDTO.from_entity(vehiculo)
 
@@ -46,7 +43,6 @@ class VehiculoService:
         if not vehiculo:
             raise ValidationException("El vehículo no existe")
 
-        # Validaciones individuales si vienen en el body
         if "anio" in body:
             validar_anio(body)
         if "patente" in body:
@@ -54,12 +50,10 @@ class VehiculoService:
         if "costo_diario" in body:
             validar_costo(body)
 
-        # 🔍 Validar patente repetida en otro vehículo
         if "patente" in body:
             if self.repo.existe_patente_en_otro_vehiculo(body["patente"], vehiculo_id):
                 raise ValidationException("La patente pertenece a otro vehículo")
 
-        # Actualizar
         vehiculo = self.repo.update(vehiculo_id, body)
         return VehiculoDTO.from_entity(vehiculo)
 
