@@ -1,5 +1,5 @@
 from ...exceptions.domain_exceptions import ValidationException
-
+from ...models.enums import RolEmpleado
 
 def normalizar_campos_basicos(body: dict) -> dict:
     """Quita espacios y normaliza email a minúsculas si están presentes."""
@@ -56,3 +56,16 @@ def validar_telefono(body: dict):
         tel_str = str(telefono)
         if not tel_str.isdigit() or len(tel_str) < 7:
             raise ValidationException("El teléfono no es válido")
+
+
+def validar_rol(body: dict):
+    if "rol" not in body or not body["rol"]:
+        raise ValidationException("El rol es obligatorio")
+
+    try:
+        RolEmpleado(body["rol"])
+    except ValueError:
+        raise ValidationException(
+            f"El rol '{body['rol']}' no es válido. Roles válidos: "
+            + ", ".join([r.value for r in RolEmpleado])
+        )

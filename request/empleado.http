@@ -19,11 +19,11 @@ Content-Type: application/json
 
 {
     "nombre": "Laura",
-    "apellido": "Gomez",
-    "dni": 22321222,
+    "apellido": "Gómez",
+    "dni": 22232222,
     "direccion": "Calle Falsa 123",
     "telefono": "1234567",
-    "email": "laura.gomed@example.com",
+    "email": "laura.gomez1@example.com",
     "rol": "ADMIN"
 }
 
@@ -39,7 +39,7 @@ Content-Type: application/json
 
 {
     "nombre": "Laura",
-    "apellido": "Gomez",
+    "apellido": "Gómez",
     "dni": 22322122,
     "direccion": "Calle Verdadera 456",
     "telefono": "7684291",

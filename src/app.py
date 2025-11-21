@@ -6,12 +6,16 @@ from .controllers.health_controller import health_bp
 from .controllers.cliente_controller import cliente_bp
 from .controllers.empleado_controller import empleado_bp
 from . import models
+from .utils.utf8_json_provider import UTF8JSONProvider
 from .utils.db_initilizer import DBInitializer
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-
+    
+    app.json_provider_class = UTF8JSONProvider
+    app.json = app.json_provider_class(app)
+    
     initializer = DBInitializer()
     
     initializer.init_database(app.config["SQLALCHEMY_DATABASE_URI"])

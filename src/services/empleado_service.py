@@ -10,6 +10,7 @@ from .utils.persona_utils import (
     validar_email_formato,
     validar_dni_formato,
     validar_telefono,
+    validar_rol,
 )
 
 
@@ -60,6 +61,7 @@ class EmpleadoService:
         validar_email_formato(body)
         validar_dni_formato(body, longitud_exacto=8)
         validar_telefono(body)
+        validar_rol(body)
 
 
         if self.empleado_repo.find_by_dni(body["dni"]):
@@ -94,6 +96,7 @@ class EmpleadoService:
         validar_email_formato(body)
         validar_dni_formato(body, longitud_exacto=8)
         validar_telefono(body)
+        validar_rol(body)
 
         if "dni" in body and body["dni"] is not None:
             existente_dni = self.empleado_repo.find_by_dni(body["dni"])
