@@ -6,4 +6,3 @@ class Config:
         "mysql+pymysql://root:11111010fa@localhost/tp"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    JSON_AS_ASCII = False  

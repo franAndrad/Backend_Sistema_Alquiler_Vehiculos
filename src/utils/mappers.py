@@ -5,6 +5,7 @@ from ..models.reserva import Reserva
 from ..models.empleado import Empleado
 from ..models.enums import RolEmpleado
 from ..models.marca import Marca
+from ..models.modelo import Modelo
 
 from ..dto.cliente_dto import ClienteResponseDTO
 from ..dto.vehiculo_dto import VehiculoResponseDTO
@@ -12,6 +13,7 @@ from ..dto.alquiler_dto import AlquilerResponseDTO
 from ..dto.reserva_dto import ReservaResponseDTO
 from ..dto.empleado_dto import EmpleadoResponseDTO
 from ..dto.marca_dto import MarcaResponseDTO
+from ..dto.modelo_dto import ModeloResponseDTO
 
 
 def cliente_to_response_dto(cliente: Cliente) -> ClienteResponseDTO:
@@ -33,6 +35,7 @@ def empleado_to_response_dto(empleado: Empleado) -> EmpleadoResponseDTO:
         telefono=empleado.telefono,
         rol=empleado.rol.value if isinstance(empleado.rol, RolEmpleado) else str(empleado.rol),
     )
+
 
 def vehiculo_to_response_dto(vehiculo: Vehiculo) -> VehiculoResponseDTO:
     return VehiculoResponseDTO(
@@ -68,8 +71,18 @@ def reserva_to_response_dto(reserva: Reserva) -> ReservaResponseDTO:
         estado=reserva.estado.value,
     )
     
+    
 def marca_to_response_dto(marca: Marca) -> MarcaResponseDTO:
     return MarcaResponseDTO(
         id=marca.id,
         nombre=marca.nombre,
+    )
+    
+
+def modelo_to_response_dto(modelo: Modelo) -> ModeloResponseDTO:
+    return ModeloResponseDTO(
+        id=modelo.id,
+        nombre=modelo.nombre,
+        descripcion=modelo.descripcion,
+        marca=marca_to_response_dto(modelo.marca)
     )

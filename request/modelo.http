@@ -1,0 +1,35 @@
+### Listar modelos
+GET http://localhost:5000/modelos
+Content-Type: application/json
+
+
+### Crear modelo
+POST http://localhost:5000/modelos
+Content-Type: application/json
+
+{
+    "id_marca": 1,
+    "nombre": "Serie 2",
+    "descripcion": "Deportivo compacto"
+}
+
+
+### Obtener modelo por ID
+GET http://localhost:5000/modelos/1
+Content-Type: application/json
+
+
+### Actualizar modelo
+PUT http://localhost:5000/modelos/1
+Content-Type: application/json
+
+{
+    "id_marca": 1,
+    "nombre": "Serie 4",
+    "descripcion": "Deportivo compacto"
+}
+
+
+### Eliminar modelo
+DELETE http://localhost:5000/modelos/1
+Content-Type: application/json
