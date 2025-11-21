@@ -11,15 +11,41 @@ class ClienteService:
     def __init__(self, cliente_repository=None):
         self.cliente_repo = cliente_repository or ClienteRepository()
 
+
     def listar_clientes(self):
         clientes = self.cliente_repo.list_all()
         return [cliente_to_response_dto(c) for c in clientes]
+
 
     def obtener_cliente(self, cliente_id):
         cliente = self.cliente_repo.get_by_id(cliente_id)
         if not cliente:
             raise NotFoundException("Cliente no encontrado")
         return cliente_to_response_dto(cliente)
+    
+    
+    def obtener_cliente_por_dni(self, cliente_dni):
+        cliente = self.cliente_repo.find_by_dni(cliente_dni)
+        if not cliente:
+            raise NotFoundException("Cliente no encontrado")
+        return cliente_to_response_dto(cliente)
+    
+    
+    def obtener_cliente_por_email(self, cliente_email):
+        cliente = self.cliente_repo.find_by_email(cliente_email)
+        if not cliente:
+            raise NotFoundException("Cliente no encontrado")
+        return cliente_to_response_dto(cliente)
+    
+    
+    def eliminar_cliente(self, cliente_id):
+        cliente = self.cliente_repo.get_by_id(cliente_id)
+        if not cliente:
+            raise NotFoundException("Cliente no encontrado")
+        
+        self.cliente_repo.delete(cliente)
+        return {"mensaje": "Cliente eliminado correctamente"}
+
 
 
     def crear_cliente(self, body):
@@ -97,3 +123,88 @@ class ClienteService:
 
         self.cliente_repo.add(cliente)
         return cliente_to_response_dto(cliente)  
+
+
+    def actualizar_cliente(self, cliente_id, body):
+        cliente = self.cliente_repo.get_by_id(cliente_id)
+        if not cliente:
+            raise NotFoundException("Cliente no encontrado")
+        
+        campos_obligatorios = [
+            "nombre", "apellido", "dni", "email",
+            "licencia_numero", "licencia_categoria", "licencia_vencimiento"
+        ]
+        
+        faltantes = []
+        for c in campos_obligatorios:
+            if c not in body or not body[c]:
+                faltantes.append(c)
+        if faltantes:
+            raise ValidationException(
+                "Faltan campos obligatorios: " + ", ".join(faltantes))  
+        
+        try:
+            licencia_vencimiento = date.fromisoformat(body["licencia_vencimiento"])
+        except ValueError:
+            raise ValidationException(
+                "Formato de fecha inválido para licencia_vencimiento (usar YYYY-MM-DD)")
+            
+        body["nombre"] = body["nombre"].strip()
+        body["apellido"] = body["apellido"].strip()
+        email = body["email"].strip()
+
+        if len(body["nombre"]) < 2:
+            raise ValidationException("El nombre es demasiado corto")
+
+        if len(body["apellido"]) < 2:
+            raise ValidationException("El apellido es demasiado corto")
+
+        if "@" not in email or "." not in email.split("@")[-1]:
+            raise ValidationException("El email no tiene un formato válido")
+        body["email"] = email.lower()
+
+        dni_str = str(body["dni"])
+        if not dni_str.isdigit() or not (7 <= len(dni_str) <= 8):
+            raise ValidationException(
+                "El DNI debe tener 7 u 8 dígitos numéricos")
+
+        telefono = body.get("telefono")
+        if telefono:
+            tel_str = str(telefono)
+            if not tel_str.isdigit() or len(tel_str) < 7:
+                raise ValidationException("El teléfono no es válido")
+        
+        try:
+            licencia_vencimiento = date.fromisoformat(
+                body["licencia_vencimiento"])
+        except ValueError:
+            raise ValidationException(
+                "Formato de fecha inválido para licencia_vencimiento (usar YYYY-MM-DD)")
+
+        if licencia_vencimiento < date.today():
+            raise BusinessException("La licencia se encuentra vencida")
+
+        categorias_validas = {"A", "B1", "B2", "C1", "C2"}
+        if body["licencia_categoria"] not in categorias_validas:
+            raise ValidationException("La categoría de licencia no es válida")
+
+        existente_dni = self.cliente_repo.find_by_dni(body["dni"])
+        if existente_dni and existente_dni.id != cliente.id:
+            raise BusinessException("Ya existe otro cliente con ese DNI")
+
+        existente_email = self.cliente_repo.find_by_email(body["email"])
+        if existente_email and existente_email.id != cliente.id:
+            raise BusinessException("Ya existe otro cliente con ese email")
+
+        cliente.nombre = body["nombre"]
+        cliente.apellido = body["apellido"]
+        cliente.dni = body["dni"]
+        cliente.direccion = body.get("direccion")
+        cliente.telefono = body.get("telefono")
+        cliente.email = body["email"]
+        cliente.licencia_numero = body["licencia_numero"]
+        cliente.licencia_categoria = body["licencia_categoria"]
+        cliente.licencia_vencimiento = licencia_vencimiento
+
+        self.cliente_repo.add(cliente)
+        return cliente_to_response_dto(cliente)
