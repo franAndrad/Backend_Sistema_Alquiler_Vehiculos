@@ -1,0 +1,39 @@
+### Listar vehículos
+GET http://localhost:5000/vehiculos
+Content-Type: application/json
+
+
+### Crear vehículo
+POST http://localhost:5000/vehiculos
+Content-Type: application/json
+
+{
+    "id_modelo": 1,
+    "anio": 2022,
+    "tipo": "Sedan",
+    "patente": "ABC123",
+    "costo_diario": 15000
+}
+
+
+### Obtener vehículo por ID
+GET http://localhost:5000/vehiculos/1
+Content-Type: application/json
+
+
+### Actualizar vehículo
+PUT http://localhost:5000/vehiculos/1
+Content-Type: application/json
+
+{
+    "id_modelo": 1,
+    "anio": 2023,
+    "tipo": "Sedan",
+    "patente": "ABC123",
+    "costo_diario": 18000
+}
+
+
+### Eliminar vehículo
+DELETE http://localhost:5000/vehiculos/1
+Content-Type: application/json

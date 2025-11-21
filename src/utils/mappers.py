@@ -38,6 +38,8 @@ def vehiculo_to_response_dto(vehiculo: Vehiculo) -> VehiculoResponseDTO:
         patente=vehiculo.patente,
         modelo=vehiculo.modelo.descripcion,
         marca=vehiculo.modelo.marca.nombre,
+        anio=vehiculo.anio,
+        tipo=vehiculo.tipo.value,
         estado=vehiculo.estado,
         costo_diario=vehiculo.costo_diario,
     )

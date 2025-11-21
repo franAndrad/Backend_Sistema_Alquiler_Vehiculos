@@ -16,13 +16,6 @@ class VehiculoRepository(BaseRepository):
     def find_by_patente(self, patente):
         return Vehiculo.query.filter_by(patente=patente).first()
 
-    def existe_patente_en_otro_vehiculo(self, patente, vehiculo_id):
-        return (
-            Vehiculo.query
-            .filter(Vehiculo.patente == patente, Vehiculo.id != vehiculo_id)
-            .first()
-        )
-
     def list_disponibles(self):
         return Vehiculo.query.filter_by(estado=EstadoVehiculo.DISPONIBLE).all()
 

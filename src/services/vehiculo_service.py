@@ -1,66 +1,106 @@
 from ..repository.vehiculo_repository import VehiculoRepository
-from ..dto.vehiculo_dto import VehiculoDTO
-from ..exceptions.domain_exceptions import ValidationException
+from ..repository.modelo_repository import ModeloRepository
+
+from ..dto.vehiculo_dto import VehiculoCreateDTO, VehiculoResponseDTO
+from ..exceptions.domain_exceptions import ValidationException, NotFoundException, BusinessException
+from ..models.vehiculo import Vehiculo
+from ..utils.mappers import vehiculo_to_response_dto
+
+
+
 from .utils.vehiculo_utils import (
     normalizar_campos,
-    validar_vehiculo_create,
+    validar_campos_obligatorios,
     validar_anio,
     validar_patente,
     validar_costo,
+    validar_tipo,
 )
 
 
 class VehiculoService:
 
     def __init__(self):
-        self.repo = VehiculoRepository()
+        self.vehiculo_repo = VehiculoRepository()
+        self.modelo_repo = ModeloRepository()
 
     def listar_vehiculos(self):
-        vehiculos = self.repo.get_all()
-        return [VehiculoDTO.from_entity(v) for v in vehiculos]
+        vehiculos = self.vehiculo_repo.get_all()
+        return [VehiculoResponseDTO.from_entity(v) for v in vehiculos]
 
     def obtener_vehiculo(self, vehiculo_id):
-        vehiculo = self.repo.get_by_id(vehiculo_id)
+        vehiculo = self.vehiculo_repo.get_by_id(vehiculo_id)
         if not vehiculo:
             raise ValidationException("El vehículo no existe")
-        return VehiculoDTO.from_entity(vehiculo)
+        return VehiculoResponseDTO.from_entity(vehiculo)
 
     def crear_vehiculo(self, body):
+        body = dict(body)
         body = normalizar_campos(body)
 
-        validar_vehiculo_create(body)
+        campos_obligatorios = [
+            "id_modelo", "anio", "tipo", "patente", "costo_diario"
+        ]
+        validar_campos_obligatorios(body, campos_obligatorios, "vehiculo")
+        validar_anio(body)
+        validar_patente(body)
+        validar_costo(body)
+        validar_tipo(body)
 
-        if self.repo.find_by_patente(body["patente"]):
-            raise ValidationException("Ya existe un vehículo con esa patente")
+        if self.vehiculo_repo.find_by_patente(body["patente"]):
+            raise BusinessException("Ya existe un vehiculo con esa patente")
 
-        vehiculo = self.repo.create(body)
-        return VehiculoDTO.from_entity(vehiculo)
 
+        modelo = self.modelo_repo.get_by_id(body["id_modelo"])
+        if not modelo:
+            raise NotFoundException("El modelo asociado no existe")
+        
+        vehiculo = Vehiculo (
+            id_modelo=body["id_modelo"],
+            anio=body["anio"],
+            tipo=body["tipo"],
+            patente=body["patente"],
+            costo_diario=body["costo_diario"]
+        )
+
+        self.vehiculo_repo.add(vehiculo)
+        return vehiculo_to_response_dto(vehiculo)
+    
     def actualizar_vehiculo(self, vehiculo_id, body):
+        vehiculo = self.vehiculo_repo.get_by_id(vehiculo_id)
+        if not vehiculo:
+            raise NotFoundException("Vehiculo no encontrado")
+        
+        body = dict(body)
         body = normalizar_campos(body)
 
-        vehiculo = self.repo.get_by_id(vehiculo_id)
-        if not vehiculo:
-            raise ValidationException("El vehículo no existe")
+        campos_obligatorios = [
+            "id_modelo", "anio", "tipo", "patente", "costo_diario"
+        ]
+        validar_campos_obligatorios(body, campos_obligatorios, "vehiculo")
+        validar_anio(body)
+        validar_patente(body)
+        validar_costo(body)
+        validar_tipo(body)
 
-        if "anio" in body:
-            validar_anio(body)
-        if "patente" in body:
-            validar_patente(body)
-        if "costo_diario" in body:
-            validar_costo(body)
+        existente_patente = self.vehiculo_repo.find_by_patente(body["patente"])
+        if existente_patente and existente_patente.patente != vehiculo.patente:
+            raise BusinessException("Ya existe otro vehiculo con esa patente")
+        
+        vehiculo.id_modelo = body["id_modelo"]
+        vehiculo.anio = body["anio"]
+        vehiculo.tipo = body["tipo"]
+        vehiculo.patente = body["patente"]
+        vehiculo.costo_diario = body["costo_diario"]
 
-        if "patente" in body:
-            if self.repo.existe_patente_en_otro_vehiculo(body["patente"], vehiculo_id):
-                raise ValidationException("La patente pertenece a otro vehículo")
+        self.vehiculo_repo.save_changes()
+        return vehiculo_to_response_dto(vehiculo)
 
-        vehiculo = self.repo.update(vehiculo_id, body)
-        return VehiculoDTO.from_entity(vehiculo)
 
     def eliminar_vehiculo(self, vehiculo_id):
-        vehiculo = self.repo.get_by_id(vehiculo_id)
+        vehiculo = self.vehiculo_repo.get_by_id(vehiculo_id)
         if not vehiculo:
             raise ValidationException("El vehículo no existe")
 
-        self.repo.delete(vehiculo_id)
+        self.vehiculo_repo.delete(vehiculo_id)
         return {"message": "Vehículo eliminado correctamente"}

@@ -16,5 +16,7 @@ class VehiculoResponseDTO:
     patente: str
     modelo: str
     marca: str
+    anio: int
+    tipo: str
     estado: EstadoVehiculo
     costo_diario: float
