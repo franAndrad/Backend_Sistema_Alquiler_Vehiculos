@@ -4,12 +4,14 @@ from ..models.alquiler import Alquiler
 from ..models.reserva import Reserva
 from ..models.empleado import Empleado
 from ..models.enums import RolEmpleado
+from ..models.marca import Marca
 
 from ..dto.cliente_dto import ClienteResponseDTO
 from ..dto.vehiculo_dto import VehiculoResponseDTO
 from ..dto.alquiler_dto import AlquilerResponseDTO
 from ..dto.reserva_dto import ReservaResponseDTO
 from ..dto.empleado_dto import EmpleadoResponseDTO
+from ..dto.marca_dto import MarcaResponseDTO
 
 
 def cliente_to_response_dto(cliente: Cliente) -> ClienteResponseDTO:
@@ -64,4 +66,10 @@ def reserva_to_response_dto(reserva: Reserva) -> ReservaResponseDTO:
         fecha_inicio=reserva.fecha_inicio,
         fecha_fin=reserva.fecha_fin,
         estado=reserva.estado.value,
+    )
+    
+def marca_to_response_dto(marca: Marca) -> MarcaResponseDTO:
+    return MarcaResponseDTO(
+        id=marca.id,
+        nombre=marca.nombre,
     )

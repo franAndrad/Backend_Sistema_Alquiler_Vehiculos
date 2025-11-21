@@ -1,0 +1,36 @@
+### Listar marcas
+GET http://localhost:5000/marcas
+Content-Type: application/json
+
+
+### Crear marca
+POST http://localhost:5000/marcas
+Content-Type: application/json
+
+{
+    "nombre": "BM"
+}
+
+
+### Obtener marca por ID
+GET http://localhost:5000/marcas/1
+Content-Type: application/json
+
+
+### Obtener marca por nombre
+GET http://localhost:5000/marcas/nombre/BMW
+Content-Type: application/json
+
+
+### Actualizar marca
+PUT http://localhost:5000/marcas/1
+Content-Type: application/json
+
+{
+    "nombre": "BMW"
+}
+
+
+### Eliminar marca
+DELETE http://localhost:5000/marcas/1
+Content-Type: application/json

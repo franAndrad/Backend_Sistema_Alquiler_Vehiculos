@@ -1,7 +1,7 @@
 from datetime import date
 
 from ..repository.cliente_repository import ClienteRepository
-from ..exceptions.domain_exceptions import ValidationException, NotFoundException, BusinessException
+from ..exceptions.domain_exceptions import NotFoundException, BusinessException
 from ..models.cliente import Cliente
 from ..utils.mappers import cliente_to_response_dto
 from .utils.persona_utils import (

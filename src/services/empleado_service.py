@@ -1,6 +1,6 @@
 # services/empleado_service.py
 from ..repository.empleado_repository import EmpleadoRepository
-from ..exceptions.domain_exceptions import ValidationException, NotFoundException, BusinessException
+from ..exceptions.domain_exceptions import NotFoundException, BusinessException
 from ..models.empleado import Empleado
 from ..utils.mappers import empleado_to_response_dto
 from .utils.persona_utils import (

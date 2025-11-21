@@ -24,12 +24,10 @@ def validar_campos_obligatorios(body: dict, campos_obligatorios: list[str], enti
 def validar_nombre_apellido(body: dict):
     if "nombre" in body and body["nombre"] is not None:
         if len(body["nombre"]) < 2:
-            raise ValidationException(
-                "El nombre debe tener al menos 2 caracteres")
+            raise ValidationException("El nombre debe tener al menos 2 caracteres")
     if "apellido" in body and body["apellido"] is not None:
         if len(body["apellido"]) < 2:
-            raise ValidationException(
-                "El apellido debe tener al menos 2 caracteres")
+            raise ValidationException("El apellido debe tener al menos 2 caracteres")
 
 
 def validar_email_formato(body: dict):
