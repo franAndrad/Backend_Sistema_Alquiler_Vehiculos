@@ -1,0 +1,18 @@
+### Listar empleados
+GET http://localhost:5000/empleados
+Content-Type: application/json
+
+
+### Crear empleado
+POST http://localhost:5000/empleados
+Content-Type: application/json
+
+{
+    "nombre": "Laura",
+    "apellido": "Gomez",
+    "dni": 22322222,
+    "direccion": "Calle Falsa 123",
+    "telefono": "1234567",
+    "email": "laura.gomezd@example.com",
+    "rol": "ADMIN"
+}

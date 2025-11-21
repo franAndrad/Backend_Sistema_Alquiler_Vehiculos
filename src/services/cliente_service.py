@@ -79,11 +79,11 @@ class ClienteService:
         body["email"] = email.lower()
 
         dni_str = str(body["dni"])
-        if not dni_str.isdigit() or not (7 <= len(dni_str) <= 8):
-            raise ValidationException("El DNI debe tener 7 u 8 dígitos numéricos")
+        if not dni_str.isdigit() or not (len(dni_str) == 8):
+            raise ValidationException("El DNI debe tener 8 dígitos numéricos")
 
         telefono = body.get("telefono")
-        if telefono:
+        if telefono:    
             tel_str = str(telefono)
             if not tel_str.isdigit() or len(tel_str) < 7:
                 raise ValidationException("El teléfono no es válido")

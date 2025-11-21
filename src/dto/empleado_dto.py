@@ -18,4 +18,6 @@ class EmpleadoResponseDTO:
     id: int
     nombre: str
     apellido: str
+    direccion: str 
+    telefono: str 
     rol: str

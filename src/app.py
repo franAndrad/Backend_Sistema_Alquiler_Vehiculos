@@ -4,6 +4,7 @@ from .extensions.db import db
 from .exceptions.error_handlers import register_error_handlers
 from .controllers.health_controller import health_bp
 from .controllers.cliente_controller import cliente_bp
+from .controllers.empleado_controller import empleado_bp
 from . import models
 from .utils.db_initilizer import DBInitializer
 
@@ -23,6 +24,7 @@ def create_app():
 
     app.register_blueprint(health_bp)
     app.register_blueprint(cliente_bp)
+    app.register_blueprint(empleado_bp)
 
     return app
 

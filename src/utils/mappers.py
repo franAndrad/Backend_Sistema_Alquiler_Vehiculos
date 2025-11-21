@@ -2,11 +2,14 @@ from ..models.cliente import Cliente
 from ..models.vehiculo import Vehiculo
 from ..models.alquiler import Alquiler
 from ..models.reserva import Reserva
+from ..models.empleado import Empleado
+from ..models.enums import RolEmpleado
 
 from ..dto.cliente_dto import ClienteResponseDTO
 from ..dto.vehiculo_dto import VehiculoResponseDTO
 from ..dto.alquiler_dto import AlquilerResponseDTO
 from ..dto.reserva_dto import ReservaResponseDTO
+from ..dto.empleado_dto import EmpleadoResponseDTO
 
 
 def cliente_to_response_dto(cliente: Cliente) -> ClienteResponseDTO:
@@ -18,7 +21,16 @@ def cliente_to_response_dto(cliente: Cliente) -> ClienteResponseDTO:
         email=cliente.email,
         licencia_vencimiento=cliente.licencia_vencimiento,
     )
-
+    
+def empleado_to_response_dto(empleado: Empleado) -> EmpleadoResponseDTO:
+    return EmpleadoResponseDTO(
+        id=empleado.id,
+        nombre=empleado.nombre,
+        apellido=empleado.apellido,
+        direccion=empleado.direccion,
+        telefono=empleado.telefono,
+        rol=empleado.rol.value if isinstance(empleado.rol, RolEmpleado) else str(empleado.rol),
+    )
 
 def vehiculo_to_response_dto(vehiculo: Vehiculo) -> VehiculoResponseDTO:
     return VehiculoResponseDTO(

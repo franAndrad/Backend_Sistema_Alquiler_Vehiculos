@@ -1,9 +1,7 @@
 from flask import Blueprint, request, jsonify
-
 from ..services.cliente_service import ClienteService
 
 cliente_bp = Blueprint("clientes", __name__, url_prefix="/clientes")
-
 cliente_service = ClienteService()
 
 
@@ -44,6 +42,7 @@ def eliminar_cliente(cliente_id):
 def obtener_cliente_por_dni(cliente_dni):
     dto = cliente_service.obtener_cliente_por_dni(cliente_dni)
     return jsonify(dto.__dict__), 200
+
 
 @cliente_bp.get("/email/<string:cliente_email>")
 def obtener_cliente_por_email(cliente_email):
