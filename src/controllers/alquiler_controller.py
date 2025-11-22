@@ -53,11 +53,11 @@ def actualizar_alquiler(alquiler_id):
 
 @alquiler_bp.patch("/<int:alquiler_id>/finalizar")
 def finalizar_alquiler(alquiler_id):
-    dto = alquiler_service.finalizar_alquiler(alquiler_id)
-    return jsonify(dto.__dict__), 200
+    resultado = alquiler_service.finalizar_alquiler(alquiler_id)
+    return jsonify(resultado), 200
 
 
 @alquiler_bp.patch("/<int:alquiler_id>/cancelar")
 def cancelar_alquiler(alquiler_id):
-    dto = alquiler_service.cancelar_alquiler(alquiler_id)
-    return jsonify(dto.__dict__), 200
+    resultado = alquiler_service.cancelar_alquiler(alquiler_id)
+    return jsonify(resultado), 200

@@ -1,0 +1,68 @@
+### Listar reservas
+GET http://localhost:5000/reservas
+Content-Type: application/json
+
+
+### Crear reserva
+POST http://localhost:5000/reservas
+Content-Type: application/json
+
+{
+    "id_cliente": 1,
+    "id_vehiculo": 2,
+    "fecha_inicio": "2026-01-10",
+    "fecha_fin": "2026-01-15"
+}
+
+
+### Obtener reserva por ID
+GET http://localhost:5000/reservas/1
+Content-Type: application/json
+
+
+### Actualizar reserva
+PUT http://localhost:5000/reservas/1
+Content-Type: application/json
+
+{
+    "id_cliente": 1,
+    "id_vehiculo": 2,
+    "fecha_inicio": "2026-01-12",
+    "fecha_fin": "2026-01-18",
+    "estado": "PENDIENTE"
+}
+
+
+### Eliminar reserva (solo si está PENDIENTE)
+DELETE http://localhost:5000/reservas/1
+Content-Type: application/json
+
+
+### Obtener reservas por estado (uno o varios, separados por coma)
+GET http://localhost:5000/reservas/estado/PENDIENTE
+Content-Type: application/json
+
+
+### Otro ejemplo con múltiples estados
+GET http://localhost:5000/reservas/estado/PENDIENTE,CONFIRMADA
+Content-Type: application/json
+
+
+### Obtener reservas por cliente
+GET http://localhost:5000/reservas/cliente/1
+Content-Type: application/json
+
+
+### Confirmar reserva
+PATCH http://localhost:5000/reservas/1/confirmar
+Content-Type: application/json
+
+
+### Cancelar reserva
+PATCH http://localhost:5000/reservas/1/cancelar
+Content-Type: application/json
+
+
+### Finalizar reserva
+PATCH http://localhost:5000/reservas/1/finalizar
+Content-Type: application/json

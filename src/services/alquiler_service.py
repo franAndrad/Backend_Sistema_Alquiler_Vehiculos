@@ -1,7 +1,9 @@
 from datetime import date
 from ..repository.alquiler_repository import AlquilerRepository
+from ..repository.vehiculo_repository import VehiculoRepository
 from ..exceptions.domain_exceptions import NotFoundException
-from ..models.enums import EstadoAlquiler
+from ..states.alquiler_state import AlquilerStateMachine
+from ..states.vehiculo_state import VehiculoStateMachine
 from ..models.alquiler import Alquiler
 from ..utils.mappers import alquiler_to_response_dto
 from .utils.alquiler_utils import (
@@ -9,9 +11,12 @@ from .utils.alquiler_utils import (
     validar_campos_obligatorios,
     validar_ids_foreign_keys,
     validar_fechas,
-    obtener_estado_enum,
     validar_cliente_existente,
     validar_empleado_existente,
+)
+
+from .utils.vehiculo_utils import (
+    obtener_estado_vehiculo_enum,
     validar_vehiculo_disponible,
 )
 
@@ -20,6 +25,7 @@ class AlquilerService:
 
     def __init__(self, alquiler_repository=None):
         self.alquiler_repo = alquiler_repository or AlquilerRepository()
+        self.vehiculo_repo = VehiculoRepository()
 
 
     def listar_alquileres(self):
@@ -54,10 +60,32 @@ class AlquilerService:
     #     return {"mensaje": "Alquiler eliminado correctamente"}
     
     
+    def eliminar_alquiler(self, alquiler_id):
+        alquiler = self.alquiler_repo.get_by_id(alquiler_id)
+        if not alquiler:
+            raise NotFoundException("Alquiler no encontrado")
+        
+
+        vehiculo = self.vehiculo_repo.get_by_id(alquiler.id_vehiculo)
+        if not vehiculo:
+            raise NotFoundException("El vehículo asociado no existe")
+
+        estado_vehiculo_enum = obtener_estado_vehiculo_enum(vehiculo.estado)
+        estado_vehiculo_enum.desocupar()
+        vehiculo.estado = estado_vehiculo_enum.estado_enum
+
+        self.alquiler_repo.delete(alquiler)
+        self.alquiler_repo.save_changes()
+
+        return {"mensaje": "Alquiler eliminado correctamente"}
+
+
     def crear_alquiler(self, body):
         body = dict(body)
         body = normalizar_campos_basicos(body)
 
+        maquina_estado = AlquilerStateMachine()
+        
         campos_obligatorios = [
             "id_cliente", "id_empleado", "id_vehiculo",
             "fecha_inicio", "fecha_fin", "estado"
@@ -68,21 +96,34 @@ class AlquilerService:
         validar_fechas(body["fecha_inicio"], body["fecha_fin"])
         validar_cliente_existente(body["id_cliente"])
         validar_empleado_existente(body["id_empleado"])
-        validar_vehiculo_disponible(body["id_vehiculo"])
         
-        estado_enum = obtener_estado_enum(EstadoAlquiler.ACTIVO)
-              
+        vehiculo = self.vehiculo_repo.get_by_id(body["id_vehiculo"])
+        if not vehiculo:
+            raise NotFoundException("Vehículo asociado no encontrado")
+        
+        # finalizar reserva
+        maquina_estado = ReservaStateMachine(reserva.estado)
+        mensaje = maquina_estado.finalizada()
+        reserva.estado = maquina_estado.state_enum
+        
+        # pasar vehiculo a alquilado
+        maquina_estado_vehiculo = VehiculoStateMachine(vehiculo.estado)
+        mensaje = maquina_estado_vehiculo.alquilar()
+        vehiculo.estado = maquina_estado_vehiculo.state_enum
+        
+            
         nuevo_alquiler = Alquiler(
             id_cliente=body["id_cliente"],
             id_empleado=body["id_empleado"],
             id_vehiculo=body["id_vehiculo"],
             fecha_inicio=date.fromisoformat(body["fecha_inicio"]),
             fecha_fin=date.fromisoformat(body["fecha_fin"]),
-            estado=estado_enum.estado_enum,
+            estado=maquina_estado.state_enum,
             costo_total=0.0
         )
 
         self.alquiler_repo.add(nuevo_alquiler)
+        self.alquiler_repo.save_changes()
         return alquiler_to_response_dto(nuevo_alquiler)
 
 
@@ -105,6 +146,8 @@ class AlquilerService:
         validar_cliente_existente(body["id_cliente"])
         validar_empleado_existente(body["id_empleado"])
         validar_vehiculo_disponible(body["id_vehiculo"])
+        
+        # Si se cambia el vehículo, hay que actualizar su estado!!!!!!!
 
         alquiler.id_cliente = body["id_cliente"]
         alquiler.id_empleado = body["id_empleado"]
@@ -121,24 +164,39 @@ class AlquilerService:
         if not alquiler:
             raise NotFoundException("Alquiler no encontrado")
 
-        estado_enum = obtener_estado_enum(alquiler.estado)
 
-        estado_enum.finalizar()
-        alquiler.estado = estado_enum.estado_enum
+        vehiculo = self.vehiculo_repo.get_by_id(alquiler.id_vehiculo)
+        if not vehiculo:
+            raise NotFoundException("Vehículo asociado no encontrado")
+        
+        maquina_estado = AlquilerStateMachine(alquiler.estado)
+        mensaje = maquina_estado.finalizar()
+        alquiler.estado = maquina_estado.state_enum
+        
+        maquina_vehiculo = VehiculoStateMachine(vehiculo.estado)
+        maquina_vehiculo.devolver()
+        vehiculo.estado = maquina_vehiculo.state_enum
 
         self.alquiler_repo.save_changes()
-        return alquiler_to_response_dto(alquiler)
+        return {"mensaje": mensaje}
     
     
     def cancelar_alquiler(self, alquiler_id):
         alquiler = self.alquiler_repo.get_by_id(alquiler_id)
         if not alquiler:
             raise NotFoundException("Alquiler no encontrado")
-
-        estado_enum = obtener_estado_enum(alquiler.estado)
-
-        estado_enum.cancelar()
-        alquiler.estado = estado_enum.estado_enum
+        
+        vehiculo = self.vehiculo_repo.get_by_id(alquiler.id_vehiculo)
+        if not vehiculo:
+            raise NotFoundException("Vehículo asociado no encontrado")
+        
+        maquina_estado = AlquilerStateMachine(alquiler.estado)
+        mensaje = maquina_estado.cancelar()
+        alquiler.estado = maquina_estado.state_enum
+        
+        maquina_vehiculo = VehiculoStateMachine(vehiculo.estado)
+        maquina_vehiculo.devolver()
+        vehiculo.estado = maquina_vehiculo.state_enum
 
         self.alquiler_repo.save_changes()
-        return alquiler_to_response_dto(alquiler)
+        return {"mensaje": mensaje}

@@ -2,11 +2,28 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from ..models.enums import EstadoReserva
 
+
 class ReservaStateMachine:
-    __state: EstadoReservaState = None
-    
-    def __init__(self, state: EstadoReservaState) -> None:
-        self.transition_to(state)
+    def __init__(self, state: EstadoReserva = None) -> None:
+        # Estado por instancia
+        self._state: EstadoReservaState | None = None
+
+        if state is None:
+            self.transition_to(Pendiente())
+        else:
+            self._init_from_enum(state)
+        
+    def _init_from_enum(self, estado: EstadoReserva):
+        if estado == EstadoReserva.PENDIENTE:
+            self.transition_to(Pendiente())
+        elif estado == EstadoReserva.CONFIRMADA:
+            self.transition_to(Confirmada())
+        elif estado == EstadoReserva.CANCELADA:
+            self.transition_to(Cancelada())
+        elif estado == EstadoReserva.FINALIZADA:
+            self.transition_to(Finalizada())
+        else:
+            raise ValueError(f"Estado de reserva no soportado: {estado}")
     
     def transition_to(self, state: EstadoReservaState):
         self.__state = state
@@ -25,7 +42,7 @@ class ReservaStateMachine:
         return self.__state.finalizada()
     
     @property
-    def estado_enum(self) -> EstadoReserva:
+    def state_enum(self) -> EstadoReserva:
         return self.__state.state_value
     
 

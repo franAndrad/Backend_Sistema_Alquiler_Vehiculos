@@ -1,7 +1,6 @@
 from datetime import date
 from ...exceptions.domain_exceptions import ValidationException, BusinessException
 from ...repository.cliente_repository import ClienteRepository
-from ...repository.vehiculo_repository import VehiculoRepository
 from ...repository.reserva_repository import ReservaRepository
 from ...models.enums import EstadoReserva
 from ...states.reserva_state import (
@@ -76,19 +75,6 @@ def validar_cliente_existente(id_cliente):
     cliente = cliente_repository.get_by_id(id_cliente)
     if not cliente:
         raise ValidationException("El cliente indicado no existe")
-    
-    
-def validar_vehiculo_disponible(id_vehiculo):
-    if id_vehiculo is None:
-        raise ValidationException("El id_vehiculo es obligatorio para crear una reserva")
-    
-    vehiculo_repository = VehiculoRepository()
-    vehiculo = vehiculo_repository.get_by_id(id_vehiculo)
-    if not vehiculo:
-        raise ValidationException("El vehículo indicado no existe")
-    
-    if vehiculo.estado != "DISPONIBLE":
-        raise BusinessException("El vehículo no está disponible para reservar")
     
     
 def validar_reserva_pendiente(reserva):

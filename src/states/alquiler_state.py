@@ -5,12 +5,25 @@ from ..models.enums import EstadoAlquiler
 
 
 class AlquilerStateMachine:
-    _state: EstadoBase = None
+    def __init__(self, state: EstadoAlquiler = None) -> None:
+        # Estado por instancia
+        self._state: EstadoBase | None = None
 
-    def __init__(self, state: EstadoBase) -> None:
-        self.transition_to(state)
-        
-
+        if state is None:
+            self.transition_to(Activo())
+        else:
+            self._init_from_enum(state)
+    
+    def _init_from_enum(self, state: EstadoAlquiler):
+        if state == EstadoAlquiler.ACTIVO:
+            self.transition_to(Activo())
+        elif state == EstadoAlquiler.FINALIZADO:
+            self.transition_to(Finalizado())
+        elif state == EstadoAlquiler.CANCELADO:
+            self.transition_to(Cancelado())
+        else:
+            raise ValueError(f"Estado no soportado: {state}")
+    
     def transition_to(self, state: EstadoBase):
         self._state = state
         self._state.context = self
@@ -25,7 +38,7 @@ class AlquilerStateMachine:
     
 
     @property
-    def estado_enum(self) -> EstadoAlquiler:
+    def state_enum(self) -> EstadoAlquiler:
         return self._state.state_value
 
 

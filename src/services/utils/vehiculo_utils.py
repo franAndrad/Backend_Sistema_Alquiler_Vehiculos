@@ -1,7 +1,13 @@
-from ...exceptions.domain_exceptions import ValidationException
+from ...exceptions.domain_exceptions import ValidationException, BusinessException
+from ...repository.vehiculo_repository import VehiculoRepository
 from ...models.enums import TipoVehiculo
 from datetime import datetime
-
+from ...models.enums import EstadoVehiculo
+from ...states.vehiculo_state import (
+    VehiculoStateMachine,
+    Disponible,
+    Alquilado,
+)
 
 def normalizar_campos(body: dict) -> dict:
     """Limpia espacios y normaliza strings."""
@@ -25,6 +31,16 @@ def validar_anio(body: dict):
     anio = body.get("anio")
     if not isinstance(anio, int) or anio < 1980 or anio > datetime.now().year + 1:
         raise ValidationException("El año del vehículo no es válido")
+
+
+def validar_vehiculo_disponible(id_vehiculo: int):
+    vehiculo_repo = VehiculoRepository()
+    vehiculo = vehiculo_repo.get_by_id(id_vehiculo)
+    if not vehiculo:
+        raise ValidationException("El vehículo no existe")
+
+    if vehiculo.estado != EstadoVehiculo.DISPONIBLE:
+        raise BusinessException("El vehículo no se encuentra disponible")
 
 
 def validar_patente(body: dict):
@@ -53,4 +69,9 @@ def validar_tipo(body: dict):
             f"El tipo '{body['tipo']}' no es válido. Tipos válidos: "
             + ", ".join([t.value for t in TipoVehiculo])
         )
-    
+
+def obtener_estado_vehiculo_enum(estado_enum):
+    if estado_enum == EstadoVehiculo.DISPONIBLE:
+        return VehiculoStateMachine(Disponible())
+    if estado_enum == EstadoVehiculo.ALQUILADO:
+        return VehiculoStateMachine(Alquilado())

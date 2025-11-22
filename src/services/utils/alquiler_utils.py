@@ -2,9 +2,9 @@ from ...exceptions.domain_exceptions import ValidationException, BusinessExcepti
 from ...repository.cliente_repository import ClienteRepository
 from ...repository.empleado_repository import EmpleadoRepository
 from ...repository.vehiculo_repository import VehiculoRepository
-# from ...services.utils.vehiculo_utils import (
-#     obtener_estado_enum as obtener_estado_enum_vehiculo
-# )
+from ...states.vehiculo_state import VehiculoStateMachine
+from ...models.enums import EstadoVehiculo
+
 from ...models.enums import EstadoAlquiler
 from datetime import date
 
@@ -76,13 +76,11 @@ def validar_vehiculo_disponible(id_vehiculo):
     if not vehiculo:
         raise ValidationException("El vehículo asociado no existe")
     
-    # estado_enum = obtener_estado_enum_vehiculo(vehiculo.estado)
+    maquina_estado = VehiculoStateMachine(vehiculo.estado)
     
-    # if not estado_enum == estado_enum.state_enum.DISPONIBLE:
-    #     raise ValidationException("El vehículo asociado no está disponible para alquiler")
-
-    if vehiculo.estado != "DISPONIBLE":
+    if not maquina_estado.state_enum == EstadoVehiculo.DISPONIBLE:
         raise ValidationException("El vehículo asociado no está disponible para alquiler")
+
 
 
 def validar_estado(body: dict):

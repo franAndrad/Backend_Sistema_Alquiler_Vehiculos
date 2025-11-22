@@ -1,25 +1,30 @@
 from ..repository.reserva_repository import ReservaRepository
+from ..repository.vehiculo_repository import VehiculoRepository
 from ..utils.mappers import reserva_to_response_dto
-from ..exceptions.domain_exceptions import ValidationException
+from ..exceptions.domain_exceptions import ValidationException, NotFoundException
 from ..models.enums import EstadoReserva
 from ..models.reserva import Reserva
+from ..states.reserva_state import ReservaStateMachine
+from ..states.vehiculo_state import VehiculoStateMachine
 from datetime import date
 from ..services.utils.reserva_utils import (
     normalizar_campos_reserva,
     validar_campos_obligatorios,
     validar_cliente_existente,
-    validar_vehiculo_disponible,
     validar_fechas_reserva,
     validar_no_solapamiento,
     validar_reserva_pendiente,
-    obtener_estado_enum,
     )
+from ..services.utils.vehiculo_utils import (
+    validar_vehiculo_disponible,
+)
     
 
 class ReservaService:
     
     def __init__(self):
         self.reserva_repo = ReservaRepository()
+        self.vehiculo_repo = VehiculoRepository()
         
         
     def listar_reservas(self):
@@ -42,7 +47,7 @@ class ReservaService:
     def crear_reserva(self, body):
         body = dict(body)
         body = normalizar_campos_reserva(body)
-        
+
         campos_obligatiorios = ["id_cliente", "id_vehiculo", "fecha_inicio", "fecha_fin"]
         validar_campos_obligatorios(body, campos_obligatiorios, "reserva")
         validar_fechas_reserva(body["fecha_inicio"], body["fecha_fin"])
@@ -50,17 +55,28 @@ class ReservaService:
         validar_cliente_existente(body["id_cliente"])
         validar_vehiculo_disponible(body["id_vehiculo"])
         
-        enum_estado = obtener_estado_enum(EstadoReserva.PENDIENTE)
+        maquina_reserva = ReservaStateMachine()
         
         nueva_reserva = Reserva(
             id_cliente=body["id_cliente"],
             id_vehiculo=body["id_vehiculo"],
             fecha_inicio=body["fecha_inicio"],
             fecha_fin=body["fecha_fin"],
-            estado=enum_estado.state_enum
+            estado=maquina_reserva.state_enum
         )
         
+        vehiculo = self.vehiculo_repo.get_by_id(body["id_vehiculo"])
+        if not vehiculo:
+            raise NotFoundException("Vehículo asociado no encontrado")
+
+        maquina_estado_vehiculo = VehiculoStateMachine(vehiculo.estado)
+        
+        # Tiene que ser reservado (agregar estado)!!!!!!!!!
+        mensaje = maquina_estado_vehiculo.alquilar()
+        vehiculo.estado = maquina_estado_vehiculo.state_enum
+        
         self.reserva_repo.add(nueva_reserva)
+        self.reserva_repo.save_changes()
         return reserva_to_response_dto(nueva_reserva)
     
         
@@ -93,10 +109,11 @@ class ReservaService:
         if not reserva:
             raise ValidationException("La reserva no existe")
         
-        enum_estado = obtener_estado_enum(reserva.estado)
-        validar_reserva_pendiente(enum_estado.state_enum)
+        maquina_estado = ReservaStateMachine(reserva.estado)
+        validar_reserva_pendiente(maquina_estado.state_enum)
         
         self.reserva_repo.delete(reserva)
+        self.reserva_repo.save_changes()
         return {"mensaje": "Reserva eliminada correctamente"}
     
 
@@ -105,12 +122,12 @@ class ReservaService:
         if not reserva:
             raise ValidationException("La reserva no existe")
         
-        enum_estado = obtener_estado_enum(reserva.estado)
-        enum_estado.confirmar()
+        maquina_estado = ReservaStateMachine(reserva.estado)
+        mensaje = maquina_estado.confirmar()
+        reserva.estado = maquina_estado.state_enum
         
-        reserva.estado = enum_estado.state_enum
         self.reserva_repo.save_changes()
-        return reserva_to_response_dto(reserva)
+        return {"mensaje": mensaje}
     
     
     def cancelar_reserva(self, reserva_id):
@@ -118,12 +135,18 @@ class ReservaService:
         if not reserva:
             raise ValidationException("La reserva no existe")
         
-        enum_estado = obtener_estado_enum(reserva.estado)
-        enum_estado.cancelar()
+        maquina_estado = ReservaStateMachine(reserva.estado)
+        mensaje = maquina_estado.cancelar()
+        reserva.estado = maquina_estado.state_enum
         
-        reserva.estado = enum_estado.state_enum
+        vehiculo = self.vehiculo_repo.get_by_id(reserva.id_vehiculo)
+        maquina_vehiculo = VehiculoStateMachine(vehiculo.estado)
+        maquina_vehiculo.devolver()
+        vehiculo.estado = maquina_vehiculo.state_enum
+        
         self.reserva_repo.save_changes()
-        return reserva_to_response_dto(reserva)
+        self.vehiculo_repo.save_changes()
+        return {"mensaje": mensaje}
     
     
     def finalizar_reserva(self, reserva_id):
@@ -131,9 +154,9 @@ class ReservaService:
         if not reserva:
             raise ValidationException("La reserva no existe")
         
-        enum_estado = obtener_estado_enum(reserva.estado)
-        enum_estado.finalizar()
-        
-        reserva.estado = enum_estado.state_enum
+        maquina_estado = ReservaStateMachine(reserva.estado)
+        mensaje = maquina_estado.finalizada()
+        reserva.estado = maquina_estado.state_enum
+
         self.reserva_repo.save_changes()
-        return reserva_to_response_dto(reserva)
+        return {"mensaje": mensaje}

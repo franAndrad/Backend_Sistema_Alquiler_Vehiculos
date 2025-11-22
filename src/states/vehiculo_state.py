@@ -5,15 +5,23 @@ from ..models.enums import EstadoVehiculo
 
 
 class VehiculoStateMachine:
-    """
-    Máquina de estados para un vehículo.
-    Maneja las transiciones entre DISPONIBLE y ALQUILADO.
-    """
+    def __init__(self, state: EstadoVehiculo = None) -> None:
+        # Estado por instancia
+        self._state: EstadoVehiculoState | None = None
 
-    _state: EstadoVehiculoState = None
+        if state is None:
+            self.transition_to(Disponible())
+        else:
+            self._init_from_enum(state)
 
-    def __init__(self, state: EstadoVehiculoState) -> None:
-        self.transition_to(state)
+    # inicializa el estado a partir de un enum
+    def _init_from_enum(self, state: EstadoVehiculo):
+        if state == EstadoVehiculo.DISPONIBLE:
+            self.transition_to(Disponible())
+        elif state == EstadoVehiculo.ALQUILADO:
+            self.transition_to(Alquilado())
+        else:
+            raise ValueError(f"Estado no soportado: {state}")
 
     def transition_to(self, state: EstadoVehiculoState):
         self._state = state
@@ -26,13 +34,9 @@ class VehiculoStateMachine:
         return self._state.devolver()
 
     @property
-    def estado_enum(self) -> EstadoVehiculo:
-        """
-        Devuelve el valor del enum asociado al estado actual
-        (DISPONIBLE, ALQUILADO, MANTENIMIENTO si lo agregás después).
-        """
+    def state_enum(self) -> EstadoVehiculo:
+        """Devuelve el estado actual como enum."""
         return self._state.state_value
-
 
 class EstadoVehiculoState(ABC):
     """

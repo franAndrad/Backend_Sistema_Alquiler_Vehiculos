@@ -3,7 +3,7 @@ from ..repository.modelo_repository import ModeloRepository
 from ..exceptions.domain_exceptions import ValidationException, NotFoundException, BusinessException
 from ..models.vehiculo import Vehiculo
 from ..utils.mappers import vehiculo_to_response_dto
-from ..models.enums import EstadoVehiculo
+from ..states.vehiculo_state import VehiculoStateMachine
 from .utils.vehiculo_utils import (
     normalizar_campos,
     validar_campos_obligatorios,
@@ -36,10 +36,13 @@ class VehiculoService:
     def crear_vehiculo(self, body):
         body = dict(body)
         body = normalizar_campos(body)
+        
+        maquina_estado = VehiculoStateMachine()
 
         campos_obligatorios = [
             "id_modelo", "anio", "tipo", "patente", "costo_diario"
         ]
+        
         validar_campos_obligatorios(body, campos_obligatorios, "vehiculo")
         validar_anio(body)
         validar_patente(body)
@@ -59,7 +62,7 @@ class VehiculoService:
             tipo=body["tipo"],
             patente=body["patente"],
             costo_diario=body["costo_diario"],
-            estado=EstadoVehiculo.DISPONIBLE
+            estado=maquina_estado.state_enum
         )
 
         self.vehiculo_repo.add(vehiculo)
