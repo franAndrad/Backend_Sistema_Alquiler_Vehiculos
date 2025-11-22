@@ -80,6 +80,54 @@ class AlquilerService:
             raise NotFoundException("No hay alquileres en el período indicado")
 
         return [alquiler_to_response_dto(a) for a in alquileres]
+    
+    
+    def vehiculos_mas_alquilados(self, fecha_desde=None, fecha_hasta=None, limite: int | None = None):
+
+        # Validar fechas si vienen
+        if fecha_desde:
+            validar_fecha(fecha_desde)
+            if isinstance(fecha_desde, str):
+                fecha_desde = date.fromisoformat(fecha_desde)
+
+        if fecha_hasta:
+            validar_fecha(fecha_hasta)
+            if isinstance(fecha_hasta, str):
+                fecha_hasta = date.fromisoformat(fecha_hasta)
+
+        if fecha_desde and fecha_hasta and fecha_desde > fecha_hasta:
+            raise BusinessException(
+                "La fecha inicial no puede ser mayor a la final")
+
+        # Normalizar límite
+        if limite is not None:
+            try:
+                limite = int(limite)
+            except ValueError:
+                raise BusinessException("El parámetro 'limit' debe ser numérico")
+            if limite <= 0:
+                limite = None
+
+        resultados = self.alquiler_repo.vehiculos_mas_alquilados(
+            fecha_desde=fecha_desde,
+            fecha_hasta=fecha_hasta,
+            limite=limite,
+        )
+
+        # resultados = lista de (Vehiculo, cantidad)
+        from ..utils.mappers import vehiculo_to_response_dto
+
+        mas_alquilados = []
+        for vehiculo, cantidad in resultados:
+            mas_alquilados.append(
+                {
+                    "vehiculo": vehiculo_to_response_dto(vehiculo).__dict__,
+                    "cantidad_alquileres": int(cantidad),
+                }
+            )
+
+        return mas_alquilados
+
 
 
     def crear_alquiler(self, body):

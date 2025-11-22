@@ -33,6 +33,20 @@ GET http://localhost:5000/alquileres/periodo?desde=2024-01-01&hasta=2026-03-01
 Content-Type: application/json
 
 
+### Obtener vehículos más alquilados (por defecto 5)
+GET  http://localhost:5000/alquileres/vehiculos-mas-alquilados
+Content-Type: application/json
+
+
+### Obtener vehículos más alquilados (cantidad personalizada)
+GET http://localhost:5000/alquileres/vehiculos-mas-alquilados?limit=10
+Content-Type: application/json
+
+
+### Obtener vehiculos mas alquilados en un período específico y con cantidad personalizada
+GET http://localhost:5000/alquileres/vehiculos-mas-alquilados?desde=2025-01-01&hasta=2025-12-31&limit=3
+Content-Type: application/json
+
 ### Actualizar alquiler
 PUT http://localhost:5000/alquileres/1
 Content-Type: application/json

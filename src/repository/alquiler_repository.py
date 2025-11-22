@@ -3,6 +3,7 @@ from sqlalchemy import func, or_
 from .base_repository import BaseRepository
 from ..extensions.db import db
 from ..models.alquiler import Alquiler
+from ..models.vehiculo import Vehiculo
 from ..models.enums import EstadoAlquiler
 
 
@@ -91,5 +92,40 @@ class AlquilerRepository(BaseRepository):
                 # y empezó antes o el mismo día del fin del intervalo
                 Alquiler.fecha_inicio <= fecha_fin,
             )
+
+        return q.all()
+    
+    
+    def vehiculos_mas_alquilados(
+        self,
+        fecha_desde: date | None = None,
+        fecha_hasta: date | None = None,
+        limite: int | None = None,
+    ):
+        """
+        Devuelve una lista de tuplas (Vehiculo, cantidad_alquileres),
+        ordenada por cantidad de alquileres descendente.
+        Si se indican fechas, filtra por fecha_inicio del alquiler.
+        """
+
+        q = (
+            db.session.query(
+                Vehiculo,
+                func.count(Alquiler.id).label("cantidad_alquileres"),
+            )
+            .join(Alquiler, Alquiler.id_vehiculo == Vehiculo.id)
+        )
+
+        if fecha_desde is not None:
+            q = q.filter(Alquiler.fecha_inicio >= fecha_desde)
+        if fecha_hasta is not None:
+            q = q.filter(Alquiler.fecha_inicio <= fecha_hasta)
+
+        q = q.group_by(Vehiculo.id).order_by(
+            func.count(Alquiler.id).desc()
+        )
+
+        if limite is not None and limite > 0:
+            q = q.limit(limite)
 
         return q.all()

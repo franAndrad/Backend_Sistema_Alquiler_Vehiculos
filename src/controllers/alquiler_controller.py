@@ -51,6 +51,21 @@ def listar_por_periodo():
     return jsonify([dto.__dict__ for dto in dtos]), 200
 
 
+@alquiler_bp.get("/vehiculos-mas-alquilados")
+def vehiculos_mas_alquilados():
+    desde = request.args.get("desde")
+    hasta = request.args.get("hasta")
+    limite = request.args.get("limit")
+
+    data = alquiler_service.vehiculos_mas_alquilados(
+        fecha_desde=desde,
+        fecha_hasta=hasta,
+        limite=limite,
+    )
+
+    return jsonify(data), 200
+
+
 @alquiler_bp.post("")
 def crear_alquiler():
     body = request.get_json() or {}
