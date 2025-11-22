@@ -1,20 +1,19 @@
 from ..repository.modelo_repository import ModeloRepository
-from ..repository.marca_repository import MarcaRepository
 from ..exceptions.domain_exceptions import NotFoundException, BusinessException
 from ..models.modelo import Modelo
 from ..utils.mappers import modelo_to_response_dto
 from .utils.modelo_utlis import (
     normalizar_campos_basicos,
     validar_campos_obligatorios,
-    validar_long_descripcion,
+    validar_descripcion,
+    validar_marca_existente,
+    validar_nombre,
 )
-
 
 class ModeloService:
 
-    def __init__(self, modelo_repository=None, marca_repository=None):
+    def __init__(self, modelo_repository=None):
         self.modelo_repo = modelo_repository or ModeloRepository()
-        self.marca_repo = marca_repository or MarcaRepository()
 
 
     def listar_modelos(self):
@@ -50,15 +49,14 @@ class ModeloService:
         body = normalizar_campos_basicos(body)
 
         campos_obligatorios = ["id_marca", "descripcion"]
-        validar_campos_obligatorios(body, campos_obligatorios, "modelo")
-        validar_long_descripcion(body)
         
-        marca = self.marca_repo.get_by_id(body["id_marca"])
-        if not marca:
-            raise NotFoundException("La marca asociada no existe")
+        validar_campos_obligatorios(body, campos_obligatorios, "modelo")
+        validar_nombre(body["nombre"])
+        validar_descripcion(body["descripcion"])
+        validar_marca_existente(body["id_marca"])
         
         if self.modelo_repo.find_by_nombre(body["nombre"]):
-            raise BusinessException("Ya existe una marca con ese nombre")
+            raise BusinessException("Ya existe un modelo con ese nombre")
         
         nuevo_modelo = Modelo(
             id_marca=body["id_marca"],
@@ -78,20 +76,18 @@ class ModeloService:
         body = dict(body)
         body = normalizar_campos_basicos(body)
 
-        campos_obligatorios = ["descripcion"]
+        campos_obligatorios = ["nombre", "id_marca", "descripcion"]
+        
         validar_campos_obligatorios(body, campos_obligatorios, "modelo")
-        validar_long_descripcion(body)
+        validar_nombre(body["nombre"])
+        validar_descripcion(body["descripcion"])
+        validar_marca_existente(body["id_marca"])
         
         modelo_existente = self.modelo_repo.find_by_nombre(body["nombre"])
         if modelo_existente and modelo_existente.id != modelo.id:
             raise BusinessException("Ya existe un modelo con ese nombre")
-
-        if "id_marca" in body and body["id_marca"] is not None:
-            marca = self.marca_repo.get_by_id(body["id_marca"])
-            if not marca:
-                raise NotFoundException("La marca asociada no existe")
-            modelo.id_marca = body["id_marca"]
-
+        
+        modelo.id_marca = body["id_marca"]
         modelo.nombre = body["nombre"]
         modelo.descripcion = body["descripcion"]
 

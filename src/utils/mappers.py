@@ -67,8 +67,8 @@ def alquiler_to_response_dto(alquiler: Alquiler) -> AlquilerResponseDTO:
 def reserva_to_response_dto(reserva: Reserva) -> ReservaResponseDTO:
     return ReservaResponseDTO(
         id=reserva.id,
-        cliente=f"{reserva.cliente.nombre} {reserva.cliente.apellido}",
-        vehiculo=reserva.vehiculo.patente,
+        cliente=cliente_to_response_dto(reserva.cliente),
+        vehiculo=vehiculo_to_response_dto(reserva.vehiculo),
         fecha_inicio=reserva.fecha_inicio,
         fecha_fin=reserva.fecha_fin,
         estado=reserva.estado.value,

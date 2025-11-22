@@ -65,14 +65,15 @@ class ClienteService:
             "nombre", "apellido", "dni", "email",
             "licencia_numero", "licencia_categoria", "licencia_vencimiento"
         ]
+        
         validar_campos_obligatorios(body, campos_obligatorios, "cliente")
-        validar_nombre_apellido(body)
-        validar_email_formato(body)
-        validar_dni_formato(body, longitud_exacto=8)
-        validar_telefono(body)
-        validar_categoria_licencia(body)
+        validar_nombre_apellido(body["nombre"], body["apellido"])
+        validar_email_formato(body["email"])
+        validar_dni_formato(body["dni"], longitud_exacto=8)
+        validar_telefono(body["telefono"])
+        validar_categoria_licencia(body["licencia_categoria"])
 
-        licencia_vencimiento = parsear_licencia_vencimiento(body)
+        licencia_vencimiento = parsear_licencia_vencimiento(body["licencia_vencimiento"])
 
         if self.cliente_repo.find_by_dni(body["dni"]):
             raise BusinessException("Ya existe un cliente con ese DNI")
@@ -108,14 +109,14 @@ class ClienteService:
             "nombre", "apellido", "dni", "email",
             "licencia_numero", "licencia_categoria", "licencia_vencimiento"
         ]
+        
         validar_campos_obligatorios(body, campos_obligatorios, "cliente")
-        validar_nombre_apellido(body)
-        validar_email_formato(body)
-        validar_dni_formato(body, longitud_exacto=8)
-        validar_telefono(body)
-        validar_categoria_licencia(body)
-
-        licencia_vencimiento = parsear_licencia_vencimiento(body)
+        validar_nombre_apellido(body["nombre"], body["apellido"])
+        validar_email_formato(body["email"])
+        validar_dni_formato(body["dni"], longitud_exacto=8)
+        validar_telefono(body.get("telefono"))
+        validar_categoria_licencia(body["licencia_categoria"])
+        licencia_vencimiento = parsear_licencia_vencimiento(body["licencia_vencimiento"])
 
         existente_dni = self.cliente_repo.find_by_dni(body["dni"])
         if existente_dni and existente_dni.id != cliente.id:

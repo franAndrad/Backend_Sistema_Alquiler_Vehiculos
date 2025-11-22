@@ -56,13 +56,13 @@ class EmpleadoService:
         body = normalizar_campos_basicos(body)
 
         campos_obligatorios = ["nombre", "apellido", "dni", "email", "rol"]
+        
         validar_campos_obligatorios(body, campos_obligatorios, "empleado")
-        validar_nombre_apellido(body)
-        validar_email_formato(body)
-        validar_dni_formato(body, longitud_exacto=8)
-        validar_telefono(body)
-        validar_rol(body)
-
+        validar_nombre_apellido(body["nombre"], body["apellido"])
+        validar_email_formato(body["email"])
+        validar_dni_formato(body["dni"], longitud_exacto=8)
+        validar_telefono(body.get("telefono"))
+        validar_rol(body["rol"])
 
         if self.empleado_repo.find_by_dni(body["dni"]):
             raise BusinessException("Ya existe un empleado con ese DNI")
@@ -92,11 +92,11 @@ class EmpleadoService:
         body = dict(body)
         body = normalizar_campos_basicos(body)
 
-        validar_nombre_apellido(body)
-        validar_email_formato(body)
-        validar_dni_formato(body, longitud_exacto=8)
-        validar_telefono(body)
-        validar_rol(body)
+        validar_nombre_apellido(body["nombre"], body["apellido"])
+        validar_email_formato(body["email"])
+        validar_dni_formato(body["dni"], longitud_exacto=8)
+        validar_telefono(body.get("telefono"))
+        validar_rol(body["rol"])
 
         if "dni" in body and body["dni"] is not None:
             existente_dni = self.empleado_repo.find_by_dni(body["dni"])
@@ -109,20 +109,13 @@ class EmpleadoService:
                 raise BusinessException(
                     "Ya existe otro empleado con ese email")
 
-        if "nombre" in body:
-            empleado.nombre = body["nombre"]
-        if "apellido" in body:
-            empleado.apellido = body["apellido"]
-        if "direccion" in body:
-            empleado.direccion = body["direccion"]
-        if "telefono" in body:
-            empleado.telefono = body["telefono"]
-        if "dni" in body:
-            empleado.dni = body["dni"]
-        if "email" in body:
-            empleado.email = body["email"]
-        if "rol" in body:
-            empleado.rol = body["rol"]
+        empleado.nombre = body["nombre"]
+        empleado.apellido = body["apellido"]
+        empleado.direccion = body["direccion"]
+        empleado.telefono = body["telefono"]
+        empleado.dni = body["dni"]
+        empleado.email = body["email"]
+        empleado.rol = body["rol"]
 
         self.empleado_repo.save_changes()
         return empleado_to_response_dto(empleado)

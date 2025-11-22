@@ -9,7 +9,7 @@ Content-Type: application/json
 {
     "id_cliente": 1,
     "id_empleado": 1,
-    "id_vehiculo": 2,
+    "id_vehiculo": 1,
     "fecha_inicio": "2024-06-10",
     "fecha_fin": "2024-06-15",
     "costo_total": 500.00,
@@ -36,8 +36,8 @@ Content-Type: application/json
 GET http://localhost:5000/alquileres/1
 
 
-### Eliminar alquiler
-DELETE http://localhost:5000/alquileres/1
+### Eliminar alquiler: No se pueden eliminar alquileres, solo finalizar o cancelar
+# DELETE http://localhost:5000/alquileres/1
 
 
 ### Finalizar alquiler

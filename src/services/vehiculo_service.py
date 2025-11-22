@@ -4,9 +4,6 @@ from ..exceptions.domain_exceptions import ValidationException, NotFoundExceptio
 from ..models.vehiculo import Vehiculo
 from ..utils.mappers import vehiculo_to_response_dto
 from ..models.enums import EstadoVehiculo
-
-
-
 from .utils.vehiculo_utils import (
     normalizar_campos,
     validar_campos_obligatorios,
@@ -23,15 +20,18 @@ class VehiculoService:
         self.vehiculo_repo = VehiculoRepository()
         self.modelo_repo = ModeloRepository()
 
+
     def listar_vehiculos(self):
         vehiculos = self.vehiculo_repo.list_all()
         return [vehiculo_to_response_dto(v) for v in vehiculos]
+
 
     def obtener_vehiculo(self, vehiculo_id):
         vehiculo = self.vehiculo_repo.get_by_id(vehiculo_id)
         if not vehiculo:
             raise ValidationException("El vehículo no existe")
         return vehiculo_to_response_dto(vehiculo)
+
 
     def crear_vehiculo(self, body):
         body = dict(body)
@@ -64,6 +64,7 @@ class VehiculoService:
 
         self.vehiculo_repo.add(vehiculo)
         return vehiculo_to_response_dto(vehiculo)
+    
     
     def actualizar_vehiculo(self, vehiculo_id, body):
         vehiculo = self.vehiculo_repo.get_by_id(vehiculo_id)

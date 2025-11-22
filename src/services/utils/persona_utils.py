@@ -21,49 +21,42 @@ def validar_campos_obligatorios(body: dict, campos_obligatorios: list[str], enti
         )
 
 
-def validar_nombre_apellido(body: dict):
-    if "nombre" in body and body["nombre"] is not None:
-        if len(body["nombre"]) < 2:
+def validar_nombre_apellido(nombre, apellido):
+    if nombre is not None:
+        if len(nombre) < 2:
             raise ValidationException("El nombre debe tener al menos 2 caracteres")
-    if "apellido" in body and body["apellido"] is not None:
-        if len(body["apellido"]) < 2:
+    if apellido is not None:
+        if len(apellido) < 2:
             raise ValidationException("El apellido debe tener al menos 2 caracteres")
 
 
-def validar_email_formato(body: dict):
-    if "email" not in body or body["email"] is None:
-        return
-    email = body["email"]
+def validar_email_formato(email):
     if "@" not in email or "." not in email.split("@")[-1]:
         raise ValidationException("El email no tiene un formato válido")
 
 
-def validar_dni_formato(body: dict, longitud_exacto: int = 8):
-    if "dni" not in body or body["dni"] is None:
-        return
-
-    dni_str = str(body["dni"])
+def validar_dni_formato(dni, longitud_exacto: int = 8):
+    dni_str = str(dni)
     if not dni_str.isdigit() or len(dni_str) != longitud_exacto:
         raise ValidationException(
             f"El DNI debe ser un número de {longitud_exacto} dígitos")
 
 
-def validar_telefono(body: dict):
-    telefono = body.get("telefono")
+def validar_telefono(telefono):
     if telefono:
         tel_str = str(telefono)
         if not tel_str.isdigit() or len(tel_str) < 7:
             raise ValidationException("El teléfono no es válido")
 
 
-def validar_rol(body: dict):
-    if "rol" not in body or not body["rol"]:
+def validar_rol(rol):
+    if not rol:
         raise ValidationException("El rol es obligatorio")
 
     try:
-        RolEmpleado(body["rol"])
+        RolEmpleado(rol)
     except ValueError:
         raise ValidationException(
-            f"El rol '{body['rol']}' no es válido. Roles válidos: "
+            f"El rol '{rol}' no es válido. Roles válidos: "
             + ", ".join([r.value for r in RolEmpleado])
         )

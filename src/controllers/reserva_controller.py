@@ -18,6 +18,14 @@ def obtener_reserva(reserva_id):
     return jsonify(dto._dict_), 200
 
 
+@reserva_bp.get("/estado/<string:estados>")
+def obtener_reservas_por_estado(estados):
+    estados_list = estados.split(",")
+    dtos = reserva_service.obtener_reservas_por_estado(estados_list)
+    data = [dto._dict_ for dto in dtos]
+    return jsonify(data), 200
+
+
 @reserva_bp.post("")
 def crear_reserva():
     body = request.get_json() or {}
@@ -31,7 +39,7 @@ def actualizar_reserva(reserva_id):
     dto = reserva_service.actualizar_reserva(reserva_id, body)
     return jsonify(dto._dict_), 200
 
-
+# Solo se pueden eliminar reservas pendientes
 @reserva_bp.delete("/<int:reserva_id>")
 def eliminar_reserva(reserva_id):
     resultado = reserva_service.eliminar_reserva(reserva_id)
@@ -43,3 +51,15 @@ def obtener_reservas_por_cliente(cliente_id):
     dtos = reserva_service.obtener_reservas_por_cliente(cliente_id)
     data = [dto._dict_ for dto in dtos]
     return jsonify(data), 200
+
+
+@reserva_bp.patch("/<int:reserva_id>/confirmar")
+def confirmar_reserva(reserva_id):
+    dto = reserva_service.confirmar_reserva(reserva_id)
+    return jsonify(dto._dict_), 200
+
+
+@reserva_bp.patch("/<int:reserva_id>/cancelar")
+def cancelar_reserva(reserva_id):
+    dto = reserva_service.cancelar_reserva(reserva_id)
+    return jsonify(dto._dict_), 200

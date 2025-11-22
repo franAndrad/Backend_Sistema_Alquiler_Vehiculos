@@ -7,7 +7,7 @@ from ..utils.mappers import marca_to_response_dto
 from .utils.marca_utils import (
     normalizar_campos_basicos, 
     validar_campos_obligatorios,
-    validar_long_nombre
+    validar_nombre
 )
 
 class MarcasService:
@@ -51,7 +51,7 @@ class MarcasService:
         campos_obligatorios = ["nombre"]
         
         validar_campos_obligatorios(body, campos_obligatorios, "marca")
-        validar_long_nombre(body)
+        validar_nombre(body)
         
         if self.marca_repo.find_by_nombre(body["nombre"]):
             raise BusinessException("Ya existe una marca con ese nombre")
@@ -73,7 +73,7 @@ class MarcasService:
         campos_obligatorios = ["nombre"]
 
         validar_campos_obligatorios(body, campos_obligatorios, "marca")
-        validar_long_nombre(body)
+        validar_nombre(body)
         
         marca_existente = self.marca_repo.find_by_nombre(body["nombre"])
         if marca_existente and marca_existente.id != marca.id:

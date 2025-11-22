@@ -44,11 +44,11 @@ def actualizar_alquiler(alquiler_id):
     dto = alquiler_service.actualizar_alquiler(alquiler_id, body)
     return jsonify(dto.__dict__), 200
 
-
-@alquiler_bp.delete("/<int:alquiler_id>")
-def eliminar_alquiler(alquiler_id):
-    resultado = alquiler_service.eliminar_alquiler(alquiler_id)
-    return jsonify(resultado), 200
+# No se pueden eliminar alquileres, solo finalizar o cancelar
+# @alquiler_bp.delete("/<int:alquiler_id>")
+# def eliminar_alquiler(alquiler_id):
+#     resultado = alquiler_service.eliminar_alquiler(alquiler_id)
+#     return jsonify(resultado), 200
 
 
 @alquiler_bp.patch("/<int:alquiler_id>/finalizar")

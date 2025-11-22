@@ -1,7 +1,6 @@
 from datetime import date
 
 from ..repository.multa_repository import MultaRepository
-from ..repository.alquiler_repository import AlquilerRepository
 from ..exceptions.domain_exceptions import NotFoundException
 from ..models.multa import Multa
 from ..utils.mappers import multa_to_response_dto
@@ -12,13 +11,13 @@ from .utils.multa_utils import (
     validar_monto,
     validar_fecha,
     validar_descripcion,
+    validar_alquiler_existente,
 )
 
 class MultaService:
     
-    def __init__(self, multa_repository=None, alquiler_repository=None):
+    def __init__(self, multa_repository=None):
         self.multa_repo = multa_repository or MultaRepository()
-        self.alquiler_repo = alquiler_repository or AlquilerRepository()
 
 
     def listar_multas(self):
@@ -72,14 +71,11 @@ class MultaService:
         ]
 
         validar_campos_obligatorios(body, campos_obligatorios, "multa")
-        validar_id_alquiler(body)
-        validar_monto(body)
-        validar_fecha(body)
-        validar_descripcion(body)
-        
-        alquiler = self.alquiler_repo.get_by_id(body["id_alquiler"])
-        if not alquiler:
-            raise NotFoundException("El alquiler asociado no existe")
+        validar_id_alquiler(body["id_alquiler"])
+        validar_monto(body["monto"])
+        validar_fecha(body["fecha"])
+        validar_descripcion(body["descripcion"])
+        validar_alquiler_existente(body["id_alquiler"])
 
         nueva_multa = Multa(
             id_alquiler=body["id_alquiler"],

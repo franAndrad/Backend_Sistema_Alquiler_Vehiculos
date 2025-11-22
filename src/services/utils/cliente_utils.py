@@ -5,12 +5,12 @@ from ...exceptions.domain_exceptions import ValidationException, BusinessExcepti
 CATEGORIAS_LICENCIA_VALIDAS = {"A", "B1", "B2", "C1", "C2"}
 
 
-def parsear_licencia_vencimiento(body: dict) -> date:
-    if "licencia_vencimiento" not in body or not body["licencia_vencimiento"]:
+def parsear_licencia_vencimiento(licencia_vencimiento_str) -> date:
+    if not licencia_vencimiento_str:
         raise ValidationException("licencia_vencimiento es obligatorio")
 
     try:
-        licencia_vencimiento = date.fromisoformat(body["licencia_vencimiento"])
+        licencia_vencimiento = date.fromisoformat(licencia_vencimiento_str)
     except ValueError:
         raise ValidationException(
             "Formato de fecha inválido para licencia_vencimiento (usar YYYY-MM-DD)"
@@ -22,8 +22,7 @@ def parsear_licencia_vencimiento(body: dict) -> date:
     return licencia_vencimiento
 
 
-def validar_categoria_licencia(body: dict):
-    categoria = body.get("licencia_categoria")
+def validar_categoria_licencia(categoria):
     if not categoria:
         raise ValidationException("La categoría de licencia es obligatoria")
 

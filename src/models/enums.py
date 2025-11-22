@@ -15,6 +15,7 @@ class EstadoReserva(enum.Enum):
     PENDIENTE = "PENDIENTE"
     CONFIRMADA = "CONFIRMADA"
     CANCELADA = "CANCELADA"
+    FINALIZADA = "FINALIZADA"
 
 
 class RolEmpleado(enum.Enum):
