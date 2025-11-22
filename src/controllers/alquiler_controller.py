@@ -39,6 +39,18 @@ def listar_alquileres_por_estado(estados):
     return jsonify(data), 200
 
 
+@alquiler_bp.get("/periodo")
+def listar_por_periodo():
+    desde = request.args.get("desde")
+    hasta = request.args.get("hasta")
+
+    if not desde or not hasta:
+        return jsonify({"error": "Debe indicar ?desde=YYYY-MM-DD&hasta=YYYY-MM-DD"}), 400
+
+    dtos = alquiler_service.listar_alquileres_por_periodo(desde, hasta)
+    return jsonify([dto.__dict__ for dto in dtos]), 200
+
+
 @alquiler_bp.post("")
 def crear_alquiler():
     body = request.get_json() or {}

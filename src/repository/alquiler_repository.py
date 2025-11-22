@@ -32,7 +32,7 @@ class AlquilerRepository(BaseRepository):
         )
 
 
-    def list_by_rango_fechas(self, desde, hasta):
+    def list_by_periodo(self, desde: date, hasta: date):
         return (
             Alquiler.query
             .filter(

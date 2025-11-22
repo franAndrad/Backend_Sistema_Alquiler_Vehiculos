@@ -28,6 +28,11 @@ GET http://localhost:5000/alquileres/estado/ACTIVO
 Content-Type: application/json
 
 
+### Obtener alquileres por período
+GET http://localhost:5000/alquileres/periodo?desde=2024-01-01&hasta=2026-03-01
+Content-Type: application/json
+
+
 ### Actualizar alquiler
 PUT http://localhost:5000/alquileres/1
 Content-Type: application/json

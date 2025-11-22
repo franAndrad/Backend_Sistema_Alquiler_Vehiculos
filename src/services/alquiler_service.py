@@ -57,6 +57,24 @@ class AlquilerService:
         if not alquileres:
             raise NotFoundException("No hay alquileres con el estado indicado")
         return [alquiler_to_response_dto(a) for a in alquileres]
+    
+    
+    def listar_alquileres_por_periodo(self, fecha_desde, fecha_hasta):
+        if isinstance(fecha_desde, str):
+            fecha_desde = date.fromisoformat(fecha_desde)
+        if isinstance(fecha_hasta, str):
+            fecha_hasta = date.fromisoformat(fecha_hasta)
+
+        if fecha_desde > fecha_hasta:
+            raise BusinessException(
+                "La fecha inicial no puede ser mayor a la final")
+
+        alquileres = self.alquiler_repo.list_by_periodo(fecha_desde, fecha_hasta)
+
+        if not alquileres:
+            raise NotFoundException("No hay alquileres en el período indicado")
+
+        return [alquiler_to_response_dto(a) for a in alquileres]
 
 
     def crear_alquiler(self, body):
@@ -66,10 +84,9 @@ class AlquilerService:
         maquina_estado = AlquilerStateMachine()
 
         campos_obligatorios = ["id_cliente", "id_empleado", "id_vehiculo"]
+        
         validar_campos_obligatorios(body, campos_obligatorios, "alquiler")
-
-        validar_ids_foreign_keys(
-            body["id_cliente"], body["id_empleado"], body["id_vehiculo"])
+        validar_ids_foreign_keys(body["id_cliente"], body["id_empleado"], body["id_vehiculo"])
         validar_cliente_existente(body["id_cliente"])
         validar_empleado_existente(body["id_empleado"])
 
@@ -156,10 +173,9 @@ class AlquilerService:
         body = normalizar_campos_basicos(body)
 
         campos_obligatorios = ["id_cliente", "id_empleado", "id_vehiculo"]
+        
         validar_campos_obligatorios(body, campos_obligatorios, "alquiler")
-
-        validar_ids_foreign_keys(
-            body["id_cliente"], body["id_empleado"], body["id_vehiculo"])
+        validar_ids_foreign_keys(body["id_cliente"], body["id_empleado"], body["id_vehiculo"])
         validar_cliente_existente(body["id_cliente"])
         validar_empleado_existente(body["id_empleado"])
 
