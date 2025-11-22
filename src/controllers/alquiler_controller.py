@@ -1,10 +1,12 @@
 from flask import Blueprint, request, jsonify
 from ..services.alquiler_service import AlquilerService
+from ..utils.auth_utils import roles_required
 
 alquiler_bp = Blueprint("alquileres", __name__, url_prefix="/alquileres")
 alquiler_service = AlquilerService()
 
 @alquiler_bp.get("")
+@roles_required("ADMIN","ATENCION")
 def listar_alquileres():
     dtos = alquiler_service.listar_alquileres()
     data = [dto.__dict__ for dto in dtos]
@@ -12,12 +14,14 @@ def listar_alquileres():
 
 
 @alquiler_bp.get("/<int:alquiler_id>")
+@roles_required("ADMIN","ATENCION")
 def obtener_alquiler(alquiler_id):
     dto = alquiler_service.obtener_alquiler(alquiler_id)
     return jsonify(dto.__dict__), 200
 
 
 @alquiler_bp.get("/cliente/<int:cliente_id>")
+@roles_required("ADMIN","ATENCION")
 def listar_alquileres_por_cliente(cliente_id):
     dtos = alquiler_service.listar_alquileres_por_cliente(cliente_id)
     data = [dto.__dict__ for dto in dtos]
@@ -25,6 +29,7 @@ def listar_alquileres_por_cliente(cliente_id):
 
 
 @alquiler_bp.get("/vehiculo/<int:vehiculo_id>")
+@roles_required("ADMIN","ATENCION")
 def listar_alquileres_por_vehiculo(vehiculo_id):
     dtos = alquiler_service.listar_alquileres_por_vehiculo(vehiculo_id)
     data = [dto.__dict__ for dto in dtos]
@@ -32,6 +37,7 @@ def listar_alquileres_por_vehiculo(vehiculo_id):
 
 
 @alquiler_bp.get("/estado/<string:estados>")
+@roles_required("ADMIN","ATENCION")
 def listar_alquileres_por_estado(estados):
     estados_list = estados.split(",")
     dtos = alquiler_service.listar_alquileres_por_estado(estados_list)
@@ -40,6 +46,7 @@ def listar_alquileres_por_estado(estados):
 
 
 @alquiler_bp.get("/periodo")
+@roles_required("ADMIN","ATENCION")
 def listar_por_periodo():
     desde = request.args.get("desde")
     hasta = request.args.get("hasta")
@@ -52,6 +59,7 @@ def listar_por_periodo():
 
 
 @alquiler_bp.get("/vehiculos-mas-alquilados")
+@roles_required("ADMIN","ATENCION")
 def vehiculos_mas_alquilados():
     desde = request.args.get("desde")
     hasta = request.args.get("hasta")
@@ -67,6 +75,7 @@ def vehiculos_mas_alquilados():
 
 
 @alquiler_bp.post("")
+@roles_required("ADMIN","ATENCION")
 def crear_alquiler():
     body = request.get_json() or {}
     dto = alquiler_service.crear_alquiler(body)
@@ -74,6 +83,7 @@ def crear_alquiler():
 
 
 @alquiler_bp.put("/<int:alquiler_id>")
+@roles_required("ADMIN","ATENCION")
 def actualizar_alquiler(alquiler_id):
     body = request.get_json() or {}
     dto = alquiler_service.actualizar_alquiler(alquiler_id, body)
@@ -81,6 +91,7 @@ def actualizar_alquiler(alquiler_id):
 
 
 @alquiler_bp.patch("/<int:alquiler_id>/finalizar")
+@roles_required("ADMIN","ATENCION")
 def finalizar_alquiler(alquiler_id):
     resultado = alquiler_service.finalizar_alquiler(alquiler_id)
     return jsonify(resultado), 200

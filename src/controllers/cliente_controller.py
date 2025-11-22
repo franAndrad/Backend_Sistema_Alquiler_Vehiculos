@@ -15,14 +15,14 @@ def listar_clientes():
 
 
 @cliente_bp.get("/<int:cliente_id>")
-@roles_required("ADMIN")
+@roles_required("ADMIN", "ATENCION")
 def obtener_cliente(cliente_id):
     dto = cliente_service.obtener_cliente(cliente_id)
     return jsonify(dto.__dict__), 200
 
 
 @cliente_bp.post("")
-@roles_required("ADMIN")
+@roles_required("ADMIN", "ATENCION")
 def crear_cliente():
     body = request.get_json() or {}
     dto = cliente_service.crear_cliente(body)
@@ -30,7 +30,7 @@ def crear_cliente():
 
 
 @cliente_bp.put("/<int:cliente_id>")
-@roles_required("ADMIN")
+@roles_required("ADMIN", "ATENCION")
 def actualizar_cliente(cliente_id):
     body = request.get_json() or {}
     dto = cliente_service.actualizar_cliente(cliente_id, body)
@@ -45,14 +45,14 @@ def eliminar_cliente(cliente_id):
 
 
 @cliente_bp.get("/dni/<int:cliente_dni>")
-@roles_required("ADMIN")
+@roles_required("ADMIN", "ATENCION")
 def obtener_cliente_por_dni(cliente_dni):
     dto = cliente_service.obtener_cliente_por_dni(cliente_dni)
     return jsonify(dto.__dict__), 200
 
 
 @cliente_bp.get("/email/<string:cliente_email>")
-@roles_required("ADMIN")
+@roles_required("ADMIN", "ATENCION")
 def obtener_cliente_por_email(cliente_email):
     dto = cliente_service.obtener_cliente_por_email(cliente_email)
     return jsonify(dto.__dict__), 200

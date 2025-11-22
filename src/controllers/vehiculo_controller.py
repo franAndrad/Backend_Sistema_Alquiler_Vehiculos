@@ -7,7 +7,7 @@ vehiculo_service = VehiculoService()
 
 
 @vehiculo_bp.get("")
-@roles_required("ADMIN")
+@roles_required("ADMIN","ATENCION")
 def listar_vehiculos():
     dtos = vehiculo_service.listar_vehiculos()
     data = [dto.__dict__ for dto in dtos]
@@ -15,14 +15,14 @@ def listar_vehiculos():
 
 
 @vehiculo_bp.get("/<int:vehiculo_id>")
-@roles_required("ADMIN")
+@roles_required("ADMIN","ATENCION")
 def obtener_vehiculo(vehiculo_id):
     dto = vehiculo_service.obtener_vehiculo(vehiculo_id)
     return jsonify(dto.__dict__), 200
 
 
 @vehiculo_bp.get("/estado/<string:estados>")
-@roles_required("ADMIN")
+@roles_required("ADMIN","ATENCION")
 def obtener_vehiculos_por_estado(estados):
     estados_list = estados.split(",")
     dtos = vehiculo_service.obtener_vehiculos_por_estado(estados_list)
