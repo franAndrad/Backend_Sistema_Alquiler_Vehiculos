@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: alquileres_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: alquileres_db
+      MYSQL_USER: alquiler_user
+      MYSQL_PASSWORD: pass1234
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    command: ["--default-authentication-plugin=mysql_native_password"]
+
+  backend:
+    build: .
+    container_name: alquileres_api
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: alquileres_db
+      DB_USER: alquiler_user
+      DB_PASSWORD: pass1234
+      FLASK_ENV: development
+    ports:
+      - "5000:5000"
+
+    # Para desarrollo, monta el código fuente 
+    volumes:
+      - .:/app
+
+volumes:
+  db_data:
