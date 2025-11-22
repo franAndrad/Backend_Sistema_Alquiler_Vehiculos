@@ -31,6 +31,14 @@ def listar_alquileres_por_vehiculo(vehiculo_id):
     return jsonify(data), 200
 
 
+@alquiler_bp.get("/estado/<string:estados>")
+def listar_alquileres_por_estado(estados):
+    estados_list = estados.split(",")
+    dtos = alquiler_service.listar_alquileres_por_estado(estados_list)
+    data = [dto.__dict__ for dto in dtos]
+    return jsonify(data), 200
+
+
 @alquiler_bp.post("")
 def crear_alquiler():
     body = request.get_json() or {}

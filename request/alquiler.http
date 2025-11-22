@@ -3,6 +3,7 @@ GET http://localhost:5000/alquileres
 Content-Type: application/json
 
 
+
 ### Crear alquiler
 # "costo_total" se calcula automaticamente.
 # "id_reserva" es opcional, se usa si el alquiler proviene de una reserva confirmada.
@@ -12,13 +13,18 @@ Content-Type: application/json
 {
     "id_cliente": 1,
     "id_empleado": 1,
-    "id_vehiculo": 1,
-    "id_reserva": 1
+    "id_vehiculo": 2,
+    "id_reserva": 2
 }
 
 
 ### Obtener alquiler por ID
 GET http://localhost:5000/alquileres/1
+Content-Type: application/json
+
+
+### Obtener alquiler por estado o estados
+GET http://localhost:5000/alquileres/estado/ACTIVO
 Content-Type: application/json
 
 
@@ -45,13 +51,6 @@ GET http://localhost:5000/alquileres/vehiculo/2
 Content-Type: application/json
 
 
-### Eliminar alquiler
-# Aunque en las reglas de negocio “no se deberían eliminar”,
-# libera el vehículo y borra el alquiler.
-DELETE http://localhost:5000/alquileres/1
-Content-Type: application/json
-
-
 ### Finalizar alquiler
-PATCH http://localhost:5000/alquileres/1/finalizar
+PATCH http://localhost:5000/alquileres/2/finalizar
 Content-Type: application/json

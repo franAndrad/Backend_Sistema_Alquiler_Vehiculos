@@ -31,6 +31,13 @@ class VehiculoService:
         if not vehiculo:
             raise ValidationException("El vehículo no existe")
         return vehiculo_to_response_dto(vehiculo)
+    
+    
+    def obtener_vehiculos_por_estado(self, estados):
+        vehiculos = self.vehiculo_repo.list_by_estado(estados)
+        if not vehiculos:
+            raise NotFoundException("No hay vehículos con el estado indicado")
+        return [vehiculo_to_response_dto(v) for v in vehiculos]
 
 
     def crear_vehiculo(self, body):

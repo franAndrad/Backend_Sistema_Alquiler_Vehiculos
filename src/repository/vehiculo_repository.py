@@ -13,14 +13,18 @@ class VehiculoRepository(BaseRepository):
     def __init__(self):
         super().__init__(Vehiculo)
 
+
     def find_by_patente(self, patente):
         return Vehiculo.query.filter_by(patente=patente).first()
+
 
     def list_disponibles(self):
         return Vehiculo.query.filter_by(estado=EstadoVehiculo.DISPONIBLE).all()
 
-    def list_by_estado(self, estado):
-        return Vehiculo.query.filter_by(estado=estado).all()
+
+    def list_by_estado(self, estados):
+        return Vehiculo.query.filter(Vehiculo.estado.in_(estados)).all()
+
 
     def tiene_alquiler_superpuesto(self, vehiculo_id, desde, hasta):
         q = Alquiler.query.filter(
@@ -30,6 +34,7 @@ class VehiculoRepository(BaseRepository):
             or_(Alquiler.fecha_fin == None, Alquiler.fecha_fin >= desde)
         )
         return db.session.query(q.exists()).scalar()
+
 
     def tiene_reserva_superpuesta(self, vehiculo_id, desde, hasta):
         q = Reserva.query.filter(

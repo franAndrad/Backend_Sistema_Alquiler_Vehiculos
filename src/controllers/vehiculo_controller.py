@@ -18,6 +18,14 @@ def obtener_vehiculo(vehiculo_id):
     return jsonify(dto.__dict__), 200
 
 
+@vehiculo_bp.get("/estado/<string:estados>")
+def obtener_vehiculos_por_estado(estados):
+    estados_list = estados.split(",")
+    dtos = vehiculo_service.obtener_vehiculos_por_estado(estados_list)
+    data = [dto.__dict__ for dto in dtos]
+    return jsonify(data), 200
+
+
 @vehiculo_bp.post("")
 def crear_vehiculo():
     body = request.get_json() or {}

@@ -20,8 +20,8 @@ from .utils.vehiculo_utils import validar_vehiculo_disponible
 
 class AlquilerService:
 
-    def __init__(self, alquiler_repository=None):
-        self.alquiler_repo = alquiler_repository or AlquilerRepository()
+    def __init__(self):
+        self.alquiler_repo = AlquilerRepository()
         self.vehiculo_repo = VehiculoRepository()
         self.reserva_repo = ReservaRepository()
 
@@ -40,11 +40,22 @@ class AlquilerService:
 
     def listar_alquileres_por_cliente(self, cliente_id):
         alquileres = self.alquiler_repo.find_by_cliente_id(cliente_id)
+        if not alquileres:
+            raise NotFoundException("El cliente no tiene alquileres")
         return [alquiler_to_response_dto(a) for a in alquileres]
 
 
     def listar_alquileres_por_vehiculo(self, vehiculo_id):
         alquileres = self.alquiler_repo.find_by_vehiculo_id(vehiculo_id)
+        if not alquileres:
+            raise NotFoundException("El vehículo no tiene alquileres")
+        return [alquiler_to_response_dto(a) for a in alquileres]
+    
+    
+    def listar_alquileres_por_estado(self, estados):
+        alquileres = self.alquiler_repo.list_by_estado(estados)
+        if not alquileres:
+            raise NotFoundException("No hay alquileres con el estado indicado")
         return [alquiler_to_response_dto(a) for a in alquileres]
 
 

@@ -11,6 +11,7 @@ class AlquilerRepository(BaseRepository):
     def __init__(self):
         super().__init__(Alquiler)
 
+
     def list_by_cliente(self, id_cliente, desde=None, hasta=None):
         q = Alquiler.query.filter_by(id_cliente=id_cliente)
 
@@ -21,6 +22,7 @@ class AlquilerRepository(BaseRepository):
 
         return q.order_by(Alquiler.fecha_inicio.desc()).all()
 
+
     def list_by_vehiculo(self, id_vehiculo):
         return (
             Alquiler.query
@@ -28,6 +30,7 @@ class AlquilerRepository(BaseRepository):
             .order_by(Alquiler.fecha_inicio.desc())
             .all()
         )
+
 
     def list_by_rango_fechas(self, desde, hasta):
         return (
@@ -39,6 +42,11 @@ class AlquilerRepository(BaseRepository):
             .order_by(Alquiler.fecha_inicio.asc())
             .all()
         )
+
+
+    def list_by_estado(self, estados):
+        return Alquiler.query.filter(Alquiler.estado.in_(estados)).all()
+
 
     def facturacion_mensual(self, anio):
         result = (

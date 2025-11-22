@@ -41,6 +41,15 @@ class ReservaService:
     
     def obtener_reservas_por_estado(self, estados):
         reservas = self.reserva_repo.get_by_estado(estados)
+        if not reservas:
+            raise ValidationException("No hay reservas con los estados indicados")
+        return [reserva_to_response_dto(r) for r in reservas]
+    
+    
+    def obtener_reservas_por_cliente(self, cliente_id):
+        reservas = self.reserva_repo.list_by_cliente(cliente_id)
+        if not reservas:
+            raise ValidationException("El cliente no tiene reservas")
         return [reserva_to_response_dto(r) for r in reservas]
     
     
