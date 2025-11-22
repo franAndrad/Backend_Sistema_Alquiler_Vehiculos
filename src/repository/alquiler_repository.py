@@ -1,8 +1,9 @@
 from datetime import date
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from .base_repository import BaseRepository
 from ..extensions.db import db
 from ..models.alquiler import Alquiler
+from ..models.enums import EstadoAlquiler
 
 
 class AlquilerRepository(BaseRepository):
@@ -21,15 +22,23 @@ class AlquilerRepository(BaseRepository):
         return q.order_by(Alquiler.fecha_inicio.desc()).all()
 
     def list_by_vehiculo(self, id_vehiculo):
-        return Alquiler.query.filter_by(id_vehiculo=id_vehiculo)\
-            .order_by(Alquiler.fecha_inicio.desc())\
+        return (
+            Alquiler.query
+            .filter_by(id_vehiculo=id_vehiculo)
+            .order_by(Alquiler.fecha_inicio.desc())
             .all()
+        )
 
     def list_by_rango_fechas(self, desde, hasta):
-        return Alquiler.query.filter(
-            Alquiler.fecha_inicio >= desde,
-            Alquiler.fecha_inicio <= hasta
-        ).order_by(Alquiler.fecha_inicio.asc()).all()
+        return (
+            Alquiler.query
+            .filter(
+                Alquiler.fecha_inicio >= desde,
+                Alquiler.fecha_inicio <= hasta
+            )
+            .order_by(Alquiler.fecha_inicio.asc())
+            .all()
+        )
 
     def facturacion_mensual(self, anio):
         result = (
@@ -46,3 +55,33 @@ class AlquilerRepository(BaseRepository):
             .all()
         )
         return result
+
+
+    def find_activos_por_vehiculo(
+        self,
+        id_vehiculo: int,
+        fecha_inicio: date | None = None,
+        fecha_fin: date | None = None,
+    ) -> list[Alquiler]:
+        """
+        Devuelve los alquileres ACTIVOS de un vehículo.
+        Si se pasan fecha_inicio y fecha_fin, filtra por solapamiento
+        de intervalos con [fecha_inicio, fecha_fin].
+        """
+
+        q = Alquiler.query.filter(
+            Alquiler.id_vehiculo == id_vehiculo,
+            Alquiler.estado == EstadoAlquiler.ACTIVO,
+        )
+
+        if fecha_inicio is not None and fecha_fin is not None:
+            q = q.filter(
+                # Alquiler cuya fecha_fin es nula (sigue activo hoy)
+                # o termina después del inicio del intervalo
+                or_(Alquiler.fecha_fin == None,
+                    Alquiler.fecha_fin >= fecha_inicio),
+                # y empezó antes o el mismo día del fin del intervalo
+                Alquiler.fecha_inicio <= fecha_fin,
+            )
+
+        return q.all()

@@ -39,24 +39,12 @@ def actualizar_reserva(reserva_id):
     dto = reserva_service.actualizar_reserva(reserva_id, body)
     return jsonify(dto.__dict__), 200
 
-# Solo se pueden eliminar reservas pendientes
-@reserva_bp.delete("/<int:reserva_id>")
-def eliminar_reserva(reserva_id):
-    resultado = reserva_service.eliminar_reserva(reserva_id)
-    return jsonify(resultado), 200
-
 
 @reserva_bp.get("/cliente/<int:cliente_id>")
 def obtener_reservas_por_cliente(cliente_id):
     dtos = reserva_service.obtener_reservas_por_cliente(cliente_id)
     data = [dto.__dict__ for dto in dtos]
     return jsonify(data), 200
-
-
-@reserva_bp.patch("/<int:reserva_id>/confirmar")
-def confirmar_reserva(reserva_id):
-    resultado = reserva_service.confirmar_reserva(reserva_id)
-    return jsonify(resultado), 200
 
 
 @reserva_bp.patch("/<int:reserva_id>/cancelar")

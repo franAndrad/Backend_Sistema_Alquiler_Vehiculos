@@ -53,7 +53,7 @@ class ReservaService:
         validar_fechas_reserva(body["fecha_inicio"], body["fecha_fin"])
         validar_no_solapamiento(body["fecha_inicio"], body["fecha_fin"])
         validar_cliente_existente(body["id_cliente"])
-        validar_vehiculo_disponible(body["id_vehiculo"])
+        validar_vehiculo_disponible(body["id_vehiculo"], body["fecha_inicio"], body["fecha_fin"])
         
         maquina_reserva = ReservaStateMachine()
         
@@ -102,19 +102,6 @@ class ReservaService:
         
         self.reserva_repo.save_changes()
         return reserva_to_response_dto(reserva)
-    
-        
-    def eliminar_reserva(self, reserva_id):
-        reserva = self.reserva_repo.get_by_id(reserva_id)
-        if not reserva:
-            raise ValidationException("La reserva no existe")
-        
-        maquina_estado = ReservaStateMachine(reserva.estado)
-        validar_reserva_pendiente(maquina_estado.state_enum)
-        
-        self.reserva_repo.delete(reserva)
-        self.reserva_repo.save_changes()
-        return {"mensaje": "Reserva eliminada correctamente"}
     
     
     def cancelar_reserva(self, reserva_id):

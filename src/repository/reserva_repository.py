@@ -17,6 +17,7 @@ class ReservaRepository(BaseRepository):
     def get_by_estado(self, estados):
         return Reserva.query.filter(Reserva.estado.in_(estados)).all()
     
+    # un vehículo está reservado solo cuando hay una reserva CONFIRMADA que se solapa con ese período
     def find_activas_por_vehiculo(
         self,
         id_vehiculo: int,
@@ -38,3 +39,4 @@ class ReservaRepository(BaseRepository):
             )
 
         return query.all()
+    

@@ -21,6 +21,8 @@ class ReservaStateMachine:
             self.transition_to(Cancelada())
         elif estado == EstadoReserva.FINALIZADA:
             self.transition_to(Finalizada())
+        elif estado == EstadoReserva.EXPIRADA:
+            self.transition_to(Expirada())
         else:
             raise ValueError(f"Estado de reserva no soportado: {estado}")
     
@@ -36,6 +38,9 @@ class ReservaStateMachine:
     
     def finalizada(self) -> str:
         return self.__state.finalizada()
+    
+    def expirar(self) -> str:
+        return self.__state.expirar()
     
     @property
     def state_enum(self) -> EstadoReserva:
@@ -64,6 +69,11 @@ class EstadoReservaState(ABC):
     @abstractmethod
     def finalizada(self) -> str:
         pass
+    
+    @abstractmethod
+    def expirar(self) -> str:
+        pass
+     
      
 class Confirmada(EstadoReservaState):
     state_value = EstadoReserva.CONFIRMADA
@@ -75,9 +85,13 @@ class Confirmada(EstadoReservaState):
         self.context.transition_to(Cancelada())
         return "Reserva cancelada exitosamente."
     
-    def finalizada(self):
+    def finalizada(self) -> str:
         self.context.transition_to(Finalizada())
         return "Reserva finalizada exitosamente."
+    
+    def expirar(self) -> str:
+        self.context.transition_to(Expirada())
+        return "Reserva expirada exitosamente."
     
     
 class Cancelada(EstadoReservaState):
@@ -89,8 +103,11 @@ class Cancelada(EstadoReservaState):
     def cancelar(self) -> str:
         raise BusinessException("La reserva ya está cancelada.")
     
-    def finalizada(self):
+    def finalizada(self) -> str:
         raise BusinessException("No se puede finalizar una reserva cancelada.")
+    
+    def expirar(self) -> str:
+        raise BusinessException("No se puede expirar una reserva cancelada.")
     
     
 class Finalizada(EstadoReservaState):
@@ -105,3 +122,21 @@ class Finalizada(EstadoReservaState):
     def finalizada(self) -> str:
         raise BusinessException("La reserva ya está finalizada.")
     
+    def expirar(self) -> str:
+        raise BusinessException("No se puede expirar una reserva finalizada.")
+
+
+class Expirada(EstadoReservaState):
+    state_value = EstadoReserva.EXPIRADA
+    
+    def confirmar(self) -> str:
+        raise BusinessException("No se puede confirmar una reserva expirada.")
+    
+    def cancelar(self) -> str:
+        raise BusinessException("No se puede cancelar una reserva expirada.")
+    
+    def finalizada(self) -> str:
+        raise BusinessException("No se puede finalizar una reserva expirada.")
+    
+    def expirar(self) -> str:
+        raise BusinessException("La reserva ya está expirada.")

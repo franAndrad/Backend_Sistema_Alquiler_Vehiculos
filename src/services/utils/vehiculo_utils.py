@@ -47,7 +47,7 @@ def validar_vehiculo_disponible(
     vehiculo_repo = VehiculoRepository()
     reserva_repo = ReservaRepository()
     alquiler_repo = AlquilerRepository()
-    
+
     vehiculo = vehiculo_repo.get_by_id(id_vehiculo)
     if not vehiculo:
         raise ValidationException("El vehículo no existe")
@@ -73,7 +73,8 @@ def validar_vehiculo_disponible(
         fecha_fin,
     )
     if reservas_activas:
-        raise BusinessException("El vehículo tiene reservas activas en ese período")
+        raise BusinessException(
+            "El vehículo tiene reservas activas en ese período")
 
     # 3) Alquileres activos que se solapen
     alquileres_activos = alquiler_repo.find_activos_por_vehiculo(
@@ -82,8 +83,9 @@ def validar_vehiculo_disponible(
         fecha_fin,
     )
     if alquileres_activos:
-        raise BusinessException("El vehículo tiene alquileres activos en ese período")
-
+        raise BusinessException(
+            "El vehículo tiene alquileres activos en ese período")
+        
 
 def validar_patente(body: dict):
     patente = body.get("patente")
