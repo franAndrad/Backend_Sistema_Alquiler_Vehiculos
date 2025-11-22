@@ -14,7 +14,6 @@ Content-Type: application/json
     "id_cliente": 1,
     "id_empleado": 1,
     "id_vehiculo": 1,
-    "id_reserva": 1,
     "fecha_inicio": "2026-01-10",
     "fecha_fin": "2026-01-15",
     "estado": "ACTIVO"
@@ -64,5 +63,5 @@ Content-Type: application/json
 
 
 ### Cancelar alquiler
-PATCH http://localhost:5000/alquileres/1/cancelar
+PATCH http://localhost:5000/alquileres/2/cancelar
 Content-Type: application/json
