@@ -49,6 +49,7 @@ Content-Type: application/json
     "licencia_vencimiento": "2026-05-01"
 }
 
+
 ### Eliminar cliente
 DELETE http://localhost:5000/clientes/3
 Content-Type: application/json

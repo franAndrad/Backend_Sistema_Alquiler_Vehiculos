@@ -16,6 +16,7 @@ from .utils.alquiler_utils import (
     validar_empleado_existente,
 )
 from .utils.vehiculo_utils import validar_vehiculo_disponible
+from .utils.comunes_utils import validar_fecha
 
 
 class AlquilerService:
@@ -39,14 +40,14 @@ class AlquilerService:
 
 
     def listar_alquileres_por_cliente(self, cliente_id):
-        alquileres = self.alquiler_repo.find_by_cliente_id(cliente_id)
+        alquileres = self.alquiler_repo.list_by_cliente(cliente_id)
         if not alquileres:
             raise NotFoundException("El cliente no tiene alquileres")
         return [alquiler_to_response_dto(a) for a in alquileres]
 
 
     def listar_alquileres_por_vehiculo(self, vehiculo_id):
-        alquileres = self.alquiler_repo.find_by_vehiculo_id(vehiculo_id)
+        alquileres = self.alquiler_repo.list_by_vehiculo(vehiculo_id)
         if not alquileres:
             raise NotFoundException("El vehículo no tiene alquileres")
         return [alquiler_to_response_dto(a) for a in alquileres]
@@ -60,6 +61,10 @@ class AlquilerService:
     
     
     def listar_alquileres_por_periodo(self, fecha_desde, fecha_hasta):
+        
+        validar_fecha(fecha_desde)
+        validar_fecha(fecha_hasta)
+        
         if isinstance(fecha_desde, str):
             fecha_desde = date.fromisoformat(fecha_desde)
         if isinstance(fecha_hasta, str):
