@@ -2,7 +2,11 @@
 GET http://localhost:5000/alquileres
 Content-Type: application/json
 
+
 ### Crear alquiler
+# QUITAR ESTADO DE CAMPO OBLIGATIORIO EN SERVICE!!!
+# "costo_total" se calcula automaticamente.
+# "id_reserva" es opcional, se usa si el alquiler proviene de una reserva confirmada.
 POST http://localhost:5000/alquileres
 Content-Type: application/json
 
@@ -10,39 +14,55 @@ Content-Type: application/json
     "id_cliente": 1,
     "id_empleado": 1,
     "id_vehiculo": 1,
-    "fecha_inicio": "2024-06-10",
-    "fecha_fin": "2024-06-15",
-    "costo_total": 500.00,
+    "id_reserva": 1,
+    "fecha_inicio": "2026-01-10",
+    "fecha_fin": "2026-01-15",
     "estado": "ACTIVO"
-}
-
-
-### Actualizar alquiler
-PUT http://localhost:5000/alquileres/1
-Content-Type: application/json
-
-{
-    "id_cliente": 1,
-    "id_empleado": 2,
-    "id_vehiculo": 3,
-    "fecha_inicio": "2024-06-12",
-    "fecha_fin": "2024-06-18",
-    "costo_total": 600.00,
-    "estado": "FINALIZADO"
 }
 
 
 ### Obtener alquiler por ID
 GET http://localhost:5000/alquileres/1
+Content-Type: application/json
 
 
-### Eliminar alquiler: No se pueden eliminar alquileres, solo finalizar o cancelar
-# DELETE http://localhost:5000/alquileres/1
+### Actualizar alquiler
+# QUITAR ESTADO EN SERVICE !!!
+PUT http://localhost:5000/alquileres/1
+Content-Type: application/json
+
+{
+    "id_cliente": 1,
+    "id_empleado": 1,
+    "id_vehiculo": 2,
+    "fecha_inicio": "2026-01-12",
+    "fecha_fin": "2026-01-18",
+    "estado": "ACTIVO"
+}
+
+
+### Listar alquileres por cliente
+GET http://localhost:5000/alquileres/cliente/1
+Content-Type: application/json
+
+
+### Listar alquileres por vehículo
+GET http://localhost:5000/alquileres/vehiculo/2
+Content-Type: application/json
+
+
+### Eliminar alquiler
+# Aunque en las reglas de negocio “no se deberían eliminar”,
+# libera el vehículo y borra el alquiler.
+DELETE http://localhost:5000/alquileres/1
+Content-Type: application/json
 
 
 ### Finalizar alquiler
 PATCH http://localhost:5000/alquileres/1/finalizar
+Content-Type: application/json
 
 
 ### Cancelar alquiler
 PATCH http://localhost:5000/alquileres/1/cancelar
+Content-Type: application/json

@@ -72,7 +72,7 @@ class ReservaService:
         maquina_estado_vehiculo = VehiculoStateMachine(vehiculo.estado)
         
         # Tiene que ser reservado (agregar estado)!!!!!!!!!
-        mensaje = maquina_estado_vehiculo.alquilar()
+        mensaje = maquina_estado_vehiculo.reservar()
         vehiculo.estado = maquina_estado_vehiculo.state_enum
         
         self.reserva_repo.add(nueva_reserva)
@@ -116,19 +116,6 @@ class ReservaService:
         self.reserva_repo.save_changes()
         return {"mensaje": "Reserva eliminada correctamente"}
     
-
-    def confirmar_reserva(self, reserva_id):
-        reserva = self.reserva_repo.get_by_id(reserva_id)
-        if not reserva:
-            raise ValidationException("La reserva no existe")
-        
-        maquina_estado = ReservaStateMachine(reserva.estado)
-        mensaje = maquina_estado.confirmar()
-        reserva.estado = maquina_estado.state_enum
-        
-        self.reserva_repo.save_changes()
-        return {"mensaje": mensaje}
-    
     
     def cancelar_reserva(self, reserva_id):
         reserva = self.reserva_repo.get_by_id(reserva_id)
@@ -146,17 +133,4 @@ class ReservaService:
         
         self.reserva_repo.save_changes()
         self.vehiculo_repo.save_changes()
-        return {"mensaje": mensaje}
-    
-    
-    def finalizar_reserva(self, reserva_id):
-        reserva = self.reserva_repo.get_by_id(reserva_id)
-        if not reserva:
-            raise ValidationException("La reserva no existe")
-        
-        maquina_estado = ReservaStateMachine(reserva.estado)
-        mensaje = maquina_estado.finalizada()
-        reserva.estado = maquina_estado.state_enum
-
-        self.reserva_repo.save_changes()
         return {"mensaje": mensaje}

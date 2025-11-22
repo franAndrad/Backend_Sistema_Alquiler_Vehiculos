@@ -18,6 +18,8 @@ class VehiculoStateMachine:
     def _init_from_enum(self, state: EstadoVehiculo):
         if state == EstadoVehiculo.DISPONIBLE:
             self.transition_to(Disponible())
+        elif state == EstadoVehiculo.RESERVADO:
+            self.transition_to(Reservado())  # Asumiendo que RESERVADO se maneja como DISPONIBLE
         elif state == EstadoVehiculo.ALQUILADO:
             self.transition_to(Alquilado())
         else:
@@ -26,6 +28,9 @@ class VehiculoStateMachine:
     def transition_to(self, state: EstadoVehiculoState):
         self._state = state
         self._state.context = self
+        
+    def reservar(self) -> str:
+        return self._state.reservar()
 
     def alquilar(self) -> str:
         return self._state.alquilar()
@@ -55,6 +60,10 @@ class EstadoVehiculoState(ABC):
         self._context = context
 
     @abstractmethod
+    def reservar(self) -> str:
+        pass
+    
+    @abstractmethod
     def alquilar(self) -> str:
         pass
 
@@ -72,6 +81,24 @@ class Disponible(EstadoVehiculoState):
 
     def devolver(self) -> str:
         raise BusinessException("El vehiculo ya está disponible")
+    
+    def reservar(self) -> str:
+        self.context.transition_to(Reservado())
+        return "El vehiculo fue reservado"
+    
+
+class Reservado(EstadoVehiculoState):
+    state_value = EstadoVehiculo.RESERVADO
+
+    def alquilar(self) -> str:
+        self.context.transition_to(Alquilado())
+        return "El vehiculo fue alquilado desde reservado"
+
+    def devolver(self) -> str:
+        raise BusinessException("El vehiculo está reservado, no puede ser devuelto")
+    
+    def reservar(self) -> str:
+        raise BusinessException("El vehiculo ya está reservado")
 
 
 class Alquilado(EstadoVehiculoState):
@@ -83,3 +110,6 @@ class Alquilado(EstadoVehiculoState):
     def devolver(self) -> str:
         self.context.transition_to(Disponible())
         return "El vehiculo fue devuelto"
+    
+    def reservar(self) -> str:
+        raise BusinessException("El vehiculo está alquilado, no puede ser reservado")

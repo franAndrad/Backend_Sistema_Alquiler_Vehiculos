@@ -1,6 +1,7 @@
 import enum
 
 class EstadoVehiculo(enum.Enum):
+    RESERVADO = "RESERVADO"
     DISPONIBLE = "DISPONIBLE"
     ALQUILADO = "ALQUILADO"
 
@@ -12,7 +13,6 @@ class EstadoAlquiler(enum.Enum):
 
 
 class EstadoReserva(enum.Enum):
-    PENDIENTE = "PENDIENTE"
     CONFIRMADA = "CONFIRMADA"
     CANCELADA = "CANCELADA"
     FINALIZADA = "FINALIZADA"

@@ -10,7 +10,7 @@ class Reserva(db.Model):
     id_vehiculo = db.Column(db.Integer, db.ForeignKey("vehiculos.id"), nullable=False)
     fecha_inicio = db.Column(db.Date, nullable=False)
     fecha_fin = db.Column(db.Date, nullable=False)
-    estado = db.Column(db.Enum(EstadoReserva), default=EstadoReserva.PENDIENTE, nullable=False)
+    estado = db.Column(db.Enum(EstadoReserva), default=EstadoReserva.CONFIRMADA, nullable=False)
 
     cliente = db.relationship("Cliente", back_populates="reservas")
     vehiculo = db.relationship("Vehiculo", back_populates="reservas")

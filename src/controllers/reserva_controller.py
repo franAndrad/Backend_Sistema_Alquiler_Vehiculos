@@ -63,9 +63,3 @@ def confirmar_reserva(reserva_id):
 def cancelar_reserva(reserva_id):
     resultado = reserva_service.cancelar_reserva(reserva_id)
     return jsonify(resultado), 200
-
-
-@reserva_bp.patch("/<int:reserva_id>/finalizar")
-def finalizar_reserva(reserva_id):
-    resultado = reserva_service.finalizar_reserva(reserva_id)
-    return jsonify(resultado), 200

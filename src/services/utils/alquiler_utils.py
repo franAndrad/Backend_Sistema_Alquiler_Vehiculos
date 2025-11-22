@@ -4,16 +4,9 @@ from ...repository.empleado_repository import EmpleadoRepository
 from ...repository.vehiculo_repository import VehiculoRepository
 from ...states.vehiculo_state import VehiculoStateMachine
 from ...models.enums import EstadoVehiculo
-
 from ...models.enums import EstadoAlquiler
 from datetime import date
 
-from ...states.alquiler_state import (
-    AlquilerStateMachine,
-    Activo,
-    Finalizado,
-    Cancelado
-)
 
 def normalizar_campos_basicos(body: dict) -> dict:
     if "fecha_inicio" in body and body["fecha_inicio"] is not None:
@@ -94,13 +87,3 @@ def validar_estado(body: dict):
             f"El estado '{body['estado']}' no es válido. Estados válidos: "
             + ", ".join([r.value for r in EstadoAlquiler])
         )
-
-
-def obtener_estado_enum(estado_enum):
-    if estado_enum == EstadoAlquiler.ACTIVO:
-        return AlquilerStateMachine(Activo())
-    if estado_enum == EstadoAlquiler.FINALIZADO:
-        return AlquilerStateMachine(Finalizado())
-    if estado_enum == EstadoAlquiler.CANCELADO:
-        return AlquilerStateMachine(Cancelado())
-    raise BusinessException("Estado de alquiler no soportado")

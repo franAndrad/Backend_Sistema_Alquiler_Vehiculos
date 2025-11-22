@@ -16,3 +16,25 @@ class ReservaRepository(BaseRepository):
 
     def get_by_estado(self, estados):
         return Reserva.query.filter(Reserva.estado.in_(estados)).all()
+    
+    def find_activas_por_vehiculo(
+        self,
+        id_vehiculo: int,
+        fecha_inicio=None,
+        fecha_fin=None,
+    ) -> list[Reserva]:
+        query = Reserva.query.filter(
+            Reserva.id_vehiculo == id_vehiculo,
+            Reserva.estado.in_(
+                [EstadoReserva.CONFIRMADA]),
+        )
+
+        # Si paso fechas, filtro por solapamiento
+        if fecha_inicio is not None and fecha_fin is not None:
+            query = query.filter(
+                # solapamiento de intervalos: [A,B] con [C,D]
+                Reserva.fecha_fin >= fecha_inicio,
+                Reserva.fecha_inicio <= fecha_fin,
+            )
+
+        return query.all()

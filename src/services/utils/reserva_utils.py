@@ -3,13 +3,6 @@ from ...exceptions.domain_exceptions import ValidationException, BusinessExcepti
 from ...repository.cliente_repository import ClienteRepository
 from ...repository.reserva_repository import ReservaRepository
 from ...models.enums import EstadoReserva
-from ...states.reserva_state import (
-    ReservaStateMachine,
-    Pendiente,
-    Confirmada,
-    Cancelada,
-    Finalizada,
-)
 
 
 def normalizar_campos_reserva(body: dict) -> dict:
@@ -20,18 +13,6 @@ def normalizar_campos_reserva(body: dict) -> dict:
         body["fecha_fin"] = date.fromisoformat(body["fecha_fin"])
     
     return body
-
-
-def obtener_estado_enum(estado_enum):
-    if estado_enum == EstadoReserva.PENDIENTE:
-        return ReservaStateMachine(Pendiente())
-    if estado_enum == EstadoReserva.CONFIRMADA:
-        return ReservaStateMachine(Confirmada())
-    if estado_enum == EstadoReserva.CANCELADA:
-        return ReservaStateMachine(Cancelada())
-    if estado_enum == EstadoReserva.FINALIZADA:
-        return ReservaStateMachine(Finalizada())
-    raise BusinessException("Estado de alquiler no soportado")
 
 
 def validar_campos_obligatorios(body: dict, campos_obligatorios: list[str], entidad: str):

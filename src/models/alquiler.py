@@ -9,6 +9,7 @@ class Alquiler(db.Model):
     id_cliente = db.Column(db.Integer, db.ForeignKey("clientes.id"), nullable=False)
     id_vehiculo = db.Column(db.Integer, db.ForeignKey("vehiculos.id"), nullable=False)
     id_empleado = db.Column(db.Integer, db.ForeignKey("empleados.id"), nullable=False)
+    id_reserva = db.Column(db.Integer, db.ForeignKey("reservas.id"), nullable=True) 
 
     fecha_inicio = db.Column(db.Date, nullable=False)
     fecha_fin = db.Column(db.Date)

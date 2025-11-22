@@ -1,9 +1,11 @@
 from datetime import date
 from ..repository.alquiler_repository import AlquilerRepository
 from ..repository.vehiculo_repository import VehiculoRepository
-from ..exceptions.domain_exceptions import NotFoundException
+from ..repository.reserva_repository import ReservaRepository
+from ..exceptions.domain_exceptions import NotFoundException, BusinessException
 from ..states.alquiler_state import AlquilerStateMachine
 from ..states.vehiculo_state import VehiculoStateMachine
+from ..states.reserva_state import ReservaStateMachine
 from ..models.alquiler import Alquiler
 from ..utils.mappers import alquiler_to_response_dto
 from .utils.alquiler_utils import (
@@ -16,7 +18,6 @@ from .utils.alquiler_utils import (
 )
 
 from .utils.vehiculo_utils import (
-    obtener_estado_vehiculo_enum,
     validar_vehiculo_disponible,
 )
 
@@ -26,6 +27,7 @@ class AlquilerService:
     def __init__(self, alquiler_repository=None):
         self.alquiler_repo = alquiler_repository or AlquilerRepository()
         self.vehiculo_repo = VehiculoRepository()
+        self.reserva_repo = ReservaRepository()
 
 
     def listar_alquileres(self):
@@ -65,7 +67,6 @@ class AlquilerService:
         if not alquiler:
             raise NotFoundException("Alquiler no encontrado")
         
-
         vehiculo = self.vehiculo_repo.get_by_id(alquiler.id_vehiculo)
         if not vehiculo:
             raise NotFoundException("El vehículo asociado no existe")
@@ -76,6 +77,7 @@ class AlquilerService:
 
         self.alquiler_repo.delete(alquiler)
         self.alquiler_repo.save_changes()
+        self.vehiculo_repo.save_changes()
 
         return {"mensaje": "Alquiler eliminado correctamente"}
 
@@ -97,15 +99,27 @@ class AlquilerService:
         validar_cliente_existente(body["id_cliente"])
         validar_empleado_existente(body["id_empleado"])
         
+        #si viene id_reserva, la buscamos y validamos
+        id_reserva = body.get("id_reserva")
+        reserva = None
+        if id_reserva is not None:
+            reserva = self.reserva_repo.get_by_id(id_reserva)
+            if not reserva:
+                raise NotFoundException("La reserva asociada no existe")
+
+            # verificamos que coincidan cliente y vehículo
+            if reserva.id_cliente != body["id_cliente"] or reserva.id_vehiculo != body["id_vehiculo"]:
+                raise BusinessException("La reserva no corresponde a ese cliente/vehículo")
+
+            # reserva pasa a finalizada
+            maquina_reserva = ReservaStateMachine(reserva.estado)
+            maquina_reserva.finalizada()
+            reserva.estado = maquina_reserva.state_enum
+        
         vehiculo = self.vehiculo_repo.get_by_id(body["id_vehiculo"])
         if not vehiculo:
             raise NotFoundException("Vehículo asociado no encontrado")
-        
-        # finalizar reserva
-        maquina_estado = ReservaStateMachine(reserva.estado)
-        mensaje = maquina_estado.finalizada()
-        reserva.estado = maquina_estado.state_enum
-        
+
         # pasar vehiculo a alquilado
         maquina_estado_vehiculo = VehiculoStateMachine(vehiculo.estado)
         mensaje = maquina_estado_vehiculo.alquilar()
@@ -116,6 +130,7 @@ class AlquilerService:
             id_cliente=body["id_cliente"],
             id_empleado=body["id_empleado"],
             id_vehiculo=body["id_vehiculo"],
+            id_reserva=id_reserva if reserva else None,
             fecha_inicio=date.fromisoformat(body["fecha_inicio"]),
             fecha_fin=date.fromisoformat(body["fecha_fin"]),
             estado=maquina_estado.state_enum,
@@ -124,6 +139,8 @@ class AlquilerService:
 
         self.alquiler_repo.add(nuevo_alquiler)
         self.alquiler_repo.save_changes()
+        self.vehiculo_repo.save_changes()
+        self.reserva_repo.save_changes()
         return alquiler_to_response_dto(nuevo_alquiler)
 
 

@@ -4,12 +4,13 @@ Content-Type: application/json
 
 
 ### Crear reserva
+# Estado se setea internamente en PENDIENTE (FSM), no se envía en el body
 POST http://localhost:5000/reservas
 Content-Type: application/json
 
 {
     "id_cliente": 1,
-    "id_vehiculo": 2,
+    "id_vehiculo": 1,
     "fecha_inicio": "2026-01-10",
     "fecha_fin": "2026-01-15"
 }
@@ -21,6 +22,7 @@ Content-Type: application/json
 
 
 ### Actualizar reserva
+# Se usa para cambiar fechas / vehículo / cliente mientras la reserva esté en un estado válido.
 PUT http://localhost:5000/reservas/1
 Content-Type: application/json
 
@@ -53,16 +55,6 @@ GET http://localhost:5000/reservas/cliente/1
 Content-Type: application/json
 
 
-### Confirmar reserva
-PATCH http://localhost:5000/reservas/1/confirmar
-Content-Type: application/json
-
-
 ### Cancelar reserva
 PATCH http://localhost:5000/reservas/1/cancelar
-Content-Type: application/json
-
-
-### Finalizar reserva
-PATCH http://localhost:5000/reservas/1/finalizar
 Content-Type: application/json

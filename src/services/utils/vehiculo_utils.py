@@ -1,13 +1,11 @@
 from ...exceptions.domain_exceptions import ValidationException, BusinessException
 from ...repository.vehiculo_repository import VehiculoRepository
+from ...repository.reserva_repository import ReservaRepository
+from ...repository.alquiler_repository import AlquilerRepository
 from ...models.enums import TipoVehiculo
+from datetime import date
 from datetime import datetime
 from ...models.enums import EstadoVehiculo
-from ...states.vehiculo_state import (
-    VehiculoStateMachine,
-    Disponible,
-    Alquilado,
-)
 
 def normalizar_campos(body: dict) -> dict:
     """Limpia espacios y normaliza strings."""
@@ -33,14 +31,58 @@ def validar_anio(body: dict):
         raise ValidationException("El año del vehículo no es válido")
 
 
-def validar_vehiculo_disponible(id_vehiculo: int):
+def validar_vehiculo_disponible(
+    id_vehiculo: int,
+    fecha_inicio: str | date | None = None,
+    fecha_fin: str | date | None = None,
+):
+    """
+    Valida que el vehículo:
+    - exista
+    - esté en estado DISPONIBLE
+    - no tenga reservas activas solapadas
+    - no tenga alquileres activos solapados
+    """
+
     vehiculo_repo = VehiculoRepository()
+    reserva_repo = ReservaRepository()
+    alquiler_repo = AlquilerRepository()
+    
     vehiculo = vehiculo_repo.get_by_id(id_vehiculo)
     if not vehiculo:
         raise ValidationException("El vehículo no existe")
 
+    # 1) Estado actual del vehículo
     if vehiculo.estado != EstadoVehiculo.DISPONIBLE:
         raise BusinessException("El vehículo no se encuentra disponible")
+
+    # Si no me mandan fechas, hasta acá llega la validación
+    if fecha_inicio is None or fecha_fin is None:
+        return
+
+    # Normalizo a date si vienen como string
+    if isinstance(fecha_inicio, str):
+        fecha_inicio = date.fromisoformat(fecha_inicio)
+    if isinstance(fecha_fin, str):
+        fecha_fin = date.fromisoformat(fecha_fin)
+
+    # 2) Reservas activas que se solapen
+    reservas_activas = reserva_repo.find_activas_por_vehiculo(
+        id_vehiculo,
+        fecha_inicio,
+        fecha_fin,
+    )
+    if reservas_activas:
+        raise BusinessException("El vehículo tiene reservas activas en ese período")
+
+    # 3) Alquileres activos que se solapen
+    alquileres_activos = alquiler_repo.find_activos_por_vehiculo(
+        id_vehiculo,
+        fecha_inicio,
+        fecha_fin,
+    )
+    if alquileres_activos:
+        raise BusinessException("El vehículo tiene alquileres activos en ese período")
 
 
 def validar_patente(body: dict):
@@ -69,9 +111,3 @@ def validar_tipo(body: dict):
             f"El tipo '{body['tipo']}' no es válido. Tipos válidos: "
             + ", ".join([t.value for t in TipoVehiculo])
         )
-
-def obtener_estado_vehiculo_enum(estado_enum):
-    if estado_enum == EstadoVehiculo.DISPONIBLE:
-        return VehiculoStateMachine(Disponible())
-    if estado_enum == EstadoVehiculo.ALQUILADO:
-        return VehiculoStateMachine(Alquilado())

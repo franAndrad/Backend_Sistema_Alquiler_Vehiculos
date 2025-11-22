@@ -1,6 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from ..models.enums import EstadoReserva
+from ..exceptions.domain_exceptions import BusinessException
 
 
 class ReservaStateMachine:
@@ -9,14 +10,12 @@ class ReservaStateMachine:
         self._state: EstadoReservaState | None = None
 
         if state is None:
-            self.transition_to(Pendiente())
+            self.transition_to(Confirmada())
         else:
             self._init_from_enum(state)
         
     def _init_from_enum(self, estado: EstadoReserva):
-        if estado == EstadoReserva.PENDIENTE:
-            self.transition_to(Pendiente())
-        elif estado == EstadoReserva.CONFIRMADA:
+        if estado == EstadoReserva.CONFIRMADA:
             self.transition_to(Confirmada())
         elif estado == EstadoReserva.CANCELADA:
             self.transition_to(Cancelada())
@@ -28,9 +27,6 @@ class ReservaStateMachine:
     def transition_to(self, state: EstadoReservaState):
         self.__state = state
         self.__state.context = self
-        
-    def pendiente(self) -> str:
-        return self.__state.pendiente()
         
     def confirmar(self) -> str:
         return self.__state.confirmar()
@@ -58,10 +54,6 @@ class EstadoReservaState(ABC):
         self._context = context
         
     @abstractmethod
-    def pendiente(self) -> str:
-        pass
-        
-    @abstractmethod
     def confirmar(self) -> str:
         pass
     
@@ -72,34 +64,12 @@ class EstadoReservaState(ABC):
     @abstractmethod
     def finalizada(self) -> str:
         pass
-    
-    
-class Pendiente(EstadoReservaState):
-    state_value = EstadoReserva.PENDIENTE
-    
-    def pendiente(self) -> str:
-        raise Exception("La reserva ya está en estado pendiente.")
-    
-    def confirmar(self) -> str:
-        self.context.transition_to(Confirmada())
-        return "Reserva confirmada exitosamente."
-    
-    def cancelar(self) -> str:
-        self.context.transition_to(Cancelada())
-        return "Reserva cancelada exitosamente."
-    
-    def finalizada(self):
-        raise Exception("No se puede finalizar una reserva pendiente.")
-    
-    
+     
 class Confirmada(EstadoReservaState):
     state_value = EstadoReserva.CONFIRMADA
     
-    def pendiente(self) -> str:
-        raise Exception("No se puede volver a pendiente una reserva confirmada.")
-    
     def confirmar(self) -> str:
-        raise Exception("La reserva ya está confirmada.")
+        raise BusinessException("La reserva ya está confirmada.")
     
     def cancelar(self) -> str:
         self.context.transition_to(Cancelada())
@@ -113,31 +83,25 @@ class Confirmada(EstadoReservaState):
 class Cancelada(EstadoReservaState):
     state_value = EstadoReserva.CANCELADA
     
-    def pendiente(self) -> str:
-        raise Exception("No se puede volver a pendiente una reserva cancelada.")
-    
     def confirmar(self) -> str:
-        raise Exception("No se puede confirmar una reserva cancelada.")
+        raise BusinessException("No se puede confirmar una reserva cancelada.")
     
     def cancelar(self) -> str:
-        raise Exception("La reserva ya está cancelada.")
+        raise BusinessException("La reserva ya está cancelada.")
     
     def finalizada(self):
-        raise Exception("No se puede finalizar una reserva cancelada.")
+        raise BusinessException("No se puede finalizar una reserva cancelada.")
     
     
 class Finalizada(EstadoReservaState):
     state_value = EstadoReserva.FINALIZADA
     
-    def pendiente(self) -> str:
-        raise Exception("No se puede volver a pendiente una reserva finalizada.")
-    
     def confirmar(self) -> str:
-        raise Exception("No se puede confirmar una reserva finalizada.")
+        raise BusinessException("No se puede confirmar una reserva finalizada.")
     
     def cancelar(self) -> str:
-        raise Exception("No se puede cancelar una reserva finalizada.")
+        raise BusinessException("No se puede cancelar una reserva finalizada.")
     
     def finalizada(self) -> str:
-        raise Exception("La reserva ya está finalizada.")
+        raise BusinessException("La reserva ya está finalizada.")
     
