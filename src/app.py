@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from .config import Config
 from .extensions.db import db
 from .exceptions.error_handlers import register_error_handlers
@@ -18,6 +19,9 @@ from .utils.db_initilizer import DBInitializer
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    
+    # Habilitar CORS para permitir peticiones desde el frontend
+    CORS(app, resources={r"/*": {"origins": "*"}})
     
     app.json_provider_class = UTF8JSONProvider
     app.json = app.json_provider_class(app)
