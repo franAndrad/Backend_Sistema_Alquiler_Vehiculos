@@ -2,6 +2,12 @@ from ...exceptions.domain_exceptions import ValidationException
 from ...models.enums import TipoVehiculo
 from datetime import datetime
 
+from ...models.enums import EstadoVehiculo
+from ...states.vehiculo_state import (
+    VehiculoStateMachine,
+    Disponible,
+    Alquilado,
+)
 
 def normalizar_campos(body: dict) -> dict:
     """Limpia espacios y normaliza strings."""
@@ -53,4 +59,9 @@ def validar_tipo(body: dict):
             f"El tipo '{body['tipo']}' no es válido. Tipos válidos: "
             + ", ".join([t.value for t in TipoVehiculo])
         )
-    
+
+def obtener_estado_vehiculo_enum(estado_enum):
+    if estado_enum == EstadoVehiculo.DISPONIBLE:
+        return VehiculoStateMachine(Disponible())
+    if estado_enum == EstadoVehiculo.ALQUILADO:
+        return VehiculoStateMachine(Alquilado())

@@ -14,6 +14,7 @@ from .utils.vehiculo_utils import (
     validar_patente,
     validar_costo,
     validar_tipo,
+    obtener_estado_vehiculo_enum,
 )
 
 

@@ -16,6 +16,11 @@ from .utils.alquiler_utils import (
     obtener_estado_enum,
 )
 
+from .utils.vehiculo_utils import (
+    obtener_estado_vehiculo_enum,
+)
+
+
 class AlquilerService:
 
     def __init__(self, alquiler_repository=None, cliente_repository=None, empleado_repository=None, vehiculo_repository=None):
@@ -51,10 +56,23 @@ class AlquilerService:
         alquiler = self.alquiler_repo.get_by_id(alquiler_id)
         if not alquiler:
             raise NotFoundException("Alquiler no encontrado")
+        
+
+        vehiculo = self.vehiculo_repo.get_by_id(alquiler.id_vehiculo)
+        if not vehiculo:
+            raise NotFoundException("El vehículo asociado no existe")
+
+        estado_vehiculo_enum = obtener_estado_vehiculo_enum(vehiculo.estado)
+        estado_vehiculo_enum.desocupar()
+        vehiculo.estado = estado_vehiculo_enum.estado_enum
+
 
         self.alquiler_repo.delete(alquiler)
+        self.alquiler_repo.save_changes()
+
         return {"mensaje": "Alquiler eliminado correctamente"}
-    
+
+
     # Verificar si se pueden crear alquileres iguales
     def crear_alquiler(self, body):
         body = dict(body)
@@ -80,7 +98,11 @@ class AlquilerService:
         vehiculo = self.vehiculo_repo.get_by_id(body["id_vehiculo"])
         if not vehiculo:
             raise NotFoundException("El vehículo asociado no existe")
-              
+        
+        estado_vehiculo = obtener_estado_vehiculo_enum(vehiculo.estado)
+        estado_vehiculo.alquilar()
+        vehiculo.estado = estado_vehiculo.estado_enum
+            
         nuevo_alquiler = Alquiler(
             id_cliente=body["id_cliente"],
             id_empleado=body["id_empleado"],
@@ -140,9 +162,18 @@ class AlquilerService:
             raise NotFoundException("Alquiler no encontrado")
 
         estado_enum = obtener_estado_enum(alquiler.estado)
-
         estado_enum.finalizar()
         alquiler.estado = estado_enum.estado_enum
+
+
+        vehiculo = self.vehiculo_repo.get_by_id(alquiler.id_vehiculo)
+        if not vehiculo:
+            raise NotFoundException("Vehículo asociado no encontrado")
+        estado_vehiculo = obtener_estado_vehiculo_enum(vehiculo.estado)
+        estado_vehiculo.devolver()
+        vehiculo.estado = estado_vehiculo.estado_enum
+
+        
 
         self.alquiler_repo.save_changes()
         return alquiler_to_response_dto(alquiler)
@@ -152,11 +183,20 @@ class AlquilerService:
         alquiler = self.alquiler_repo.get_by_id(alquiler_id)
         if not alquiler:
             raise NotFoundException("Alquiler no encontrado")
+        
+        vehiculo = self.vehiculo_repo.get_by_id(alquiler.id_vehiculo)
+        if not vehiculo:
+            raise NotFoundException("Vehículo asociado no encontrado")
+        
 
         estado_enum = obtener_estado_enum(alquiler.estado)
 
         estado_enum.cancelar()
         alquiler.estado = estado_enum.estado_enum
+
+        estado_vehiculo = obtener_estado_vehiculo_enum(vehiculo.estado)
+        estado_vehiculo.devolver()
+        vehiculo.estado = estado_vehiculo.estado_enum
 
         self.alquiler_repo.save_changes()
         return alquiler_to_response_dto(alquiler)
