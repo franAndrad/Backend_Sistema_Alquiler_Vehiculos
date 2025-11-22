@@ -1,2 +1,17 @@
-GET http://localhost:5000/health
+@baseUrl = http://localhost:5000
+
+### Login empleado
+# @name login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
+
+{
+    "email": "admin@empresa.com",
+    "password": "admin123"
+}
+
+
+### Health check
+GET {{baseUrl}}/health
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}

@@ -55,7 +55,8 @@ class EmpleadoService:
         body = dict(body)
         body = normalizar_campos_basicos(body)
 
-        campos_obligatorios = ["nombre", "apellido", "dni", "email", "rol"]
+        campos_obligatorios = ["nombre", "apellido",
+                               "dni", "email", "rol", "password"]
         
         validar_campos_obligatorios(body, campos_obligatorios, "empleado")
         validar_nombre_apellido(body["nombre"], body["apellido"])
@@ -79,6 +80,8 @@ class EmpleadoService:
             email=body["email"],
             rol=body["rol"],
         )
+        
+        empleado.set_password(body["password"])
 
         self.empleado_repo.add(empleado)
         return empleado_to_response_dto(empleado)
@@ -116,6 +119,10 @@ class EmpleadoService:
         empleado.dni = body["dni"]
         empleado.email = body["email"]
         empleado.rol = body["rol"]
+
+        nueva_password = body.get("password")
+        if nueva_password:
+            empleado.set_password(nueva_password)
 
         self.empleado_repo.save_changes()
         return empleado_to_response_dto(empleado)

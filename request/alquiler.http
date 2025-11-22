@@ -1,14 +1,28 @@
-### Listar alquileres
-GET http://localhost:5000/alquileres
+@baseUrl = http://127.0.0.1:5000
+
+### Login empleado
+# @name login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
+{
+    "email": "admin@empresa.com",
+    "password": "admin123"
+}
+
+
+### Listar alquileres
+GET {{baseUrl}}/alquileres
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Crear alquiler
 # "costo_total" se calcula automaticamente.
 # "id_reserva" es opcional, se usa si el alquiler proviene de una reserva confirmada.
-POST http://localhost:5000/alquileres
+POST {{baseUrl}}/alquileres
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "id_cliente": 1,
@@ -19,37 +33,45 @@ Content-Type: application/json
 
 
 ### Obtener alquiler por ID
-GET http://localhost:5000/alquileres/1
+GET {{baseUrl}}/alquileres/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Obtener alquiler por estado o estados
-GET http://localhost:5000/alquileres/estado/ACTIVO
+GET {{baseUrl}}/alquileres/estado/ACTIVO
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Obtener alquileres por período
-GET http://localhost:5000/alquileres/periodo?desde=2024-01-01&hasta=2026-03-01
+GET {{baseUrl}}/alquileres/periodo?desde=2024-01-01&hasta=2026-03-01
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Obtener vehículos más alquilados (por defecto 5)
-GET  http://localhost:5000/alquileres/vehiculos-mas-alquilados
+GET  {{baseUrl}}/alquileres/vehiculos-mas-alquilados
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Obtener vehículos más alquilados (cantidad personalizada)
-GET http://localhost:5000/alquileres/vehiculos-mas-alquilados?limit=10
+GET {{baseUrl}}/alquileres/vehiculos-mas-alquilados?limit=10
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Obtener vehiculos mas alquilados en un período específico y con cantidad personalizada
-GET http://localhost:5000/alquileres/vehiculos-mas-alquilados?desde=2025-01-01&hasta=2025-12-31&limit=3
+GET {{baseUrl}}/alquileres/vehiculos-mas-alquilados?desde=2025-01-01&hasta=2025-12-31&limit=3
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
+
 
 ### Actualizar alquiler
-PUT http://localhost:5000/alquileres/1
+PUT {{baseUrl}}/alquileres/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "id_cliente": 1,
@@ -61,15 +83,18 @@ Content-Type: application/json
 
 
 ### Listar alquileres por cliente
-GET http://localhost:5000/alquileres/cliente/1
+GET {{baseUrl}}/alquileres/cliente/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Listar alquileres por vehículo
-GET http://localhost:5000/alquileres/vehiculo/2
+GET {{baseUrl}}/alquileres/vehiculo/2
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Finalizar alquiler
-PATCH http://localhost:5000/alquileres/2/finalizar
+PATCH {{baseUrl}}/alquileres/2/finalizar
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}

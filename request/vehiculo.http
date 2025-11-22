@@ -1,11 +1,26 @@
-### Listar vehículos
-GET http://localhost:5000/vehiculos
+@baseUrl = http://127.0.0.1:5000
+
+### Login empleado
+# @name login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
+
+{
+    "email": "admin@empresa.com",
+    "password": "admin123"
+}
+
+
+### Listar vehículos
+GET {{baseUrl}}/vehiculos
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Crear vehículo
-POST http://localhost:5000/vehiculos
+POST {{baseUrl}}/vehiculos
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "id_modelo": 1,
@@ -17,18 +32,21 @@ Content-Type: application/json
 
 
 ### Obtener vehículo por ID
-GET http://localhost:5000/vehiculos/1
+GET {{baseUrl}}/vehiculos/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Obtener vehículos por estado o estados
-GET http://localhost:5000/vehiculos/estado/DISPONIBLE
+GET {{baseUrl}}/vehiculos/estado/DISPONIBLE
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Actualizar vehículo
-PUT http://localhost:5000/vehiculos/1
+PUT {{baseUrl}}/vehiculos/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "id_modelo": 1,
@@ -40,5 +58,6 @@ Content-Type: application/json
 
 
 ### Eliminar vehículo
-DELETE http://localhost:5000/vehiculos/1
+DELETE {{baseUrl}}/vehiculos/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}

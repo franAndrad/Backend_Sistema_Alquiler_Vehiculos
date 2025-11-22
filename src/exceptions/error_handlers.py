@@ -1,10 +1,12 @@
-from flask import jsonify
 from .domain_exceptions import (
     DomainException,
     BusinessException,
     NotFoundException,
-    ValidationException
+    ValidationException,
 )
+
+from flask import jsonify
+from ..utils.auth_utils import AuthorizationException 
 
 def register_error_handlers(app):
 
@@ -19,6 +21,10 @@ def register_error_handlers(app):
     @app.errorhandler(ValidationException)
     def handle_validation(e):
         return jsonify({"error": str(e)}), 422
+
+    @app.errorhandler(AuthorizationException)
+    def handle_authz(e):
+        return jsonify({"error": str(e)}), 403
 
     @app.errorhandler(DomainException)
     def handle_domain(e):

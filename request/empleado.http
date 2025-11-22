@@ -1,21 +1,38 @@
-### Listar empleados
-GET http://localhost:5000/empleados
+@baseUrl = http://127.0.0.1:5000
+
+### Login empleado
+# @name login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
+
+{
+    "email": "admin@empresa.com",
+    "password": "admin123"
+}
+
+
+### Listar empleados
+GET {{baseUrl}}/empleados
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Obtener empleado por email
-GET http://localhost:5000/empleados/email/laura.gomez@example.com
+GET {{baseUrl}}/empleados/email/laura.gomez@example.com
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Obtener empleado por DNI
-GET http://localhost:5000/empleados/dni/22322222
+GET {{baseUrl}}/empleados/dni/22322222
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Crear empleado
-POST http://localhost:5000/empleados
+POST {{baseUrl}}/empleados
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "nombre": "Laura",
@@ -24,18 +41,21 @@ Content-Type: application/json
     "direccion": "Calle Falsa 123",
     "telefono": "1234567",
     "email": "laura.gomez1@example.com",
-    "rol": "ADMIN"
+    "rol": "ATENCION",
+    "password": "admin123"
 }
 
 
 ### Obtener empleado por ID
-GET http://localhost:5000/empleados/1
+GET {{baseUrl}}/empleados/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Actualizar empleado
-PUT http://localhost:5000/empleados/1
+PUT {{baseUrl}}/empleados/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "nombre": "Laura",
@@ -44,5 +64,5 @@ Content-Type: application/json
     "direccion": "Calle Verdadera 456",
     "telefono": "7684291",
     "email": "laura.gomezs@example.com",
-    "rol": "VENDEDOR"
+    "rol": "ATENCION"
 }

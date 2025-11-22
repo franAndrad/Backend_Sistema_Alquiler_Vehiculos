@@ -1,5 +1,6 @@
 from ..extensions.db import db
 from .enums import RolEmpleado
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class Empleado(db.Model):
@@ -12,6 +13,13 @@ class Empleado(db.Model):
     direccion = db.Column(db.String(200))
     telefono = db.Column(db.String(30))
     email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
     rol = db.Column(db.Enum(RolEmpleado), nullable=False)
 
     alquileres = db.relationship("Alquiler", back_populates="empleado")
+    
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)

@@ -13,7 +13,7 @@ class EmpleadoRepository(BaseRepository):
 
 
     def find_by_email(self, email):
-        return Empleado.query.filter_by(email=email).first()
+        return Empleado.query.filter_by(email=email.lower()).first()
 
 
     def list_by_rol(self, rol):

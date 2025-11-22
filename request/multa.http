@@ -1,11 +1,25 @@
-### Listar multas
-GET http://localhost:5000/multas
+@baseUrl = http://127.0.0.1:5000
+
+### Login empleado
+# @name login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
+{
+    "email": "admin@empresa.com",
+    "password": "admin123"
+}
+
+
+### Listar multas
+GET {{baseUrl}}/multas
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 ### Crear multa
-POST http://localhost:5000/multas
+POST {{baseUrl}}/multas
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "id_alquiler": 1,
@@ -16,13 +30,15 @@ Content-Type: application/json
 
 
 ### Obtener multa por ID
-GET http://localhost:5000/multas/1
+GET {{baseUrl}}/multas/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Crear multa
-POST http://localhost:5000/multas
+POST {{baseUrl}}/multas
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "id_alquiler": 2,
@@ -33,8 +49,9 @@ Content-Type: application/json
 
 
 ### Actualizar multa
-PUT http://localhost:5000/multas/1
+PUT {{baseUrl}}/multas/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "id_alquiler": 1,
@@ -45,5 +62,6 @@ Content-Type: application/json
 
 
 ### Eliminar multa
-DELETE http://localhost:5000/multas/1
+DELETE {{baseUrl}}/multas/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}

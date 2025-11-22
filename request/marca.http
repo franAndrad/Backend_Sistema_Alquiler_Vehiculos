@@ -1,11 +1,24 @@
-### Listar marcas
-GET http://localhost:5000/marcas
+@baseUrl = http://127.0.0.1:5000
+
+### Login empleado
+# @name login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
+{
+    "email": "admin@empresa.com",
+    "password": "admin123"
+}
+
+### Listar marcas
+GET {{baseUrl}}/marcas
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 ### Crear marca
-POST http://localhost:5000/marcas
+POST {{baseUrl}}/marcas
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "nombre": "BM"
@@ -13,18 +26,21 @@ Content-Type: application/json
 
 
 ### Obtener marca por ID
-GET http://localhost:5000/marcas/1
+GET {{baseUrl}}/marcas/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Obtener marca por nombre
-GET http://localhost:5000/marcas/nombre/BMW
+GET {{baseUrl}}/marcas/nombre/BMW
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Actualizar marca
-PUT http://localhost:5000/marcas/1
+PUT {{baseUrl}}/marcas/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "nombre": "BMW"
@@ -32,5 +48,6 @@ Content-Type: application/json
 
 
 ### Eliminar marca
-DELETE http://localhost:5000/marcas/1
+DELETE {{baseUrl}}/marcas/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}

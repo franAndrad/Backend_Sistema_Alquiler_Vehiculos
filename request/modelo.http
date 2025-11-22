@@ -1,11 +1,26 @@
-### Listar modelos
-GET http://localhost:5000/modelos
+@baseUrl = http://127.0.0.1:5000
+
+### Login empleado
+# @name login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
+
+{
+    "email": "admin@empresa.com",
+    "password": "admin123"
+}
+
+
+### Listar modelos
+GET {{baseUrl}}/modelos
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Crear modelo
-POST http://localhost:5000/modelos
+POST {{baseUrl}}/modelos
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "id_marca": 1,
@@ -15,14 +30,15 @@ Content-Type: application/json
 
 
 ### Obtener modelo por ID
-GET http://localhost:5000/modelos/1
+GET {{baseUrl}}/modelos/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Actualizar modelo
-PUT http://localhost:5000/modelos/1
+PUT {{baseUrl}}/modelos/1
 Content-Type: application/json
-
+Authorization: Bearer {{login.response.body.access_token}}
 {
     "id_marca": 1,
     "nombre": "Serie 4",
@@ -31,5 +47,6 @@ Content-Type: application/json
 
 
 ### Eliminar modelo
-DELETE http://localhost:5000/modelos/1
+DELETE {{baseUrl}}/modelos/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}

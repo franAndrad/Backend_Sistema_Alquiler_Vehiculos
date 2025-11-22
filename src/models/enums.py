@@ -20,13 +20,13 @@ class EstadoReserva(enum.Enum):
 
 class RolEmpleado(enum.Enum):
     ADMIN = "ADMIN"
-    VENDEDOR = "VENDEDOR"
     ATENCION = "ATENCION"
 
 
 class TipoMantenimiento(enum.Enum):
     PREVENTIVO = "PREVENTIVO"
     CORRECTIVO = "CORRECTIVO"
+
 
 class TipoVehiculo(enum.Enum):
     SEDAN = "SEDAN"

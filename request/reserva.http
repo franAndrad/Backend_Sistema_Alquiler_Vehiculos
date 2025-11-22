@@ -1,11 +1,26 @@
-### Listar reservas
-GET http://localhost:5000/reservas
+@baseUrl = http://127.0.0.1:5000
+
+### Login empleado
+# @name login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
+
+{
+    "email": "admin@empresa.com",
+    "password": "admin123"
+}
+
+
+### Listar reservas
+GET {{baseUrl}}/reservas
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Crear reserva
-POST http://localhost:5000/reservas
+POST {{baseUrl}}/reservas
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "id_cliente": 1,
@@ -16,14 +31,17 @@ Content-Type: application/json
 
 
 ### Obtener reserva por ID
-GET http://localhost:5000/reservas/1
+
+GET {{baseUrl}}/reservas/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Actualizar reserva
 # Se usa para cambiar fechas / vehículo / cliente mientras la reserva esté en un estado válido.
-PUT http://localhost:5000/reservas/1
+PUT {{baseUrl}}/reservas/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "id_cliente": 1,
@@ -34,20 +52,23 @@ Content-Type: application/json
 
 
 ### Obtener reservas por estado (uno o varios, separados por coma)
-GET http://localhost:5000/reservas/estado/CANCELADA
+GET {{baseUrl}}/reservas/estado/CANCELADA
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Otro ejemplo con múltiples estados
-GET http://localhost:5000/reservas/estado/CANCELADA,CONFIRMADA
+GET {{baseUrl}}/reservas/estado/CANCELADA,CONFIRMADA
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Obtener reservas por cliente  
-GET http://localhost:5000/reservas/cliente/1
+GET {{baseUrl}}/reservas/cliente/1
 Content-Type: application/json
-
+Authorization: Bearer {{login.response.body.access_token}}
 
 ### Cancelar reserva
-PATCH http://localhost:5000/reservas/1/cancelar
+PATCH {{baseUrl}}/reservas/1/cancelar
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}

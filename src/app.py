@@ -1,7 +1,10 @@
 from flask import Flask
 from .config import Config
 from .extensions.db import db
+from .extensions.jwt_ext import init_jwt
 from .exceptions.error_handlers import register_error_handlers
+
+# Blueprints
 from .controllers.health_controller import health_bp
 from .controllers.cliente_controller import cliente_bp
 from .controllers.empleado_controller import empleado_bp
@@ -11,28 +14,29 @@ from .controllers.multa_controller import multa_bp
 from .controllers.alquiler_controller import alquiler_bp
 from .controllers.vehiculo_controller import vehiculo_bp
 from .controllers.reserva_controller import reserva_bp
-from . import models
+from .controllers.auth_controller import auth_bp  # si lo agregás
 from .utils.utf8_json_provider import UTF8JSONProvider
 from .utils.db_initilizer import DBInitializer
+
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-    
+
     app.json_provider_class = UTF8JSONProvider
     app.json = app.json_provider_class(app)
-    
-    initializer = DBInitializer()
-    
-    initializer.init_database(app.config["SQLALCHEMY_DATABASE_URI"])
-    
+
     db.init_app(app)
-    
-    initializer.init_tables(app, db)
-    
+    init_jwt(app)
     register_error_handlers(app)
 
+    with app.app_context():
+        initializer = DBInitializer()
+        initializer.init_database(app.config["SQLALCHEMY_DATABASE_URI"])
+        initializer.init_tables(app, db)
+
     app.register_blueprint(health_bp)
+    app.register_blueprint(auth_bp)      
     app.register_blueprint(cliente_bp)
     app.register_blueprint(empleado_bp)
     app.register_blueprint(marca_bp)

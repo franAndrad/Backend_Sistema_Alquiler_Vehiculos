@@ -1,10 +1,23 @@
+@baseUrl = http://127.0.0.1:5000
+
+### Login empleado
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@empresa.com",
+    "password": "admin123"
+}
+
+
 ### Listar clientes
-GET http://localhost:5000/clientes
+GET {{baseUrl}}/clientes
 Content-Type: application/json
 
 
 ### Crear cliente
-POST http://localhost:5000/clientes
+POST {{baseUrl}}/clientes
 Content-Type: application/json
 
 {
@@ -20,23 +33,27 @@ Content-Type: application/json
 
 
 ### Obtener cliente por ID
-GET http://localhost:5000/clientes/1
+GET {{baseUrl}}/clientes/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Obtener cliente por DNI
-GET http://localhost:5000/clientes/dni/11111111
+GET {{baseUrl}}/clientes/dni/11111111
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Obtener cliente por email
-GET http://localhost:5000/clientes/email/fran.eze.andrade@gmail.com
+GET {{baseUrl}}/clientes/email/fran.eze.andrade@gmail.com
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Actualizar cliente
-PUT http://localhost:5000/clientes/1
+PUT {{baseUrl}}/clientes/1
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "nombre": "Francisco",
@@ -51,5 +68,6 @@ Content-Type: application/json
 
 
 ### Eliminar cliente
-DELETE http://localhost:5000/clientes/3
+DELETE {{baseUrl}}/clientes/3
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
