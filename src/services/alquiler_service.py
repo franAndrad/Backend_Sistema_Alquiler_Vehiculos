@@ -50,36 +50,6 @@ class AlquilerService:
     def listar_alquileres_por_vehiculo(self, vehiculo_id):
         alquileres = self.alquiler_repo.find_by_vehiculo_id(vehiculo_id)
         return [alquiler_to_response_dto(a) for a in alquileres]
-    
-    
-    # No se pueden eliminar alquileres, solo finalizar o cancelar
-    # def eliminar_alquiler(self, alquiler_id):
-    #     alquiler = self.alquiler_repo.get_by_id(alquiler_id)
-    #     if not alquiler:
-    #         raise NotFoundException("Alquiler no encontrado")
-
-    #     self.alquiler_repo.delete(alquiler)
-    #     return {"mensaje": "Alquiler eliminado correctamente"}
-    
-    
-    def eliminar_alquiler(self, alquiler_id):
-        alquiler = self.alquiler_repo.get_by_id(alquiler_id)
-        if not alquiler:
-            raise NotFoundException("Alquiler no encontrado")
-        
-        vehiculo = self.vehiculo_repo.get_by_id(alquiler.id_vehiculo)
-        if not vehiculo:
-            raise NotFoundException("El vehículo asociado no existe")
-
-        estado_vehiculo_enum = obtener_estado_vehiculo_enum(vehiculo.estado)
-        estado_vehiculo_enum.desocupar()
-        vehiculo.estado = estado_vehiculo_enum.estado_enum
-
-        self.alquiler_repo.delete(alquiler)
-        self.alquiler_repo.save_changes()
-        self.vehiculo_repo.save_changes()
-
-        return {"mensaje": "Alquiler eliminado correctamente"}
 
 
     def crear_alquiler(self, body):
@@ -89,17 +59,17 @@ class AlquilerService:
         maquina_estado = AlquilerStateMachine()
         
         campos_obligatorios = [
-            "id_cliente", "id_empleado", "id_vehiculo",
-            "fecha_inicio", "fecha_fin", "estado"
+            "id_cliente", "id_empleado", "id_vehiculo"
         ]
 
         validar_campos_obligatorios(body, campos_obligatorios, "alquiler")
         validar_ids_foreign_keys(body["id_cliente"], body["id_empleado"], body["id_vehiculo"])
-        validar_fechas(body["fecha_inicio"], body["fecha_fin"])
         validar_cliente_existente(body["id_cliente"])
         validar_empleado_existente(body["id_empleado"])
+
         
-        #si viene id_reserva, la buscamos y validamos
+        
+        # si viene id_reserva, la buscamos y validamos
         id_reserva = body.get("id_reserva")
         reserva = None
         if id_reserva is not None:
@@ -131,8 +101,8 @@ class AlquilerService:
             id_empleado=body["id_empleado"],
             id_vehiculo=body["id_vehiculo"],
             id_reserva=id_reserva if reserva else None,
-            fecha_inicio=date.fromisoformat(body["fecha_inicio"]),
-            fecha_fin=date.fromisoformat(body["fecha_fin"]),
+            fecha_inicio=date.today(),
+            fecha_fin=None,
             estado=maquina_estado.state_enum,
             costo_total=0.0
         )
@@ -154,7 +124,7 @@ class AlquilerService:
 
         campos_obligatorios = [
             "id_cliente", "id_empleado", "id_vehiculo",
-            "fecha_inicio", "fecha_fin", "estado"
+            "fecha_inicio", "fecha_fin"
         ]
 
         validar_campos_obligatorios(body, campos_obligatorios, "alquiler")
@@ -186,29 +156,10 @@ class AlquilerService:
         if not vehiculo:
             raise NotFoundException("Vehículo asociado no encontrado")
         
+        alquiler.fecha_fin = date.today()
+        
         maquina_estado = AlquilerStateMachine(alquiler.estado)
         mensaje = maquina_estado.finalizar()
-        alquiler.estado = maquina_estado.state_enum
-        
-        maquina_vehiculo = VehiculoStateMachine(vehiculo.estado)
-        maquina_vehiculo.devolver()
-        vehiculo.estado = maquina_vehiculo.state_enum
-
-        self.alquiler_repo.save_changes()
-        return {"mensaje": mensaje}
-    
-    
-    def cancelar_alquiler(self, alquiler_id):
-        alquiler = self.alquiler_repo.get_by_id(alquiler_id)
-        if not alquiler:
-            raise NotFoundException("Alquiler no encontrado")
-        
-        vehiculo = self.vehiculo_repo.get_by_id(alquiler.id_vehiculo)
-        if not vehiculo:
-            raise NotFoundException("Vehículo asociado no encontrado")
-        
-        maquina_estado = AlquilerStateMachine(alquiler.estado)
-        mensaje = maquina_estado.cancelar()
         alquiler.estado = maquina_estado.state_enum
         
         maquina_vehiculo = VehiculoStateMachine(vehiculo.estado)

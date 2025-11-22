@@ -4,7 +4,6 @@ Content-Type: application/json
 
 
 ### Crear reserva
-# Estado se setea internamente en PENDIENTE (FSM), no se envía en el body
 POST http://localhost:5000/reservas
 Content-Type: application/json
 
@@ -31,7 +30,6 @@ Content-Type: application/json
     "id_vehiculo": 2,
     "fecha_inicio": "2026-01-12",
     "fecha_fin": "2026-01-18",
-    "estado": "PENDIENTE"
 }
 
 

@@ -4,7 +4,6 @@ Content-Type: application/json
 
 
 ### Crear alquiler
-# QUITAR ESTADO DE CAMPO OBLIGATIORIO EN SERVICE!!!
 # "costo_total" se calcula automaticamente.
 # "id_reserva" es opcional, se usa si el alquiler proviene de una reserva confirmada.
 POST http://localhost:5000/alquileres
@@ -14,9 +13,7 @@ Content-Type: application/json
     "id_cliente": 1,
     "id_empleado": 1,
     "id_vehiculo": 1,
-    "fecha_inicio": "2026-01-10",
-    "fecha_fin": "2026-01-15",
-    "estado": "ACTIVO"
+    "id_reserva": 1
 }
 
 
@@ -26,7 +23,6 @@ Content-Type: application/json
 
 
 ### Actualizar alquiler
-# QUITAR ESTADO EN SERVICE !!!
 PUT http://localhost:5000/alquileres/1
 Content-Type: application/json
 
@@ -36,7 +32,6 @@ Content-Type: application/json
     "id_vehiculo": 2,
     "fecha_inicio": "2026-01-12",
     "fecha_fin": "2026-01-18",
-    "estado": "ACTIVO"
 }
 
 
@@ -59,9 +54,4 @@ Content-Type: application/json
 
 ### Finalizar alquiler
 PATCH http://localhost:5000/alquileres/1/finalizar
-Content-Type: application/json
-
-
-### Cancelar alquiler
-PATCH http://localhost:5000/alquileres/2/cancelar
 Content-Type: application/json

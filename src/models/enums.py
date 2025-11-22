@@ -9,7 +9,6 @@ class EstadoVehiculo(enum.Enum):
 class EstadoAlquiler(enum.Enum):
     ACTIVO = "ACTIVO"
     FINALIZADO = "FINALIZADO"
-    CANCELADO = "CANCELADO"
 
 
 class EstadoReserva(enum.Enum):

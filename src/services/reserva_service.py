@@ -88,7 +88,7 @@ class ReservaService:
         body = dict(body)
         body = normalizar_campos_reserva(body)
         
-        campos_obligatorios = ["id_cliente", "id_vehiculo", "fecha_inicio", "fecha_fin", "estado"]
+        campos_obligatorios = ["id_cliente", "id_vehiculo", "fecha_inicio", "fecha_fin"]
         validar_campos_obligatorios(body, campos_obligatorios, "reserva")
         validar_fechas_reserva(body["fecha_inicio"], body["fecha_fin"])
         validar_no_solapamiento(body["fecha_inicio"], body["fecha_fin"])
