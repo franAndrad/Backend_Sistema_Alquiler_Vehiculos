@@ -6,6 +6,7 @@ class ClienteResponseDTO:
     id: int
     nombre: str
     apellido: str
+    direccion: str
     dni: str
     email: str
     telefono: int

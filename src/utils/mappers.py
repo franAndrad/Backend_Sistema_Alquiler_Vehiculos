@@ -24,6 +24,7 @@ def cliente_to_response_dto(cliente: Cliente) -> ClienteResponseDTO:
         id=cliente.id,
         nombre=cliente.nombre,
         apellido=cliente.apellido,
+        direccion=cliente.direccion,
         dni=cliente.dni,
         email=cliente.email,
         telefono=cliente.telefono,
