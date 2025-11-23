@@ -1,5 +1,5 @@
 from ...exceptions.domain_exceptions import ValidationException
-from .comunes_utils import normalizar_strings
+from .comunes_helpers import normalizar_strings
 
 def normalizar_campos_basicos(body: dict) -> dict:
     return normalizar_strings(

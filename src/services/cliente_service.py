@@ -5,11 +5,11 @@ from ..models.cliente import Cliente
 from ..utils.mappers import (
     cliente_to_response_dto
     )
-from .utils.persona_utils import (
+from .helpers.persona_helpers import (
     normalizar_campos_basicos,
 )
 
-from .utils.cliente_utils import (
+from .helpers.cliente_helpers import (
     parsear_licencia_vencimiento,
     validar_datos_cliente
     )

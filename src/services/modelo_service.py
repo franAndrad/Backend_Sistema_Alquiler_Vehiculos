@@ -4,13 +4,13 @@ from ..models.modelo import Modelo
 from ..utils.mappers import (
     modelo_to_response_dto
     )
-from .utils.modelo_utlis import (
+from .helpers.modelo_helpers import (
     normalizar_campos_basicos,
     validar_descripcion,
     validar_marca_existente,
     validar_nombre,
 )
-from ..services.utils.comunes_utils import (
+from ..services.helpers.comunes_helpers import (
     validar_campos_obligatorios,
 )
 

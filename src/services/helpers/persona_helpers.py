@@ -1,6 +1,6 @@
 from ...exceptions.domain_exceptions import ValidationException
 from ...models.enums import RolEmpleado
-from .comunes_utils import (
+from .comunes_helpers import (
     normalizar_strings, 
     validar_enum
     )

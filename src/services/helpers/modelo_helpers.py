@@ -1,6 +1,6 @@
 from ...exceptions.domain_exceptions import ValidationException, NotFoundException
 from ...repository.marca_repository import MarcaRepository
-from .comunes_utils import normalizar_strings
+from .comunes_helpers import normalizar_strings
 
 
 def normalizar_campos_basicos(body: dict) -> dict:

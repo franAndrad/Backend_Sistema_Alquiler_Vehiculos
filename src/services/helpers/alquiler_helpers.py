@@ -4,7 +4,7 @@ from ...repository.empleado_repository import EmpleadoRepository
 from ...repository.vehiculo_repository import VehiculoRepository
 from ...states.vehiculo_state import VehiculoStateMachine
 from ...models.enums import EstadoVehiculo, EstadoAlquiler
-from .comunes_utils import (
+from .comunes_helpers import (
     normalizar_strings, 
     validar_campos_obligatorios
     )

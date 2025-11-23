@@ -5,7 +5,7 @@ from ...repository.alquiler_repository import AlquilerRepository
 from ...models.enums import TipoVehiculo
 from datetime import date
 from datetime import datetime
-from .comunes_utils import (
+from .comunes_helpers import (
     normalizar_strings, 
     validar_enum,
     validar_campos_obligatorios

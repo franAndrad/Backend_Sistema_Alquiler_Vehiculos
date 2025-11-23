@@ -12,12 +12,12 @@ from ..utils.mappers import (
     alquiler_to_response_dto, 
     alquiler_finalizado_to_response_dto
     )
-from .utils.alquiler_utils import (
+from .helpers.alquiler_helpers import (
     normalizar_campos_basicos,
     validar_datos_alquiler
     )
-from .utils.vehiculo_utils import validar_vehiculo_disponible
-from .utils.comunes_utils import (
+from .helpers.vehiculo_helpers import validar_vehiculo_disponible
+from .helpers.comunes_helpers import (
     validar_fecha
     )
 

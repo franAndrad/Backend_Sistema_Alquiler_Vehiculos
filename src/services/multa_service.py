@@ -7,10 +7,10 @@ from datetime import datetime
 from ..utils.mappers import (
     multa_to_response_dto
     )
-from ..services.utils.comunes_utils import (
+from ..services.helpers.comunes_helpers import (
     validar_campos_obligatorios,
     )
-from .utils.multa_utils import (
+from .helpers.multa_helpers import (
     validar_alquiler_existente,
     normalizar_campos_basicos,
     validar_id_alquiler,

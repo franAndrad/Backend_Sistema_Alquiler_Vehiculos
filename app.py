@@ -1,22 +1,22 @@
-from .exceptions.error_handlers import register_error_handlers
-from .extensions.jwt_ext import init_jwt
-from .extensions.db import db
-from .config import Config
+from src.exceptions.error_handlers import register_error_handlers
+from src.extensions.jwt_ext import init_jwt
+from src.extensions.db import db
+from config import Config
 from flask import Flask
 
-from .controllers.empleado_controller import empleado_bp
-from .controllers.alquiler_controller import alquiler_bp
-from .controllers.vehiculo_controller import vehiculo_bp
-from .controllers.reserva_controller import reserva_bp
-from .controllers.cliente_controller import cliente_bp
-from .controllers.modelo_controller import modelo_bp
-from .controllers.health_controller import health_bp
-from .controllers.marca_controller import marca_bp
-from .controllers.multa_controller import multa_bp
-from .controllers.auth_controller import auth_bp
+from src.controllers.empleado_controller import empleado_bp
+from src.controllers.alquiler_controller import alquiler_bp
+from src.controllers.vehiculo_controller import vehiculo_bp
+from src.controllers.reserva_controller import reserva_bp
+from src.controllers.cliente_controller import cliente_bp
+from src.controllers.modelo_controller import modelo_bp
+from src.controllers.health_controller import health_bp
+from src.controllers.marca_controller import marca_bp
+from src.controllers.multa_controller import multa_bp
+from src.controllers.auth_controller import auth_bp
 
-from .utils.utf8_json_provider import UTF8JSONProvider
-from .utils.db_initilizer import DBInitializer
+from src.utils.utf8_json_provider import UTF8JSONProvider
+from src.utils.db_initilizer import DBInitializer
 
 def create_app():
     app = Flask(__name__)

@@ -1,7 +1,7 @@
 from datetime import date
 from ...exceptions.domain_exceptions import ValidationException, BusinessException
-from .comunes_utils import validar_campos_obligatorios
-from .persona_utils import (
+from .comunes_helpers import validar_campos_obligatorios
+from .persona_helpers import (
     validar_nombre_apellido,
     validar_email_formato,
     validar_dni_formato,

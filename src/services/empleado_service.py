@@ -5,7 +5,7 @@ from ..models.empleado import Empleado
 from ..utils.mappers import (
     empleado_to_response_dto
     )
-from .utils.persona_utils import (
+from .helpers.persona_helpers import (
     normalizar_campos_basicos,
     validar_nombre_apellido,
     validar_email_formato,
@@ -13,7 +13,7 @@ from .utils.persona_utils import (
     validar_telefono,
     validar_rol,
     )
-from ..services.utils.comunes_utils import (
+from ..services.helpers.comunes_helpers import (
     validar_campos_obligatorios,
     )
 

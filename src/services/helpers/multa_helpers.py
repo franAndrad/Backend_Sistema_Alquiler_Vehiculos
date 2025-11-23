@@ -1,6 +1,6 @@
 from ...exceptions.domain_exceptions import ValidationException, NotFoundException
 from ...repository.alquiler_repository import AlquilerRepository
-from .comunes_utils import normalizar_strings
+from .comunes_helpers import normalizar_strings
 from datetime import date
 
 

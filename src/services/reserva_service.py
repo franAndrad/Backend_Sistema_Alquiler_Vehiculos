@@ -5,11 +5,11 @@ from ..states.vehiculo_state import VehiculoStateMachine
 from ..states.reserva_state import ReservaStateMachine
 from ..models.enums import  EstadoVehiculo
 from ..models.reserva import Reserva
-from ..services.utils.reserva_utils import (
+from ..services.helpers.reserva_helpers import (
     normalizar_campos_reserva,
     validar_datos_reserva
     )
-from ..services.utils.vehiculo_utils import (
+from ..services.helpers.vehiculo_helpers import (
     validar_vehiculo_disponible
 )
 from ..utils.mappers import (

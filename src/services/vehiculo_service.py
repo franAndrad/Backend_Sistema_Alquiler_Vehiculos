@@ -3,7 +3,7 @@ from ..repository.vehiculo_repository import VehiculoRepository
 from ..repository.modelo_repository import ModeloRepository
 from ..states.vehiculo_state import VehiculoStateMachine
 from ..models.vehiculo import Vehiculo
-from .utils.vehiculo_utils import (
+from .helpers.vehiculo_helpers import (
     normalizar_campos,
     validar_datos_vehiculo
     )

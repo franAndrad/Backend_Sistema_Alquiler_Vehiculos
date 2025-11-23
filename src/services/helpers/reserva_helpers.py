@@ -3,10 +3,10 @@ from ...exceptions.domain_exceptions import ValidationException, BusinessExcepti
 from ...repository.cliente_repository import ClienteRepository
 from ...repository.reserva_repository import ReservaRepository
 from ...models.enums import EstadoReserva
-from .comunes_utils import (
+from .comunes_helpers import (
     validar_campos_obligatorios,
     )
-from .vehiculo_utils import (
+from .vehiculo_helpers import (
     validar_vehiculo_disponible,
     )
 

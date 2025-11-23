@@ -22,8 +22,10 @@ services:
     restart: unless-stopped
     depends_on:
       - db
+    env_file:
+      - .env  
     environment:
-      DB_HOST: db
+      DB_HOST: db         
       DB_PORT: 3306
       DB_NAME: alquileres_db
       DB_USER: alquiler_user
@@ -31,8 +33,6 @@ services:
       FLASK_ENV: development
     ports:
       - "5000:5000"
-
-    # Para desarrollo, monta el código fuente 
     volumes:
       - .:/app
 

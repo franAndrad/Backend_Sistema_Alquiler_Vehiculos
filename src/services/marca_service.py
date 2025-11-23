@@ -1,10 +1,10 @@
 from ..exceptions.domain_exceptions import NotFoundException, BusinessException
 from ..repository.marca_repository import MarcaRepository
 from ..models.marca import Marca
-from ..services.utils.comunes_utils import (
+from ..services.helpers.comunes_helpers import (
     validar_campos_obligatorios,
     )
-from .utils.marca_utils import (
+from .helpers.marca_helpers import (
     normalizar_campos_basicos, 
     validar_nombre,
     )
