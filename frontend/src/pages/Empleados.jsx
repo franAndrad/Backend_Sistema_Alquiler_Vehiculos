@@ -94,8 +94,8 @@ function Empleados() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h2>Empleados</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <h2 style={{ margin: 0 }}>Empleados</h2>
         <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
           {showForm ? 'Cancelar' : '+ Nuevo Empleado'}
         </button>
@@ -109,7 +109,7 @@ function Empleados() {
           <form onSubmit={handleSubmit}>
             <div className="form-row">
               <div className="form-group">
-                <label>Nombre *</label>
+                <label>Nombre<span className="required-asterisk"> *</span></label>
                 <input
                   type="text"
                   value={formData.nombre}
@@ -118,7 +118,7 @@ function Empleados() {
                 />
               </div>
               <div className="form-group">
-                <label>Apellido *</label>
+                <label>Apellido<span className="required-asterisk"> *</span></label>
                 <input
                   type="text"
                   value={formData.apellido}
@@ -130,7 +130,7 @@ function Empleados() {
 
             <div className="form-row">
               <div className="form-group">
-                <label>DNI *</label>
+                <label>DNI<span className="required-asterisk"> *</span></label>
                 <input
                   type="text"
                   value={formData.dni}
@@ -139,7 +139,7 @@ function Empleados() {
                 />
               </div>
               <div className="form-group">
-                <label>Email *</label>
+                <label>Email<span className="required-asterisk"> *</span></label>
                 <input
                   type="email"
                   value={formData.email}
@@ -169,7 +169,7 @@ function Empleados() {
             </div>
 
             <div className="form-group">
-              <label>Rol *</label>
+              <label>Rol<span className="required-asterisk"> *</span></label>
               <select
                 value={formData.rol}
                 onChange={(e) => setFormData({ ...formData, rol: e.target.value })}

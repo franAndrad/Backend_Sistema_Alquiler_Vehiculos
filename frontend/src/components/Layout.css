@@ -5,44 +5,90 @@
 }
 
 .header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 1.5rem 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+  border-bottom: 3px solid var(--brand-accent);
+  padding: 20px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-md);
 }
 
-.header h1 {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
-  font-weight: 600;
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.brand-logo {
+  font-size: 32px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius);
+  backdrop-filter: blur(10px);
+}
+
+.brand-info {
+  flex: 1;
+}
+
+.brand-name {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--white);
+  margin: 0;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.brand-tagline {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 2px 0 0 0;
+  font-weight: 400;
+  letter-spacing: 0.5px;
 }
 
 .nav {
   display: flex;
-  gap: 1rem;
+  gap: 4px;
   flex-wrap: wrap;
 }
 
 .nav a {
-  color: white;
+  color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  transition: background-color 0.3s;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
   font-weight: 500;
+  font-size: 14px;
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .nav a:hover {
   background-color: rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  transform: translateY(-1px);
 }
 
 .nav a.active {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.25);
+  color: var(--white);
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .main-content {
   flex: 1;
-  padding: 2rem;
+  padding: 24px;
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;

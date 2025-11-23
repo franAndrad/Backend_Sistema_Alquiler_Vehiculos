@@ -1,10 +1,21 @@
 .form-container {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--white);
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   max-width: 600px;
   margin: 0 auto;
+  border: 2px solid var(--brand-primary-light);
+  background: linear-gradient(to bottom, var(--white) 0%, var(--gray-50) 100%);
+}
+
+.form-container h3 {
+  color: var(--brand-primary);
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--brand-primary-light);
 }
 
 .form-group {
@@ -13,28 +24,44 @@
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #495057;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--gray-700);
+  letter-spacing: 0.01em;
+}
+
+.form-group label .required-asterisk {
+  color: var(--danger);
+  font-weight: 700;
+  margin-left: 2px;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: border-color 0.3s;
+  padding: 10px 12px;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  transition: all 0.15s ease;
+  background-color: var(--white);
+  color: var(--gray-900);
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px var(--brand-primary-light);
+}
+
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+  border-color: var(--gray-400);
 }
 
 .form-group textarea {
@@ -47,6 +74,12 @@
   gap: 1rem;
   justify-content: flex-end;
   margin-top: 2rem;
+}
+
+.form-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .form-row {

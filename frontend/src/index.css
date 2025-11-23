@@ -4,17 +4,108 @@
   box-sizing: border-box;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f5f5;
+:root {
+  /* Brand Colors - AutoRent Pro */
+  --brand-primary: #2563eb;
+  --brand-primary-dark: #1e40af;
+  --brand-primary-light: #dbeafe;
+  --brand-secondary: #059669;
+  --brand-secondary-dark: #047857;
+  --brand-secondary-light: #d1fae5;
+  --brand-accent: #f59e0b;
+  --brand-accent-dark: #d97706;
+  --brand-accent-light: #fef3c7;
+  
+  /* Neutral Colors */
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  
+  /* Status Colors */
+  --success: #22c55e;
+  --success-light: #dcfce7;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --info: #3b82f6;
+  --info-light: #dbeafe;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* Border Radius */
+  --radius: 8px;
+  --radius-sm: 4px;
+  --radius-lg: 12px;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, var(--brand-primary-light) 0%, var(--brand-secondary-light) 100%);
+  background-attachment: fixed;
+  color: var(--gray-900);
+  line-height: 1.5;
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--gray-900);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--brand-primary);
+}
+
+h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 24px;
+}
+
+h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin-bottom: 20px;
+}
+
+h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+h5 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+h6 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-600);
 }
 

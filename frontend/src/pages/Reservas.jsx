@@ -113,8 +113,8 @@ function Reservas() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h2>Reservas</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <h2 style={{ margin: 0 }}>Reservas</h2>
         <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
           {showForm ? 'Cancelar' : '+ Nueva Reserva'}
         </button>
@@ -127,7 +127,7 @@ function Reservas() {
           <h3>{editingId ? 'Editar Reserva' : 'Nueva Reserva'}</h3>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Cliente *</label>
+              <label>Cliente<span className="required-asterisk"> *</span></label>
               <select
                 value={formData.id_cliente}
                 onChange={(e) => setFormData({ ...formData, id_cliente: e.target.value })}
@@ -143,7 +143,7 @@ function Reservas() {
             </div>
 
             <div className="form-group">
-              <label>Vehículo *</label>
+              <label>Vehículo<span className="required-asterisk"> *</span></label>
               <select
                 value={formData.id_vehiculo}
                 onChange={(e) => setFormData({ ...formData, id_vehiculo: e.target.value })}
@@ -160,7 +160,7 @@ function Reservas() {
 
             <div className="form-row">
               <div className="form-group">
-                <label>Fecha Inicio *</label>
+                <label>Fecha Inicio<span className="required-asterisk"> *</span></label>
                 <input
                   type="date"
                   value={formData.fecha_inicio}
@@ -169,7 +169,7 @@ function Reservas() {
                 />
               </div>
               <div className="form-group">
-                <label>Fecha Fin *</label>
+                <label>Fecha Fin<span className="required-asterisk"> *</span></label>
                 <input
                   type="date"
                   value={formData.fecha_fin}

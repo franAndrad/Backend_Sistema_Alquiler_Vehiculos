@@ -76,8 +76,8 @@ function Marcas() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h2>Marcas</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <h2 style={{ margin: 0 }}>Marcas</h2>
         <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
           {showForm ? 'Cancelar' : '+ Nueva Marca'}
         </button>
@@ -90,7 +90,7 @@ function Marcas() {
           <h3>{editingId ? 'Editar Marca' : 'Nueva Marca'}</h3>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Nombre *</label>
+              <label>Nombre<span className="required-asterisk"> *</span></label>
               <input
                 type="text"
                 value={formData.nombre}

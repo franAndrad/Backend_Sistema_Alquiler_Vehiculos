@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { alquilerAPI, clienteAPI, vehiculoAPI, empleadoAPI } from '../services/api'
+import { formatearFecha, formatearFechaLegible } from '../utils/dateFormatter'
 import '../components/Table.css'
 import '../components/Form.css'
 
@@ -96,8 +97,8 @@ function Alquileres() {
       id_cliente: alquiler.cliente?.id || '',
       id_vehiculo: alquiler.vehiculo?.id || '',
       id_empleado: alquiler.empleado?.id || '',
-      fecha_inicio: alquiler.fecha_inicio || '',
-      fecha_fin: alquiler.fecha_fin || '',
+      fecha_inicio: formatearFecha(alquiler.fecha_inicio, false) || '',
+      fecha_fin: formatearFecha(alquiler.fecha_fin, false) || '',
     })
     setShowForm(true)
   }
@@ -130,8 +131,8 @@ function Alquileres() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h2>Alquileres</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <h2 style={{ margin: 0 }}>Alquileres</h2>
         <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
           {showForm ? 'Cancelar' : '+ Nuevo Alquiler'}
         </button>
@@ -144,7 +145,7 @@ function Alquileres() {
           <h3>{editingId ? 'Editar Alquiler' : 'Nuevo Alquiler'}</h3>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Cliente *</label>
+              <label>Cliente<span className="required-asterisk"> *</span></label>
               <select
                 value={formData.id_cliente}
                 onChange={(e) => setFormData({ ...formData, id_cliente: e.target.value })}
@@ -160,7 +161,7 @@ function Alquileres() {
             </div>
 
             <div className="form-group">
-              <label>Vehículo *</label>
+              <label>Vehículo<span className="required-asterisk"> *</span></label>
               <select
                 value={formData.id_vehiculo}
                 onChange={(e) => setFormData({ ...formData, id_vehiculo: e.target.value })}
@@ -176,7 +177,7 @@ function Alquileres() {
             </div>
 
             <div className="form-group">
-              <label>Empleado *</label>
+              <label>Empleado<span className="required-asterisk"> *</span></label>
               <select
                 value={formData.id_empleado}
                 onChange={(e) => setFormData({ ...formData, id_empleado: e.target.value })}
@@ -193,7 +194,7 @@ function Alquileres() {
 
             <div className="form-row">
               <div className="form-group">
-                <label>Fecha Inicio *</label>
+                <label>Fecha Inicio<span className="required-asterisk"> *</span></label>
                 <input
                   type="date"
                   value={formData.fecha_inicio}
@@ -250,9 +251,9 @@ function Alquileres() {
                   <td>{alquiler.cliente?.nombre} {alquiler.cliente?.apellido}</td>
                   <td>{alquiler.vehiculo?.patente}</td>
                   <td>{alquiler.empleado?.nombre} {alquiler.empleado?.apellido}</td>
-                  <td>{alquiler.fecha_inicio}</td>
-                  <td>{alquiler.fecha_fin || '-'}</td>
-                  <td>{alquiler.costo_total ? `$${alquiler.costo_total.toLocaleString()}` : '-'}</td>
+                  <td>{formatearFechaLegible(alquiler.fecha_inicio)}</td>
+                  <td>{formatearFechaLegible(alquiler.fecha_fin)}</td>
+                  <td>{alquiler.costo_total ? `$${alquiler.costo_total.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '-'}</td>
                   <td>
                     <span style={{
                       padding: '0.3rem 0.6rem',

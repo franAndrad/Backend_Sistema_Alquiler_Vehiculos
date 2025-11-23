@@ -102,8 +102,8 @@ function Multas() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h2>Multas</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <h2 style={{ margin: 0 }}>Multas</h2>
         <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
           {showForm ? 'Cancelar' : '+ Nueva Multa'}
         </button>
@@ -116,7 +116,7 @@ function Multas() {
           <h3>{editingId ? 'Editar Multa' : 'Nueva Multa'}</h3>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Alquiler *</label>
+              <label>Alquiler<span className="required-asterisk"> *</span></label>
               <select
                 value={formData.id_alquiler}
                 onChange={(e) => setFormData({ ...formData, id_alquiler: e.target.value })}
@@ -132,7 +132,7 @@ function Multas() {
             </div>
 
             <div className="form-group">
-              <label>Descripción *</label>
+              <label>Descripción<span className="required-asterisk"> *</span></label>
               <textarea
                 value={formData.descripcion}
                 onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
@@ -142,7 +142,7 @@ function Multas() {
 
             <div className="form-row">
               <div className="form-group">
-                <label>Monto *</label>
+                <label>Monto<span className="required-asterisk"> *</span></label>
                 <input
                   type="number"
                   step="0.01"
@@ -153,7 +153,7 @@ function Multas() {
                 />
               </div>
               <div className="form-group">
-                <label>Fecha *</label>
+                <label>Fecha<span className="required-asterisk"> *</span></label>
                 <input
                   type="date"
                   value={formData.fecha}

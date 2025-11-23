@@ -19,7 +19,13 @@ function Layout({ children }) {
   return (
     <div className="layout">
       <header className="header">
-        <h1>🚗 Sistema de Alquiler de Vehículos</h1>
+        <div className="header-brand">
+          <div className="brand-logo">🚗</div>
+          <div className="brand-info">
+            <h1 className="brand-name">AutoRent Pro</h1>
+            <p className="brand-tagline">Sistema de Gestión de Alquileres</p>
+          </div>
+        </div>
         <nav className="nav">
           {navItems.map((item) => (
             <Link

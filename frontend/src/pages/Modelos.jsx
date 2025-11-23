@@ -97,8 +97,8 @@ function Modelos() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h2>Modelos</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <h2 style={{ margin: 0 }}>Modelos</h2>
         <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
           {showForm ? 'Cancelar' : '+ Nuevo Modelo'}
         </button>
@@ -111,7 +111,7 @@ function Modelos() {
           <h3>{editingId ? 'Editar Modelo' : 'Nuevo Modelo'}</h3>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Marca *</label>
+              <label>Marca<span className="required-asterisk"> *</span></label>
               <select
                 value={formData.id_marca}
                 onChange={(e) => setFormData({ ...formData, id_marca: e.target.value })}
@@ -127,7 +127,7 @@ function Modelos() {
             </div>
 
             <div className="form-group">
-              <label>Nombre *</label>
+              <label>Nombre<span className="required-asterisk"> *</span></label>
               <input
                 type="text"
                 value={formData.nombre}
@@ -137,7 +137,7 @@ function Modelos() {
             </div>
 
             <div className="form-group">
-              <label>Descripción *</label>
+              <label>Descripción<span className="required-asterisk"> *</span></label>
               <textarea
                 value={formData.descripcion}
                 onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}

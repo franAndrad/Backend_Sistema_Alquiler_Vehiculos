@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { clienteAPI } from '../services/api'
+import { FaPlus, FaEdit, FaTrash, FaTimes, FaSave } from 'react-icons/fa'
+import { formatearFecha, formatearFechaLegible } from '../utils/dateFormatter'
 import '../components/Table.css'
 import '../components/Form.css'
 
@@ -38,6 +40,7 @@ function Clientes() {
     }
   }
 
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
@@ -55,6 +58,8 @@ function Clientes() {
 
   const handleEdit = (cliente) => {
     setEditingId(cliente.id)
+    // Formatear la fecha para el input de tipo date (solo fecha, sin hora)
+    const fechaVencimiento = formatearFecha(cliente.licencia_vencimiento, false)
     setFormData({
       nombre: cliente.nombre || '',
       apellido: cliente.apellido || '',
@@ -64,7 +69,7 @@ function Clientes() {
       email: cliente.email || '',
       licencia_numero: cliente.licencia_numero || '',
       licencia_categoria: cliente.licencia_categoria || '',
-      licencia_vencimiento: cliente.licencia_vencimiento || '',
+      licencia_vencimiento: fechaVencimiento,
     })
     setShowForm(true)
   }
@@ -100,10 +105,20 @@ function Clientes() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h2>Clientes</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <h2 style={{ margin: 0 }}>Clientes</h2>
         <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
-          {showForm ? 'Cancelar' : '+ Nuevo Cliente'}
+          {showForm ? (
+            <>
+              <FaTimes style={{ marginRight: '0.5rem' }} />
+              Cancelar
+            </>
+          ) : (
+            <>
+              <FaPlus style={{ marginRight: '0.5rem' }} />
+              Nuevo Cliente
+            </>
+          )}
         </button>
       </div>
 
@@ -115,7 +130,7 @@ function Clientes() {
           <form onSubmit={handleSubmit}>
             <div className="form-row">
               <div className="form-group">
-                <label>Nombre *</label>
+                <label>Nombre<span className="required-asterisk"> *</span></label>
                 <input
                   type="text"
                   value={formData.nombre}
@@ -124,7 +139,7 @@ function Clientes() {
                 />
               </div>
               <div className="form-group">
-                <label>Apellido *</label>
+                <label>Apellido<span className="required-asterisk"> *</span></label>
                 <input
                   type="text"
                   value={formData.apellido}
@@ -136,7 +151,7 @@ function Clientes() {
 
             <div className="form-row">
               <div className="form-group">
-                <label>DNI *</label>
+                <label>DNI<span className="required-asterisk"> *</span></label>
                 <input
                   type="text"
                   value={formData.dni}
@@ -145,7 +160,7 @@ function Clientes() {
                 />
               </div>
               <div className="form-group">
-                <label>Email *</label>
+                <label>Email<span className="required-asterisk"> *</span></label>
                 <input
                   type="email"
                   value={formData.email}
@@ -176,7 +191,7 @@ function Clientes() {
 
             <div className="form-row">
               <div className="form-group">
-                <label>Número de Licencia *</label>
+                <label>Número de Licencia<span className="required-asterisk"> *</span></label>
                 <input
                   type="text"
                   value={formData.licencia_numero}
@@ -185,7 +200,7 @@ function Clientes() {
                 />
               </div>
               <div className="form-group">
-                <label>Categoría de Licencia *</label>
+                <label>Categoría de Licencia<span className="required-asterisk"> *</span></label>
                 <input
                   type="text"
                   value={formData.licencia_categoria}
@@ -196,7 +211,7 @@ function Clientes() {
             </div>
 
             <div className="form-group">
-              <label>Vencimiento de Licencia *</label>
+              <label>Vencimiento de Licencia<span className="required-asterisk"> *</span></label>
               <input
                 type="date"
                 value={formData.licencia_vencimiento}
@@ -207,10 +222,21 @@ function Clientes() {
 
             <div className="form-actions">
               <button type="button" className="btn btn-secondary" onClick={resetForm}>
+                <FaTimes style={{ marginRight: '0.5rem' }} />
                 Cancelar
               </button>
               <button type="submit" className="btn btn-primary">
-                {editingId ? 'Actualizar' : 'Crear'}
+                {editingId ? (
+                  <>
+                    <FaSave style={{ marginRight: '0.5rem' }} />
+                    Actualizar
+                  </>
+                ) : (
+                  <>
+                    <FaPlus style={{ marginRight: '0.5rem' }} />
+                    Crear
+                  </>
+                )}
               </button>
             </div>
           </form>
@@ -243,19 +269,23 @@ function Clientes() {
                   <td>{cliente.apellido}</td>
                   <td>{cliente.dni}</td>
                   <td>{cliente.email}</td>
-                  <td>{cliente.licencia_vencimiento}</td>
+                  <td>{formatearFechaLegible(cliente.licencia_vencimiento)}</td>
                   <td>
                     <div className="actions">
                       <button
                         className="btn btn-secondary btn-small"
                         onClick={() => handleEdit(cliente)}
+                        title="Editar cliente"
                       >
+                        <FaEdit style={{ marginRight: '0.3rem' }} />
                         Editar
                       </button>
                       <button
                         className="btn btn-danger btn-small"
                         onClick={() => handleDelete(cliente.id)}
+                        title="Eliminar cliente"
                       >
+                        <FaTrash style={{ marginRight: '0.3rem' }} />
                         Eliminar
                       </button>
                     </div>

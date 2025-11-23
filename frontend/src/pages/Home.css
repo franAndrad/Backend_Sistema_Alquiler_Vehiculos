@@ -4,17 +4,19 @@
 
 .home-hero {
   text-align: center;
-  margin-bottom: 3rem;
-  padding: 2rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 32px;
+  padding: 48px 24px;
+  background: linear-gradient(135deg, var(--white) 0%, var(--brand-primary-light) 100%);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 2px solid var(--brand-primary-light);
 }
 
 .home-hero h2 {
-  color: #667eea;
+  color: var(--brand-primary);
   margin-bottom: 1rem;
   font-size: 2rem;
+  font-weight: 700;
 }
 
 .home-hero p {
@@ -29,25 +31,46 @@
 }
 
 .home-card {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--white);
+  padding: 24px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
   text-decoration: none;
   color: inherit;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: all 0.2s ease;
   text-align: center;
+  border: 2px solid var(--gray-200);
+  position: relative;
+  overflow: hidden;
+}
+
+.home-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
 }
 
 .home-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--brand-primary);
+  transform: translateY(-4px);
+}
+
+.home-card:hover::before {
+  transform: scaleX(1);
 }
 
 .home-card h3 {
-  color: #667eea;
+  color: var(--brand-primary);
   margin-bottom: 0.5rem;
   font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .home-card p {
