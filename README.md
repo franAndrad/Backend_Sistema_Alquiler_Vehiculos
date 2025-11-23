@@ -57,27 +57,46 @@ docker compose up
 
 ## 2) Ejecutar localmente
 ```bash
+# 1) Crear y activar el entorno virtual
 python -m venv venv
+
+# Linux / macOS
 source venv/bin/activate
+
+# Windows PowerShell
+.\venv\Scripts\Activate.ps1
+
+# Windows (cmd)
+.\venv\Scripts\activate.bat
+
+# 2) Instalar dependencias
 pip install -r requirements.txt
-````
+```
 
-crear un .env
+Crear un archivo `.env` en la raíz del proyecto con los valores (ajustar según tu entorno):
 
+```env
 DB_USER=root
 DB_PASSWORD=tu_contraseña
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_NAME=tp         
+DB_NAME=tp
 
 JWT_SECRET_KEY=super_key_123
 JWT_EXPIRES_IN=900
+```
 
-ejecutar
+Notas:
+- Cambia DB_PASSWORD y JWT_SECRET_KEY por valores seguros.
+- Si usas Docker, asegúrate de que las variables apunten al servicio de la base de datos (host/puerto).
+
+Finalmente, ejecutar la aplicación:
 
 ```bash
 python app.py
 ```
+
+La API quedará disponible en http://localhost:5000 (o el puerto configurado en tu app).
 
 ---
 
