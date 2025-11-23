@@ -1,8 +1,14 @@
+import os
+from dotenv import load_dotenv
+
+if os.getenv("RUN_ENV") != "docker":
+    load_dotenv()
+
+from flask import Flask
 from src.exceptions.error_handlers import register_error_handlers
 from src.extensions.jwt_ext import init_jwt
 from src.extensions.db import db
-from config import Config
-from flask import Flask
+from config import Config 
 
 from src.controllers.empleado_controller import empleado_bp
 from src.controllers.alquiler_controller import alquiler_bp
@@ -18,9 +24,14 @@ from src.controllers.auth_controller import auth_bp
 from src.utils.utf8_json_provider import UTF8JSONProvider
 from src.utils.db_initilizer import DBInitializer
 
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+
+    # Debug para ver qué leyó realmente
+    print(">>> SQLALCHEMY_DATABASE_URI:",
+          app.config["SQLALCHEMY_DATABASE_URI"])
 
     app.json_provider_class = UTF8JSONProvider
     app.json = app.json_provider_class(app)
@@ -35,7 +46,7 @@ def create_app():
         initializer.init_tables(app, db)
 
     app.register_blueprint(health_bp)
-    app.register_blueprint(auth_bp)      
+    app.register_blueprint(auth_bp)
     app.register_blueprint(cliente_bp)
     app.register_blueprint(empleado_bp)
     app.register_blueprint(marca_bp)

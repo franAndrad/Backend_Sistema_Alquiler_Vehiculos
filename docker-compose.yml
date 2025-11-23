@@ -22,14 +22,15 @@ services:
     restart: unless-stopped
     depends_on:
       - db
-    env_file:
-      - .env  
     environment:
-      DB_HOST: db         
+      RUN_ENV: docker            
+      DB_USER: alquiler_user     
+      DB_PASSWORD: pass1234       
+      DB_HOST: db                 
       DB_PORT: 3306
       DB_NAME: alquileres_db
-      DB_USER: alquiler_user
-      DB_PASSWORD: pass1234
+      JWT_SECRET_KEY: super_key_123
+      JWT_EXPIRES_IN: 900
       FLASK_ENV: development
     ports:
       - "5000:5000"

@@ -60,6 +60,22 @@ docker compose up
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+````
+
+crear un .env
+
+DB_USER=root
+DB_PASSWORD=tu_contraseña
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_NAME=tp         
+
+JWT_SECRET_KEY=super_key_123
+JWT_EXPIRES_IN=900
+
+ejecutar
+
+```bash
 python app.py
 ```
 
