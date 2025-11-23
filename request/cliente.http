@@ -26,6 +26,7 @@ Authorization: Bearer {{login.response.body.access_token}}
 {
     "nombre": "Francisco",
     "apellido": "Andrade",
+    "direccion": "Calle Falsa 123",
     "dni": 11121111,
     "email": "fran.eze.andrade@gmail.com",
     "telefono": "3884216529",
@@ -61,6 +62,7 @@ Authorization: Bearer {{login.response.body.access_token}}
 {
     "nombre": "Francisco",
     "apellido": "Andrade",
+    "direccion": "Calle Falsa 123",
     "dni": 11211111,
     "email": "otro.mail@gmail.com",
     "telefono": "388416529",

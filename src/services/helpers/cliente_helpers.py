@@ -37,7 +37,7 @@ def validar_categoria_licencia(categoria):
 
 
 def validar_datos_cliente(body: dict, es_update: bool = False):
-    campos_obligatorios = ["nombre", "apellido",
+    campos_obligatorios = ["nombre", "apellido", "direccion",
                            "dni", "email", "licencia_categoria"]
     
     validar_campos_obligatorios(body, campos_obligatorios, "cliente")
