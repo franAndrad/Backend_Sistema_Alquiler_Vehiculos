@@ -15,6 +15,17 @@ Content-Type: application/json
     "costo_diario": 15000
 }
 
+### Crear vehículo PARA OBSERVER
+POST http://localhost:5000/vehiculos
+Content-Type: application/json
+
+{
+    "id_modelo": 1,
+    "anio": 2022,
+    "tipo": "SEDAN",
+    "patente": "ABC323",
+    "costo_diario": 15000
+}
 
 ### Obtener vehículo por ID
 GET http://localhost:5000/vehiculos/1

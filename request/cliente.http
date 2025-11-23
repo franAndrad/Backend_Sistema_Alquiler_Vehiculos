@@ -18,6 +18,20 @@ Content-Type: application/json
     "licencia_vencimiento": "2026-05-01"
 }
 
+### Crear cliente PARA OBSERVER
+POST http://localhost:5000/clientes
+Content-Type: application/json
+
+{
+    "nombre": "Tomas",
+    "apellido": "Mina",
+    "dni": 11111112,
+    "email": "tomasmina@gmail.com",
+    "telefono": "3884216356",
+    "licencia_numero": "ABC321",
+    "licencia_categoria": "B1",
+    "licencia_vencimiento": "2026-05-01"
+}
 
 ### Obtener cliente por ID
 GET http://localhost:5000/clientes/1

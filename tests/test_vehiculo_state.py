@@ -1,5 +1,5 @@
 import pytest
-from src.states.vehiculo_state import Vehiculo, Disponible, Alquilado
+from src.states.vehiculo_state import VehiculoStateMachine as Vehiculo, Disponible, Alquilado
 from src.exceptions.domain_exceptions import BusinessException
 
 

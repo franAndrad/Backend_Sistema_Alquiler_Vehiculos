@@ -14,6 +14,16 @@ Content-Type: application/json
     "fecha_fin": "2026-11-25"
 }
 
+### Crear reserva PARA OBSERVER
+POST http://localhost:5000/reservas
+Content-Type: application/json
+
+{
+    "id_cliente": 2,
+    "id_vehiculo": 2,
+    "fecha_inicio": "2026-11-29",
+    "fecha_fin": "2026-11-30"
+}
 
 ### Obtener reserva por ID
 GET http://localhost:5000/reservas/1
@@ -51,3 +61,4 @@ Content-Type: application/json
 ### Cancelar reserva
 PATCH http://localhost:5000/reservas/1/cancelar
 Content-Type: application/json
+

@@ -18,6 +18,7 @@ from ..services.utils.reserva_utils import (
 from ..services.utils.vehiculo_utils import (
     validar_vehiculo_disponible,
 )
+from ..observer import Sujeto, SMSObserver, EmailClienteObserver, EmailEmpleadosObserver
     
 
 class ReservaService:
@@ -25,6 +26,12 @@ class ReservaService:
     def __init__(self):
         self.reserva_repo = ReservaRepository()
         self.vehiculo_repo = VehiculoRepository()
+        
+        # Configuración del patrón Observer
+        self.sujeto_reserva = Sujeto()
+        self.sujeto_reserva.attach(SMSObserver())
+        self.sujeto_reserva.attach(EmailClienteObserver())
+        self.sujeto_reserva.attach(EmailEmpleadosObserver())
         
         
     def listar_reservas(self):
@@ -86,6 +93,14 @@ class ReservaService:
         
         self.reserva_repo.add(nueva_reserva)
         self.reserva_repo.save_changes()
+        
+        # Notificar a todos los observadores (SMS, Email Cliente, Email Empleados)
+        print("\n" + "="*80)
+        print("🔔 NOTIFICACIONES DE RESERVA")
+        print("="*80)
+        self.sujeto_reserva.notify(nueva_reserva)
+        print("="*80 + "\n")
+        
         return reserva_to_response_dto(nueva_reserva)
     
         

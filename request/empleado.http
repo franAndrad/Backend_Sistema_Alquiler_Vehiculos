@@ -27,6 +27,19 @@ Content-Type: application/json
     "rol": "ADMIN"
 }
 
+### Crear empleado PARA OBSERVER
+POST http://localhost:5000/empleados
+Content-Type: application/json
+
+{
+    "nombre": "Laurencia",
+    "apellido": "Volañoz",
+    "dni": 22232223,
+    "direccion": "Calle Real 123",
+    "telefono": "1234576",
+    "email": "laurencia.volanoz@example.com",
+    "rol": "ADMIN"
+}
 
 ### Obtener empleado por ID
 GET http://localhost:5000/empleados/1
