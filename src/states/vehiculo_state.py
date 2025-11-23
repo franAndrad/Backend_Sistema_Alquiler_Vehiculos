@@ -95,7 +95,8 @@ class Reservado(EstadoVehiculoState):
         return "El vehiculo fue alquilado desde reservado"
 
     def devolver(self) -> str:
-        raise BusinessException("El vehiculo está reservado, no puede ser devuelto")
+        self.context.transition_to(Disponible())
+        return "El vehiculo reservado fue cancelado y ahora está disponible"
     
     def reservar(self) -> str:
         raise BusinessException("El vehiculo ya está reservado")
