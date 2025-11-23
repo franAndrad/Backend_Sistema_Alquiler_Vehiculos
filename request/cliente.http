@@ -27,7 +27,7 @@ Authorization: Bearer {{login.response.body.access_token}}
     "nombre": "Francisco",
     "apellido": "Andrade",
     "dni": 11121111,
-    "email": "fran.ezeeeeeeeee.andrade@gmail.com",
+    "email": "fran.eze.andrade@gmail.com",
     "telefono": "3884216529",
     "licencia_numero": "ABC123",
     "licencia_categoria": "B1",

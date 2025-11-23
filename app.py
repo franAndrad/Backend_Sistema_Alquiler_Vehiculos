@@ -5,6 +5,7 @@ if os.getenv("RUN_ENV") != "docker":
     load_dotenv()
 
 from flask import Flask
+from flask_cors import CORS
 from src.exceptions.error_handlers import register_error_handlers
 from src.extensions.jwt_ext import init_jwt
 from src.extensions.db import db
@@ -29,9 +30,13 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    # Debug para ver qué leyó realmente
-    print(">>> SQLALCHEMY_DATABASE_URI:",
-          app.config["SQLALCHEMY_DATABASE_URI"])
+    CORS(
+        app,
+        resources={r"/*": {"origins": ["http://localhost:3000"]}},
+        supports_credentials=True,
+        allow_headers=["Content-Type", "Authorization"],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    )
 
     app.json_provider_class = UTF8JSONProvider
     app.json = app.json_provider_class(app)
