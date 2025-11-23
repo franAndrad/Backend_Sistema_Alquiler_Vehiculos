@@ -1,8 +1,8 @@
 from ..repository.reserva_repository import ReservaRepository
 from ..repository.vehiculo_repository import VehiculoRepository
 from ..utils.mappers import reserva_to_response_dto
-from ..exceptions.domain_exceptions import ValidationException, NotFoundException
-from ..models.enums import EstadoReserva
+from ..exceptions.domain_exceptions import ValidationException, NotFoundException, BusinessException
+from ..models.enums import  EstadoVehiculo
 from ..models.reserva import Reserva
 from ..states.reserva_state import ReservaStateMachine
 from ..states.vehiculo_state import VehiculoStateMachine
@@ -63,6 +63,10 @@ class ReservaService:
         validar_no_solapamiento(body["fecha_inicio"], body["fecha_fin"])
         validar_cliente_existente(body["id_cliente"])
         validar_vehiculo_disponible(body["id_vehiculo"], body["fecha_inicio"], body["fecha_fin"])
+
+        vehiculo = VehiculoRepository.get_by_id(body["id_vehiculo"])
+        if vehiculo.estado != EstadoVehiculo.DISPONIBLE:
+            raise BusinessException("El vehículo no se encuentra disponible")
         
         maquina_reserva = ReservaStateMachine()
         
@@ -80,8 +84,7 @@ class ReservaService:
 
         maquina_estado_vehiculo = VehiculoStateMachine(vehiculo.estado)
         
-        # Tiene que ser reservado (agregar estado)!!!!!!!!!
-        mensaje = maquina_estado_vehiculo.reservar()
+        maquina_estado_vehiculo.reservar()
         vehiculo.estado = maquina_estado_vehiculo.state_enum
         
         self.reserva_repo.add(nueva_reserva)
@@ -102,12 +105,16 @@ class ReservaService:
         validar_fechas_reserva(body["fecha_inicio"], body["fecha_fin"])
         validar_no_solapamiento(body["fecha_inicio"], body["fecha_fin"])
         validar_cliente_existente(body["id_cliente"])
-        validar_vehiculo_disponible(body["id_vehiculo"])
+        validar_vehiculo_disponible(body["id_vehiculo"], body["fecha_inicio"], body["fecha_fin"])
+
+        vehiculo_existente = self.vehiculo_repo.get_by_id(body["id_vehiculo"])
+        if vehiculo_existente and vehiculo_existente.id != reserva.id_vehiculo:
+            raise BusinessException("El vehículo no se encuentra disponible")
         
         reserva.id_cliente = body["id_cliente"]
         reserva.id_vehiculo = body["id_vehiculo"]
-        reserva.fecha_inicio = date.fromisoformat(body["fecha_inicio"])
-        reserva.fecha_fin = date.fromisoformat(body["fecha_fin"])
+        reserva.fecha_inicio = body["fecha_inicio"]
+        reserva.fecha_fin = body["fecha_fin"]
         
         self.reserva_repo.save_changes()
         return reserva_to_response_dto(reserva)

@@ -26,9 +26,8 @@ Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "id_cliente": 1,
-    "id_empleado": 1,
-    "id_vehiculo": 2,
-    "id_reserva": 2
+    "id_empleado": 2,
+    "id_vehiculo": 1
 }
 
 
@@ -95,6 +94,6 @@ Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Finalizar alquiler
-PATCH {{baseUrl}}/alquileres/2/finalizar
+PATCH {{baseUrl}}/alquileres/3/finalizar
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.access_token}}

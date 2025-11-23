@@ -14,17 +14,20 @@ Content-Type: application/json
 ### Listar clientes
 GET {{baseUrl}}/clientes
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Crear cliente
 POST {{baseUrl}}/clientes
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
+
 
 {
     "nombre": "Francisco",
     "apellido": "Andrade",
-    "dni": 11111111,
-    "email": "fran.eze.andrade@gmail.com",
+    "dni": 11121111,
+    "email": "fran.ezeeeeeeeee.andrade@gmail.com",
     "telefono": "3884216529",
     "licencia_numero": "ABC123",
     "licencia_categoria": "B1",
@@ -58,9 +61,9 @@ Authorization: Bearer {{login.response.body.access_token}}
 {
     "nombre": "Francisco",
     "apellido": "Andrade",
-    "dni": 11111111,
+    "dni": 11211111,
     "email": "otro.mail@gmail.com",
-    "telefono": "3884216529",
+    "telefono": "388416529",
     "licencia_numero": "ABC123",
     "licencia_categoria": "B1",
     "licencia_vencimiento": "2026-05-01"

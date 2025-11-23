@@ -24,9 +24,9 @@ Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "id_cliente": 1,
-    "id_vehiculo": 2,
-    "fecha_inicio": "2026-11-22",
-    "fecha_fin": "2026-11-25"
+    "id_vehiculo": 3,
+    "fecha_inicio": "2027-11-22",
+    "fecha_fin": "2027-11-25"
 }
 
 
@@ -39,15 +39,15 @@ Authorization: Bearer {{login.response.body.access_token}}
 
 ### Actualizar reserva
 # Se usa para cambiar fechas / vehículo / cliente mientras la reserva esté en un estado válido.
-PUT {{baseUrl}}/reservas/1
+PUT {{baseUrl}}/reservas/2
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "id_cliente": 1,
-    "id_vehiculo": 1,
-    "fecha_inicio": "2026-01-12",
-    "fecha_fin": "2026-01-18",
+    "id_vehiculo": 3,
+    "fecha_inicio": "2028-01-12",
+    "fecha_fin": "2028-01-18"
 }
 
 

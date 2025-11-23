@@ -2,12 +2,14 @@ from datetime import date
 from ..repository.alquiler_repository import AlquilerRepository
 from ..repository.vehiculo_repository import VehiculoRepository
 from ..repository.reserva_repository import ReservaRepository
+from ..repository.multa_repository import MultaRepository
+
 from ..exceptions.domain_exceptions import NotFoundException, BusinessException
 from ..states.alquiler_state import AlquilerStateMachine
 from ..states.vehiculo_state import VehiculoStateMachine
 from ..states.reserva_state import ReservaStateMachine
 from ..models.alquiler import Alquiler
-from ..utils.mappers import alquiler_to_response_dto
+from ..utils.mappers import alquiler_to_response_dto, alquiler_finalizado_to_response_dto
 from .utils.alquiler_utils import (
     normalizar_campos_basicos,
     validar_campos_obligatorios,
@@ -25,6 +27,7 @@ class AlquilerService:
         self.alquiler_repo = AlquilerRepository()
         self.vehiculo_repo = VehiculoRepository()
         self.reserva_repo = ReservaRepository()
+        self.multa_repo = MultaRepository()
 
 
     def listar_alquileres(self):
@@ -127,7 +130,6 @@ class AlquilerService:
             )
 
         return mas_alquilados
-
 
 
     def crear_alquiler(self, body):
@@ -273,11 +275,28 @@ class AlquilerService:
         vehiculo = self.vehiculo_repo.get_by_id(alquiler.id_vehiculo)
         if not vehiculo:
             raise NotFoundException("Vehículo asociado no encontrado")
-
+        
+        fecha_fin_real = date.today()
         alquiler.fecha_fin = date.today()
 
+        dias_utilizados = (fecha_fin_real - alquiler.fecha_inicio).days + 1
+        if dias_utilizados < 1:
+            dias_utilizados = 1
+
+        costo_diario = vehiculo.costo_diario
+        costo_base = dias_utilizados * costo_diario
+
+        multas_validas = [
+            multa for multa in alquiler.multas
+            if alquiler.fecha_inicio <= multa.fecha <= fecha_fin_real
+        ]
+
+        costo_multas = sum(multa.monto for multa in multas_validas)
+
+        alquiler.costo_total = costo_base + costo_multas
+
         maquina_estado = AlquilerStateMachine(alquiler.estado)
-        mensaje = maquina_estado.finalizar()
+        maquina_estado.finalizar()
         alquiler.estado = maquina_estado.state_enum
 
         maquina_vehiculo = VehiculoStateMachine(vehiculo.estado)
@@ -285,4 +304,6 @@ class AlquilerService:
         vehiculo.estado = maquina_vehiculo.state_enum
 
         self.alquiler_repo.save_changes()
-        return {"mensaje": mensaje}
+        return alquiler_finalizado_to_response_dto(
+            alquiler,dias_utilizados, costo_base, multas_validas
+        )

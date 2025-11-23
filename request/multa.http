@@ -22,9 +22,9 @@ Content-Type: application/json
 Authorization: Bearer {{login.response.body.access_token}}
 
 {
-    "id_alquiler": 1,
+    "id_alquiler": 3,
     "monto": 150.75,
-    "fecha": "2024-06-15",
+    "fecha": "2025-11-23",
     "descripcion": "Exceso de velocidad"
 }
 
@@ -41,22 +41,22 @@ Content-Type: application/json
 Authorization: Bearer {{login.response.body.access_token}}
 
 {
-    "id_alquiler": 2,
+    "id_alquiler": 4,
     "monto": 100.00,
-    "fecha": "2024-06-14",
+    "fecha": "2025-11-23",
     "descripcion": "Estacionamiento indebido"
 }
 
 
 ### Actualizar multa
-PUT {{baseUrl}}/multas/1
+PUT {{baseUrl}}/multas/4
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.access_token}}
 
 {
-    "id_alquiler": 1,
+    "id_alquiler": 4,
     "monto": 200.00,
-    "fecha": "2024-06-16",
+    "fecha": "2025-11-23",
     "descripcion": "Estacionamiento indebido"
 }
 

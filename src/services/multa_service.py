@@ -1,8 +1,11 @@
 from datetime import date
 
 from ..repository.multa_repository import MultaRepository
-from ..exceptions.domain_exceptions import NotFoundException
+from ..repository.alquiler_repository import AlquilerRepository
+from ..exceptions.domain_exceptions import NotFoundException, BusinessException
+from ..models.enums import EstadoAlquiler
 from ..models.multa import Multa
+from datetime import datetime
 from ..utils.mappers import multa_to_response_dto
 from .utils.multa_utils import (
     normalizar_campos_basicos,
@@ -18,6 +21,7 @@ class MultaService:
     
     def __init__(self, multa_repository=None):
         self.multa_repo = multa_repository or MultaRepository()
+        self.alquiler_repo = AlquilerRepository()
 
 
     def listar_multas(self):
@@ -59,7 +63,7 @@ class MultaService:
             raise NotFoundException("Multa no encontrada")
 
         self.multa_repo.delete(multa)
-        return {"mensaje": "Multa eliminada correctamente"} 
+        return {"mensaje": "Multa eliminada correctamente"}
     
     
     def crear_multa(self, body):
@@ -77,6 +81,24 @@ class MultaService:
         validar_descripcion(body["descripcion"])
         validar_alquiler_existente(body["id_alquiler"])
 
+                
+        alquiler = self.alquiler_repo.get_by_id(body["id_alquiler"])
+        if not alquiler:
+            raise NotFoundException("El alquiler asociado no existe")
+
+        if alquiler.estado != EstadoAlquiler.ACTIVO:
+            raise BusinessException("Solo se pueden registrar multas para alquileres activos")
+
+        try:
+            fecha_multa = datetime.strptime(body["fecha"], "%Y-%m-%d").date()
+        except ValueError:
+            raise BusinessException("El formato de fecha debe ser YYYY-MM-DD")
+
+        if fecha_multa < alquiler.fecha_inicio:
+            raise BusinessException(
+                "La fecha de la multa no puede ser anterior al inicio del alquiler"
+            )
+
         nueva_multa = Multa(
             id_alquiler=body["id_alquiler"],
             descripcion=body["descripcion"],
@@ -87,7 +109,7 @@ class MultaService:
         self.multa_repo.add(nueva_multa)
         return multa_to_response_dto(nueva_multa)
     
-    
+
     def actualizar_multa(self, multa_id, body):
         multa = self.multa_repo.get_by_id(multa_id)
         if not multa:
@@ -101,14 +123,27 @@ class MultaService:
         ]
 
         validar_campos_obligatorios(body, campos_obligatorios, "multa")
-        validar_id_alquiler(body)
-        validar_monto(body)
-        validar_fecha(body) 
-        validar_descripcion(body)
-        
+        validar_id_alquiler(body["id_alquiler"])
+        validar_descripcion(body["descripcion"])
+        validar_monto(body["monto"])
+        validar_fecha(body["fecha"])
+
         alquiler = self.alquiler_repo.get_by_id(body["id_alquiler"])
         if not alquiler:
             raise NotFoundException("El alquiler asociado no existe")
+
+        if alquiler.estado != EstadoAlquiler.ACTIVO:
+            raise BusinessException("Solo se pueden actualizar multas para alquileres activos")
+
+        try:
+            fecha_multa = datetime.strptime(body["fecha"], "%Y-%m-%d").date()
+        except ValueError:
+            raise BusinessException("El formato de fecha debe ser YYYY-MM-DD")
+
+        if fecha_multa < alquiler.fecha_inicio:
+            raise BusinessException(
+                "La fecha de la multa no puede ser anterior al inicio del alquiler"
+            )
 
         multa.id_alquiler = body["id_alquiler"]
         multa.descripcion = body["descripcion"]

@@ -10,12 +10,13 @@ from ..models.multa import Multa
 
 from ..dto.cliente_dto import ClienteResponseDTO
 from ..dto.vehiculo_dto import VehiculoResponseDTO
-from ..dto.alquiler_dto import AlquilerResponseDTO
+from ..dto.alquiler_dto import AlquilerResponseDTO, AlquilerFinalizadoResponseDTO
 from ..dto.reserva_dto import ReservaResponseDTO
 from ..dto.empleado_dto import EmpleadoResponseDTO
 from ..dto.marca_dto import MarcaResponseDTO
 from ..dto.modelo_dto import ModeloResponseDTO
 from ..dto.multa_dto import MultaResponseDTO
+
 
 
 def cliente_to_response_dto(cliente: Cliente) -> ClienteResponseDTO:
@@ -25,6 +26,9 @@ def cliente_to_response_dto(cliente: Cliente) -> ClienteResponseDTO:
         apellido=cliente.apellido,
         dni=cliente.dni,
         email=cliente.email,
+        telefono=cliente.telefono,
+        licencia_numero=cliente.licencia_numero,
+        licencia_categoria=cliente.licencia_categoria,
         licencia_vencimiento=cliente.licencia_vencimiento,
     )
     
@@ -33,8 +37,10 @@ def empleado_to_response_dto(empleado: Empleado) -> EmpleadoResponseDTO:
         id=empleado.id,
         nombre=empleado.nombre,
         apellido=empleado.apellido,
+        dni=empleado.dni,
         direccion=empleado.direccion,
         telefono=empleado.telefono,
+        email=empleado.email,
         rol=empleado.rol.value if isinstance(empleado.rol, RolEmpleado) else str(empleado.rol),
     )
 
@@ -63,6 +69,28 @@ def alquiler_to_response_dto(alquiler: Alquiler) -> AlquilerResponseDTO:
         estado=alquiler.estado.value,
     )
 
+def alquiler_finalizado_to_response_dto(
+    alquiler,
+    dias_utilizados,
+    costo_base,
+    multas_validas,
+    
+) -> AlquilerFinalizadoResponseDTO:
+
+    return AlquilerFinalizadoResponseDTO(
+        id=alquiler.id,
+        cliente=cliente_to_response_dto(alquiler.cliente),
+        vehiculo=vehiculo_to_response_dto(alquiler.vehiculo),
+        empleado=empleado_to_response_dto(alquiler.empleado),
+        fecha_inicio=alquiler.fecha_inicio,
+        fecha_fin=alquiler.fecha_fin,
+        dias_utilizados=dias_utilizados,
+        costo_base=costo_base,
+        multas=[multa_to_response_dto(m) for m in multas_validas],
+        costo_total_multas=sum(m.monto for m in multas_validas),
+        costo_total=alquiler.costo_total,
+        estado=alquiler.estado.value,
+    )
 
 def reserva_to_response_dto(reserva: Reserva) -> ReservaResponseDTO:
     return ReservaResponseDTO(
@@ -99,3 +127,4 @@ def multa_to_response_dto(multa: Multa) -> dict:
         monto=multa.monto,
         fecha=multa.fecha
     )
+

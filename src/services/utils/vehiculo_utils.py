@@ -52,10 +52,6 @@ def validar_vehiculo_disponible(
     if not vehiculo:
         raise ValidationException("El vehículo no existe")
 
-    # 1) Estado actual del vehículo
-    if vehiculo.estado != EstadoVehiculo.DISPONIBLE:
-        raise BusinessException("El vehículo no se encuentra disponible")
-
     # Si no me mandan fechas, hasta acá llega la validación
     if fecha_inicio is None or fecha_fin is None:
         return
