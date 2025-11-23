@@ -7,6 +7,7 @@ if os.getenv("RUN_ENV") != "docker":
 from flask import Flask
 from flask_cors import CORS
 from src.exceptions.error_handlers import register_error_handlers
+from src.extensions.mail_ext import init_mail
 from src.extensions.jwt_ext import init_jwt
 from src.extensions.db import db
 from config import Config 
@@ -43,6 +44,7 @@ def create_app():
 
     db.init_app(app)
     init_jwt(app)
+    init_mail(app)
     register_error_handlers(app)
 
     with app.app_context():

@@ -1,79 +1,140 @@
 # Sistema de Gestión de Alquileres
 
-Backend desarrollado en **Flask**, **MySQL** y **JWT**, con estructura modular basada en:
-- **Controllers**: manejo de endpoints HTTP.
-- **Services**: reglas de negocio.
-- **Repository**: acceso a datos.
-- **Models**: entidades y enums.
-- **Utils**: validaciones, autenticación y mappers.
-- **Patterns**: uso de **Singleton** y **State** para mejorar la mantenibilidad.
+Backend desarrollado en **Flask**, **MySQL**, **SQLAlchemy**, **JWT** y un ecosistema de patrones orientados a objetos. El proyecto implementa una arquitectura modular, escalable y mantenible, ideal para entornos productivos y académicos.
 
 ---
 
-# 🧩 Patrones utilizados
+# 🧩 Arquitectura General
 
-## 🟦 Patrón Singleton — Inicialización de la Base de Datos
-Se utiliza para garantizar:
-- Que la inicialización ocurra **una sola vez**.
-- Evitar condiciones de carrera.
-- Mantener una única instancia consistente en todo el sistema.
+El proyecto está organizado en capas:
 
-Ideal para entornos Docker donde los servicios pueden intentar iniciar simultáneamente.
+* **Controllers**: manejo de endpoints HTTP.
+* **Services**: lógica de negocio.
+* **Repository**: acceso a datos (SQLAlchemy ORM).
+* **Models**: entidades y enums.
+* **Utils**: validaciones, autenticación y mappers.
+* **Patterns**: uso de **Singleton**, **State** y **Observer**.
 
 ---
 
-## 🟩 Patrón State — Gestión de Estados del Dominio
+# 🧠 Patrones de Diseño Implementados
+
+## 🟦 Singleton — Inicialización de la Base de Datos
+
+Asegura que:
+
+* La base se inicialice **una sola vez**.
+* Se eviten condiciones de carrera.
+* Exista una única instancia consistente para todo el sistema.
+
+Ideal para entornos Docker donde los contenedores pueden iniciar en paralelo.
+
+---
+
+## 🟩 State — Gestión de Estados del Dominio
+
 Implementado en:
-- Vehículos  
-- Reservas  
-- Alquileres  
 
-Ventajas:
-- Evita condicionales complejos.
-- Cada estado define su comportamiento.
-- No se permiten transiciones inválidas (ej. finalizar un alquiler ya finalizado).
+* **Vehículos**
+* **Reservas**
+* **Alquileres**
 
-Ejemplos:
-- Vehículo `ALQUILADO` no puede volver a `RESERVADO`.
-- Reserva `EXPIRADA` no puede cancelarse.
-- Alquiler `FINALIZADO` no puede modificarse.
+### Beneficios
+
+* Cada estado define su propio comportamiento.
+* Evita condicionales complejos.
+* No permite transiciones inválidas.
+
+### Ejemplos
+
+* Un vehículo `ALQUILADO` **no puede volver** a `RESERVADO`.
+* Una reserva `EXPIRADA` **no puede cancelarse**.
+* Un alquiler `FINALIZADO` **no puede modificarse**.
+
+---
+
+## 🟧 Observer — Sistema Global de Notificaciones
+
+Se implementó un **notificador global** basado en el patrón Observer.
+
+### ¿Qué hace?
+
+Cada vez que se crea:
+
+* una **Reserva**, o
+* un **Alquiler**,
+
+se dispara un evento que ejecuta automáticamente todos los observers registrados.
+
+### Observers actuales
+
+* **EmailClienteObserver**: envía correo al cliente.
+* **SMSObserver**: envía SMS (simulado por consola).
+* *Se pueden agregar más observers fácilmente*: EmailEmpleadosObserver, WhatsAppObserver, LoggerObserver, etc.
+
+### Flujo del Observer
+
+1. Se crea una Reserva o un Alquiler.
+2. El service ejecuta `notificador_movimientos.notificar(entidad)`.
+3. El notificador global (Singleton) llama a cada observer.
+4. Cada observer realiza su trabajo sin modificar los services.
+
+### Ventajas
+
+* Notificaciones centralizadas.
+* No se repite lógica.
+* Fácil de extender.
+* Funciona con **cualquier entidad** que tenga cliente, vehículo, fecha_inicio, fecha_fin.
 
 ---
 
 # 🚀 Cómo iniciar el proyecto
 
 ## 1) Con Docker (recomendado)
+
 ```bash
 docker compose build --no-cache
 docker compose up
 ```
 
-| Servicio         | Puerto | Descripción |
-|-----------------|--------|-------------|
-| alquileres_api  | 5000   | API Flask   |
-| alquileres_db   | 3306   | MySQL 8     |
+### Servicios
+
+| Servicio       | Puerto | Descripción |
+| -------------- | ------ | ----------- |
+| alquileres_api | 5000   | API Flask   |
+| alquileres_db  | 3306   | MySQL 8     |
 
 ---
 
 ## 2) Ejecutar localmente
+
+### Crear entorno virtual
+
 ```bash
-# 1) Crear y activar el entorno virtual
 python -m venv venv
+```
 
-# Linux / macOS
+### Activarlo
+
+Linux / macOS:
+
+```bash
 source venv/bin/activate
+```
 
-# Windows PowerShell
+Windows (PowerShell):
+
+```bash
 .\venv\Scripts\Activate.ps1
+```
 
-# Windows (cmd)
-.\venv\Scripts\activate.bat
+### Instalar dependencias
 
-# 2) Instalar dependencias
+```bash
 pip install -r requirements.txt
 ```
 
-Crear un archivo `.env` en la raíz del proyecto con los valores (ajustar según tu entorno):
+### Archivo `.env` requerido
 
 ```env
 DB_USER=root
@@ -84,197 +145,128 @@ DB_NAME=tp
 
 JWT_SECRET_KEY=super_key_123
 JWT_EXPIRES_IN=900
+
+# Opcional: Email via Mailtrap
+MAIL_SERVER=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=xxxxxx
+MAIL_PASSWORD=yyyyyy
+MAIL_DEFAULT_SENDER=noreply@alquileres.com
 ```
 
-Notas:
-- Cambia DB_PASSWORD y JWT_SECRET_KEY por valores seguros.
-- Si usas Docker, asegúrate de que las variables apunten al servicio de la base de datos (host/puerto).
-
-Finalmente, ejecutar la aplicación:
+Ejecutar:
 
 ```bash
 python app.py
 ```
 
-La API quedará disponible en http://localhost:5000 (o el puerto configurado en tu app).
+La API estará disponible en:
+**[http://localhost:5000](http://localhost:5000)**
 
 ---
 
 # 🔐 Autenticación
 
 ### POST `/auth/login`
-Devuelve un token **JWT**.
+
+Genera un token JWT.
 
 ### GET `/auth/me`
-Requiere token. Devuelve info del usuario autenticado.
+
+Devuelve la información del usuario autenticado.
 
 ---
 
-# 📡 Endpoints y Permisos por Rol
-Listado completo basado en tu código real.
+# 📡 Endpoints disponibles
+
+A continuación se detalla el listado completo de endpoints por recurso y rol permitido.
+
+## 🧑 Empleados (`/empleados`)
+
+| Método | Endpoint                 | Acción           | Roles |
+| ------ | ------------------------ | ---------------- | ----- |
+| GET    | /empleados               | Listar           | ADMIN |
+| GET    | /empleados/rol/{rol}     | Listar por rol   | ADMIN |
+| GET    | /empleados/{id}          | Obtener          | ADMIN |
+| GET    | /empleados/dni/{dni}     | Buscar por DNI   | ADMIN |
+| GET    | /empleados/email/{email} | Buscar por email | ADMIN |
+| POST   | /empleados               | Crear            | ADMIN |
+| PUT    | /empleados/{id}          | Actualizar       | ADMIN |
+| DELETE | /empleados/{id}          | Eliminar         | ADMIN |
 
 ---
 
-# 🧑 Empleados (`/empleados`)
+## 👤 Clientes (`/clientes`)
 
-| Método | Endpoint | Acción | Roles |
-|--------|----------|--------|--------|
-| GET | /empleados | Listar | ADMIN |
-| GET | /empleados/rol/{rol} | Listar por rol | ADMIN |
-| GET | /empleados/{id} | Obtener | ADMIN |
-| GET | /empleados/dni/{dni} | Buscar por DNI | ADMIN |
-| GET | /empleados/email/{email} | Buscar por email | ADMIN |
-| POST | /empleados | Crear | ADMIN |
-| PUT | /empleados/{id} | Actualizar | ADMIN |
-| DELETE | /empleados/{id} | Eliminar | ADMIN |
-
----
-
-# 👤 Clientes (`/clientes`)
-
-| Método | Endpoint | Acción | Roles |
-|--------|-----------|--------|--------|
-| GET | /clientes | Listar | ADMIN |
-| GET | /clientes/{id} | Obtener | ADMIN / ATENCION |
-| POST | /clientes | Crear | ADMIN / ATENCION |
-| PUT | /clientes/{id} | Actualizar | ADMIN / ATENCION |
-| DELETE | /clientes/{id} | Eliminar | ADMIN |
-| GET | /clientes/dni/{dni} | Buscar por DNI | ADMIN / ATENCION |
-| GET | /clientes/email/{email} | Buscar por email | ADMIN / ATENCION |
+| Método | Endpoint                | Acción           | Roles            |
+| ------ | ----------------------- | ---------------- | ---------------- |
+| GET    | /clientes               | Listar           | ADMIN            |
+| GET    | /clientes/{id}          | Obtener          | ADMIN / ATENCION |
+| POST   | /clientes               | Crear            | ADMIN / ATENCION |
+| PUT    | /clientes/{id}          | Actualizar       | ADMIN / ATENCION |
+| DELETE | /clientes/{id}          | Eliminar         | ADMIN            |
+| GET    | /clientes/dni/{dni}     | Buscar por DNI   | ADMIN / ATENCION |
+| GET    | /clientes/email/{email} | Buscar por email | ADMIN / ATENCION |
 
 ---
 
-# 🚗 Vehículos (`/vehiculos`)
+## 🚗 Vehículos (`/vehiculos`)
 
-| Método | Endpoint | Acción | Roles |
-|--------|-----------|--------|--------|
-| GET | /vehiculos | Listar | ADMIN / ATENCION |
-| GET | /vehiculos/{id} | Obtener | ADMIN / ATENCION |
-| GET | /vehiculos/estado/{estados} | Buscar por estado | ADMIN / ATENCION |
-| POST | /vehiculos | Crear | ADMIN |
-| PUT | /vehiculos/{id} | Actualizar | ADMIN |
-| DELETE | /vehiculos/{id} | Eliminar | ADMIN |
-
----
-
-# 📅 Reservas (`/reservas`)
-
-| Método | Endpoint | Acción | Roles |
-|--------|-----------|--------|--------|
-| GET | /reservas | Listar | ADMIN / ATENCION |
-| GET | /reservas/{id} | Obtener | ADMIN / ATENCION |
-| GET | /reservas/estado/{estados} | Buscar por estado | ADMIN / ATENCION |
-| GET | /reservas/cliente/{cliente_id} | Por cliente | ADMIN / ATENCION |
-| POST | /reservas | Crear | ADMIN / ATENCION |
-| PUT | /reservas/{id} | Actualizar | ADMIN / ATENCION |
-| PATCH | /reservas/{id}/cancelar | Cancelar | ADMIN / ATENCION |
+| Método | Endpoint                    | Acción            | Roles            |
+| ------ | --------------------------- | ----------------- | ---------------- |
+| GET    | /vehiculos                  | Listar            | ADMIN / ATENCION |
+| GET    | /vehiculos/{id}             | Obtener           | ADMIN / ATENCION |
+| GET    | /vehiculos/estado/{estados} | Buscar por estado | ADMIN / ATENCION |
+| POST   | /vehiculos                  | Crear             | ADMIN            |
+| PUT    | /vehiculos/{id}             | Actualizar        | ADMIN            |
+| DELETE | /vehiculos/{id}             | Eliminar          | ADMIN            |
 
 ---
 
-# 🚨 Multas (`/multas`)
+## 📅 Reservas (`/reservas`)
 
-| Método | Endpoint | Acción | Roles |
-|--------|-----------|--------|--------|
-| GET | /multas | Listar | ADMIN / ATENCION |
-| GET | /multas/{id} | Obtener | ADMIN / ATENCION |
-| POST | /multas | Crear | ADMIN / ATENCION |
-| PUT | /multas/{id} | Actualizar | ADMIN / ATENCION |
-| DELETE | /multas/{id} | Eliminar | ADMIN |
-
----
-
-# 🏭 Modelos (`/modelos`)
-
-| Método | Endpoint | Acción | Roles |
-|--------|-----------|--------|--------|
-| GET | /modelos | Listar | ADMIN |
-| GET | /modelos/{id} | Obtener | ADMIN |
-| POST | /modelos | Crear | ADMIN |
-| PUT | /modelos/{id} | Actualizar | ADMIN |
-| DELETE | /modelos/{id} | Eliminar | ADMIN |
+| Método | Endpoint                       | Acción            | Roles            |
+| ------ | ------------------------------ | ----------------- | ---------------- |
+| GET    | /reservas                      | Listar            | ADMIN / ATENCION |
+| GET    | /reservas/{id}                 | Obtener           | ADMIN / ATENCION |
+| GET    | /reservas/estado/{estados}     | Buscar por estado | ADMIN / ATENCION |
+| GET    | /reservas/cliente/{cliente_id} | Por cliente       | ADMIN / ATENCION |
+| POST   | /reservas                      | Crear             | ADMIN / ATENCION |
+| PUT    | /reservas/{id}                 | Actualizar        | ADMIN / ATENCION |
+| PATCH  | /reservas/{id}/cancelar        | Cancelar          | ADMIN / ATENCION |
 
 ---
 
-# 🏷️ Marcas (`/marcas`)
+## 🚨 Multas (`/multas`)
 
-| Método | Endpoint | Acción | Roles |
-|--------|-----------|--------|--------|
-| GET | /marcas | Listar | ADMIN |
-| GET | /marcas/{id} | Obtener | ADMIN |
-| GET | /marcas/nombre/{nombre} | Buscar por nombre | ADMIN |
-| POST | /marcas | Crear | ADMIN |
-| PUT | /marcas/{id} | Actualizar | ADMIN |
-| DELETE | /marcas/{id} | Eliminar | ADMIN |
-
----
-
-# 🚚 Alquileres (`/alquileres`)
-
-| Método | Endpoint | Acción | Roles |
-|--------|-----------|--------|--------|
-| GET | /alquileres | Listar | ADMIN / ATENCION |
-| GET | /alquileres/{id} | Obtener | ADMIN / ATENCION |
-| GET | /alquileres/cliente/{cliente_id} | Por cliente | ADMIN / ATENCION |
-| GET | /alquileres/vehiculo/{vehiculo_id} | Por vehículo | ADMIN / ATENCION |
-| GET | /alquileres/estado/{estados} | Por estado | ADMIN / ATENCION |
-| GET | /alquileres/periodo?desde=X&hasta=Y | Por período | ADMIN / ATENCION |
-| GET | /alquileres/vehiculos-mas-alquilados | Ranking | ADMIN / ATENCION |
-| POST | /alquileres | Crear | ADMIN / ATENCION |
-| PUT | /alquileres/{id} | Actualizar | ADMIN / ATENCION |
-| PATCH | /alquileres/{id}/finalizar | Finalizar | ADMIN / ATENCION |
+| Método | Endpoint     | Acción     | Roles            |
+| ------ | ------------ | ---------- | ---------------- |
+| GET    | /multas      | Listar     | ADMIN / ATENCION |
+| GET    | /multas/{id} | Obtener    | ADMIN / ATENCION |
+| POST   | /multas      | Crear      | ADMIN / ATENCION |
+| PUT    | /multas/{id} | Actualizar | ADMIN / ATENCION |
+| DELETE | /multas/{id} | Eliminar   | ADMIN            |
 
 ---
 
-# 📏 Reglas de negocio
+## 🏭 Modelos (`/modelos`)
 
-## Empleados
-- DNI + email únicos.
-- Contraseña hasheada.
-- Solo ADMIN gestiona empleados.
-
-## Clientes
-- Validación estricta de DNI, email y licencia.
-
-## Vehículos
-- Estados manejados con **State**.
-- Disponibilidad controlada.
-- No se alquila ni reserva si no está DISPONIBLE.
-
-## Reservas
-- Expiran automáticamente.
-- Cancelación con PATCH.
-- Filtrado por cliente y estado.
-
-## Alquileres
-- Solo se finalizan si están activos.
-- Finalización calcula monto.
-- Estadísticas por período y por vehículo.
-- Relación entre Reserva y Alquiler:
-
-    - Si existe una reserva para un vehículo en un período determinado, solo puede generarse un alquiler dentro de ese mismo período.
-
-    - Si el cliente intenta alquilar ANTES del inicio del período reservado, se permite el alquiler pero la reserva se ignora, ya que el cliente está alquilando anticipadamente.
-
-    - Si el cliente intenta alquilar DESPUÉS del período reservado, la reserva expira automáticamente (su estado pasa a EXPIRADA) y no se utiliza para el alquiler.
-
-    - Garantiza que un vehículo reservado queda bloqueado para ese período, pero no impide alquilarlo antes si el cliente lo solicita.
-    
-    - La reserva solo sirve como “bloqueo” del período reservado; fuera del período, se toma la decisión correcta según el caso:
-
-        - Antes → se ignora
-        - Después → expira
-
-## Multas
-- Asociadas a alquiler.
-- Solo ADMIN puede eliminar.
+| Método | Endpoint      | Acción     | Roles |
+| ------ | ------------- | ---------- | ----- |
+| GET    | /modelos      | Listar     | ADMIN |
+| GET    | /modelos/{id} | Obtener    | ADMIN |
+| POST   | /modelos      | Crear      | ADMIN |
+| PUT    | /modelos/{id} | Actualizar | ADMIN |
+| DELETE | /modelos/{id} | Eliminar   | ADMIN |
 
 ---
 
-# ✔ Validaciones faltantes recomendadas
-- Políticas de contraseñas más seguras.
-- Evitar eliminar empleados referenciados.
-- Evitar quedarse sin un usuario ADMIN.
-- Validaciones extra para teléfonos y longitudes.
+## 🏷️ Marcas (`/marcas`)
 
----
-
+| Método | Endpoint                | Acción            | Roles |
+| ------ | ----------------------- | ----------------- | ----- |
+| GET    | /marcas                 | Listar            | ADMIN |
+| GET    | /marcas/{id}            | Obtener           | ADMIN |
+| GET    | /marcas/nombre/{nombre} | Buscar por nombre | ADMIN |
+| POST   | /marcas                 | Crear             | ADMIN |
+| PUT    | /marcas/{id}            | Actual            |       |

@@ -95,6 +95,6 @@ Authorization: Bearer {{login.response.body.access_token}}
 
 
 ### Finalizar alquiler
-PATCH {{baseUrl}}/alquileres/3/finalizar
+PATCH {{baseUrl}}/alquileres/1/finalizar
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.access_token}}

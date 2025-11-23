@@ -1,4 +1,5 @@
 from ..exceptions.domain_exceptions import NotFoundException, BusinessException
+from src.observer.notificador_global import notificador_movimientos
 from ..repository.alquiler_repository import AlquilerRepository
 from ..repository.vehiculo_repository import VehiculoRepository
 from ..repository.reserva_repository import ReservaRepository
@@ -206,6 +207,8 @@ class AlquilerService:
 
         self.alquiler_repo.add(nuevo_alquiler)
         self.alquiler_repo.save_changes()
+        
+        notificador_movimientos.notificar(nuevo_alquiler)
 
         return alquiler_to_response_dto(nuevo_alquiler)
 

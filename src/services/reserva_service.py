@@ -1,4 +1,5 @@
 from ..exceptions.domain_exceptions import ValidationException, NotFoundException, BusinessException
+from src.observer.notificador_global import notificador_movimientos
 from ..repository.vehiculo_repository import VehiculoRepository
 from ..repository.reserva_repository import ReservaRepository
 from ..states.vehiculo_state import VehiculoStateMachine
@@ -83,6 +84,9 @@ class ReservaService:
         
         self.reserva_repo.add(nueva_reserva)
         self.reserva_repo.save_changes()
+        
+        # notificar a los observadores nueva reserva
+        notificador_movimientos.notificar(nueva_reserva)
         return reserva_to_response_dto(nueva_reserva)
     
         
