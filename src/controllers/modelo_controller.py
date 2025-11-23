@@ -1,5 +1,5 @@
-from flask import Blueprint, request, jsonify
 from ..services.modelo_service import ModeloService
+from flask import Blueprint, request, jsonify
 from ..utils.auth_utils import roles_required
 
 modelo_bp = Blueprint("modelos", __name__, url_prefix="/modelos")

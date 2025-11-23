@@ -1,7 +1,6 @@
 from ..extensions.db import db
 from ..models.enums import EstadoVehiculo
 
-
 class Vehiculo(db.Model):
     __tablename__ = "vehiculos"
 

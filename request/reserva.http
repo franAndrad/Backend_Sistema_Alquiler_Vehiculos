@@ -1,5 +1,6 @@
 @baseUrl = http://127.0.0.1:5000
 
+
 ### Login empleado
 # @name login
 POST {{baseUrl}}/auth/login
@@ -24,14 +25,13 @@ Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "id_cliente": 1,
-    "id_vehiculo": 3,
+    "id_vehiculo": 1,
     "fecha_inicio": "2027-11-22",
     "fecha_fin": "2027-11-25"
 }
 
 
 ### Obtener reserva por ID
-
 GET {{baseUrl}}/reservas/1
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.access_token}}
@@ -67,6 +67,7 @@ Authorization: Bearer {{login.response.body.access_token}}
 GET {{baseUrl}}/reservas/cliente/1
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.access_token}}
+
 
 ### Cancelar reserva
 PATCH {{baseUrl}}/reservas/1/cancelar

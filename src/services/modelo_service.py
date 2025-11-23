@@ -1,13 +1,17 @@
-from ..repository.modelo_repository import ModeloRepository
 from ..exceptions.domain_exceptions import NotFoundException, BusinessException
+from ..repository.modelo_repository import ModeloRepository
 from ..models.modelo import Modelo
-from ..utils.mappers import modelo_to_response_dto
+from ..utils.mappers import (
+    modelo_to_response_dto
+    )
 from .utils.modelo_utlis import (
     normalizar_campos_basicos,
-    validar_campos_obligatorios,
     validar_descripcion,
     validar_marca_existente,
     validar_nombre,
+)
+from ..services.utils.comunes_utils import (
+    validar_campos_obligatorios,
 )
 
 class ModeloService:

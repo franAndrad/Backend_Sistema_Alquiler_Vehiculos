@@ -5,25 +5,34 @@ from ...repository.alquiler_repository import AlquilerRepository
 from ...models.enums import TipoVehiculo
 from datetime import date
 from datetime import datetime
-from ...models.enums import EstadoVehiculo
+from .comunes_utils import (
+    normalizar_strings, 
+    validar_enum,
+    validar_campos_obligatorios
+    )
+
 
 def normalizar_campos(body: dict) -> dict:
-    """Limpia espacios y normaliza strings."""
-    if "tipo" in body and body["tipo"]:
-        body["tipo"] = body["tipo"].strip()
-    if "patente" in body and body["patente"]:
-        body["patente"] = body["patente"].strip().upper()
-    return body
+    return normalizar_strings(
+        body,
+        campos=["patente", "tipo"]
+    )
+    
+    
+def validar_tipo(body: dict):
+    validar_enum(body.get("tipo"), TipoVehiculo, "tipo de vehículo")
+    
+    
+def validar_datos_vehiculo(body: dict):
+    campos_obligatorios = [
+        "id_modelo", "anio", "tipo", "patente", "costo_diario",
+    ]
+    validar_campos_obligatorios(body, campos_obligatorios, "vehiculo")
+    validar_anio(body)
+    validar_patente(body)
+    validar_costo(body)
+    validar_tipo(body)
 
-
-def validar_campos_obligatorios(body: dict, campos_obligatorios: list[str], entidad: str):
-    faltantes = [
-        c for c in campos_obligatorios if c not in body or not body[c]]
-    if faltantes:
-        raise ValidationException(
-            f"Faltan campos obligatorios para {entidad}: {', '.join(faltantes)}"
-        )
-        
 
 def validar_anio(body: dict):
     anio = body.get("anio")
@@ -98,14 +107,3 @@ def validar_costo(body: dict):
         raise ValidationException("El costo diario debe ser un número mayor a cero")
     
 
-def validar_tipo(body: dict):
-    if "tipo" not in body or not body["tipo"]:
-        raise ValidationException("El tipo de vehículo es obligatorio")
-
-    try:
-        TipoVehiculo(body["tipo"])
-    except ValueError:
-        raise ValidationException(
-            f"El tipo '{body['tipo']}' no es válido. Tipos válidos: "
-            + ", ".join([t.value for t in TipoVehiculo])
-        )

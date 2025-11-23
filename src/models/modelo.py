@@ -1,6 +1,5 @@
 from ..extensions.db import db
 
-
 class Modelo(db.Model):
     __tablename__ = "modelos"
 

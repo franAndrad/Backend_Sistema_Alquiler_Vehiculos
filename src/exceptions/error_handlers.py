@@ -1,3 +1,4 @@
+from ..utils.auth_utils import AuthorizationException 
 from .domain_exceptions import (
     DomainException,
     BusinessException,
@@ -6,7 +7,6 @@ from .domain_exceptions import (
 )
 
 from flask import jsonify
-from ..utils.auth_utils import AuthorizationException 
 
 def register_error_handlers(app):
 

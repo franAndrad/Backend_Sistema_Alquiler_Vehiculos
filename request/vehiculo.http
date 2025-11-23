@@ -1,5 +1,6 @@
 @baseUrl = http://127.0.0.1:5000
 
+
 ### Login empleado
 # @name login
 POST {{baseUrl}}/auth/login
@@ -24,7 +25,7 @@ Authorization: Bearer {{login.response.body.access_token}}
 
 {
     "id_modelo": 1,
-    "anio": 2022,
+"anio": 2022,
     "tipo": "SEDAN",
     "patente": "ABC12345",
     "costo_diario": 15000

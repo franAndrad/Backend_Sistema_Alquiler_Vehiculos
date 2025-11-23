@@ -1,22 +1,15 @@
 from ...exceptions.domain_exceptions import ValidationException, NotFoundException
 from ...repository.alquiler_repository import AlquilerRepository
-
-
+from .comunes_utils import normalizar_strings
 from datetime import date
 
-def normalizar_campos_basicos(body: dict) -> dict:
-    """Quita espacios y normaliza campos si están presentes."""
-    if "descripcion" in body and body["descripcion"] is not None:
-        body["descripcion"] = body["descripcion"].strip()
-    return body
 
-def validar_campos_obligatorios(body: dict, campos_obligatorios: list[str], entidad: str):
-    faltantes = [
-        c for c in campos_obligatorios if c not in body or not body[c]]
-    if faltantes:
-        raise ValidationException(
-            f"Faltan campos obligatorios para {entidad}: {', '.join(faltantes)}"
-        )
+def normalizar_campos_basicos(body: dict) -> dict:
+    return normalizar_strings(
+        body,
+        campos=["descripcion"],
+    )
+
     
 def validar_id_alquiler(id_alquiler):
     if id_alquiler is not None:

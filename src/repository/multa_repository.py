@@ -1,7 +1,6 @@
 from .base_repository import BaseRepository
 from ..models.multa import Multa
 
-
 class MultaRepository(BaseRepository):
 
     def __init__(self):

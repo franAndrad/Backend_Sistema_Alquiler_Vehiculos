@@ -1,6 +1,6 @@
-from flask import Blueprint, request, jsonify
 from ..services.alquiler_service import AlquilerService
 from ..utils.auth_utils import roles_required
+from flask import Blueprint, request, jsonify
 
 alquiler_bp = Blueprint("alquileres", __name__, url_prefix="/alquileres")
 alquiler_service = AlquilerService()

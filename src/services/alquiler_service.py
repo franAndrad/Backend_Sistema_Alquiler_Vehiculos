@@ -1,24 +1,25 @@
-from datetime import date
+from ..exceptions.domain_exceptions import NotFoundException, BusinessException
 from ..repository.alquiler_repository import AlquilerRepository
 from ..repository.vehiculo_repository import VehiculoRepository
 from ..repository.reserva_repository import ReservaRepository
 from ..repository.multa_repository import MultaRepository
-
-from ..exceptions.domain_exceptions import NotFoundException, BusinessException
 from ..states.alquiler_state import AlquilerStateMachine
 from ..states.vehiculo_state import VehiculoStateMachine
 from ..states.reserva_state import ReservaStateMachine
 from ..models.alquiler import Alquiler
-from ..utils.mappers import alquiler_to_response_dto, alquiler_finalizado_to_response_dto
+from datetime import date
+from ..utils.mappers import (
+    alquiler_to_response_dto, 
+    alquiler_finalizado_to_response_dto
+    )
 from .utils.alquiler_utils import (
     normalizar_campos_basicos,
-    validar_campos_obligatorios,
-    validar_ids_foreign_keys,
-    validar_cliente_existente,
-    validar_empleado_existente,
-)
+    validar_datos_alquiler
+    )
 from .utils.vehiculo_utils import validar_vehiculo_disponible
-from .utils.comunes_utils import validar_fecha
+from .utils.comunes_utils import (
+    validar_fecha
+    )
 
 
 class AlquilerService:
@@ -87,7 +88,6 @@ class AlquilerService:
     
     def vehiculos_mas_alquilados(self, fecha_desde=None, fecha_hasta=None, limite: int | None = None):
 
-        # Validar fechas si vienen
         if fecha_desde:
             validar_fecha(fecha_desde)
             if isinstance(fecha_desde, str):
@@ -102,7 +102,7 @@ class AlquilerService:
             raise BusinessException(
                 "La fecha inicial no puede ser mayor a la final")
 
-        # Normalizar límite
+        # normalizar límite
         if limite is not None:
             try:
                 limite = int(limite)
@@ -138,20 +138,14 @@ class AlquilerService:
 
         maquina_estado = AlquilerStateMachine()
 
-        campos_obligatorios = ["id_cliente", "id_empleado", "id_vehiculo"]
-        
-        validar_campos_obligatorios(body, campos_obligatorios, "alquiler")
-        validar_ids_foreign_keys(body["id_cliente"], body["id_empleado"], body["id_vehiculo"])
-        validar_cliente_existente(body["id_cliente"])
-        validar_empleado_existente(body["id_empleado"])
+        validar_datos_alquiler(body)
 
         fecha_actual = date.today()
 
-        # validar disponibilidad
         id_reserva = body.get("id_reserva")
 
         if id_reserva is None:
-            # SIN reserva → debe estar disponible HOY
+            # sin reserva → debe estar disponible HOY
             validar_vehiculo_disponible(
                 body["id_vehiculo"], fecha_actual, fecha_actual)
 
@@ -163,8 +157,7 @@ class AlquilerService:
             reserva = self.reserva_repo.get_by_id(id_reserva)
             if not reserva:
                 raise NotFoundException("La reserva asociada no existe")
-
-            # cliente y vehículo deben coincidir
+            
             if reserva.id_cliente != body["id_cliente"] or reserva.id_vehiculo != body["id_vehiculo"]:
                 raise BusinessException(
                     "La reserva no corresponde a ese cliente/vehículo")
@@ -185,15 +178,13 @@ class AlquilerService:
                 id_reserva_final = None
 
             else:
-                # El alquiler comienza DESPUÉS de la fecha de la reserva
-                # → venció
+                # El alquiler comienza DESPUÉS de la fecha de la reserva → venció
                 maquina_reserva = ReservaStateMachine(reserva.estado)
                 maquina_reserva.expirar()
                 reserva.estado = maquina_reserva.state_enum
                 raise BusinessException(
                     "La reserva asociada ya venció para la fecha de inicio del alquiler")
 
-        # ocupar vehículo
         vehiculo = self.vehiculo_repo.get_by_id(body["id_vehiculo"])
         if not vehiculo:
             raise NotFoundException("Vehículo asociado no encontrado")
@@ -227,12 +218,7 @@ class AlquilerService:
         body = dict(body)
         body = normalizar_campos_basicos(body)
 
-        campos_obligatorios = ["id_cliente", "id_empleado", "id_vehiculo"]
-        
-        validar_campos_obligatorios(body, campos_obligatorios, "alquiler")
-        validar_ids_foreign_keys(body["id_cliente"], body["id_empleado"], body["id_vehiculo"])
-        validar_cliente_existente(body["id_cliente"])
-        validar_empleado_existente(body["id_empleado"])
+        validar_datos_alquiler(body)
 
         fecha_actual = date.today()
 
@@ -258,7 +244,6 @@ class AlquilerService:
 
             alquiler.id_vehiculo = id_vehiculo_nuevo
 
-        # actualizar datos del alquiler
         alquiler.id_cliente = body["id_cliente"]
         alquiler.id_empleado = body["id_empleado"]
         alquiler.fecha_inicio = fecha_actual

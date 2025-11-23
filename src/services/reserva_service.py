@@ -1,24 +1,21 @@
-from ..repository.reserva_repository import ReservaRepository
-from ..repository.vehiculo_repository import VehiculoRepository
-from ..utils.mappers import reserva_to_response_dto
 from ..exceptions.domain_exceptions import ValidationException, NotFoundException, BusinessException
+from ..repository.vehiculo_repository import VehiculoRepository
+from ..repository.reserva_repository import ReservaRepository
+from ..states.vehiculo_state import VehiculoStateMachine
+from ..states.reserva_state import ReservaStateMachine
 from ..models.enums import  EstadoVehiculo
 from ..models.reserva import Reserva
-from ..states.reserva_state import ReservaStateMachine
-from ..states.vehiculo_state import VehiculoStateMachine
-from datetime import date
 from ..services.utils.reserva_utils import (
     normalizar_campos_reserva,
-    validar_campos_obligatorios,
-    validar_cliente_existente,
-    validar_fechas_reserva,
-    validar_no_solapamiento,
-    validar_reserva_pendiente,
+    validar_datos_reserva
     )
 from ..services.utils.vehiculo_utils import (
-    validar_vehiculo_disponible,
+    validar_vehiculo_disponible
 )
-    
+from ..utils.mappers import (
+    reserva_to_response_dto
+    )
+
 
 class ReservaService:
     
@@ -57,17 +54,14 @@ class ReservaService:
         body = dict(body)
         body = normalizar_campos_reserva(body)
 
-        campos_obligatiorios = ["id_cliente", "id_vehiculo", "fecha_inicio", "fecha_fin"]
-        validar_campos_obligatorios(body, campos_obligatiorios, "reserva")
-        validar_fechas_reserva(body["fecha_inicio"], body["fecha_fin"])
-        validar_no_solapamiento(body["fecha_inicio"], body["fecha_fin"])
-        validar_cliente_existente(body["id_cliente"])
-        validar_vehiculo_disponible(body["id_vehiculo"], body["fecha_inicio"], body["fecha_fin"])
-
-        vehiculo = VehiculoRepository.get_by_id(body["id_vehiculo"])
+        validar_datos_reserva(body)
+        
+        vehiculo = self.vehiculo_repo.get_by_id(body["id_vehiculo"])
         if vehiculo.estado != EstadoVehiculo.DISPONIBLE:
             raise BusinessException("El vehículo no se encuentra disponible")
-        
+       
+        validar_vehiculo_disponible(body["id_vehiculo"], body["fecha_inicio"], body["fecha_fin"])
+
         maquina_reserva = ReservaStateMachine()
         
         nueva_reserva = Reserva(
@@ -100,12 +94,7 @@ class ReservaService:
         body = dict(body)
         body = normalizar_campos_reserva(body)
         
-        campos_obligatorios = ["id_cliente", "id_vehiculo", "fecha_inicio", "fecha_fin"]
-        validar_campos_obligatorios(body, campos_obligatorios, "reserva")
-        validar_fechas_reserva(body["fecha_inicio"], body["fecha_fin"])
-        validar_no_solapamiento(body["fecha_inicio"], body["fecha_fin"])
-        validar_cliente_existente(body["id_cliente"])
-        validar_vehiculo_disponible(body["id_vehiculo"], body["fecha_inicio"], body["fecha_fin"])
+        validar_datos_reserva(body)
 
         vehiculo_existente = self.vehiculo_repo.get_by_id(body["id_vehiculo"])
         if vehiculo_existente and vehiculo_existente.id != reserva.id_vehiculo:

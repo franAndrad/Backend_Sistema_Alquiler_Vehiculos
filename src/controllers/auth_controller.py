@@ -1,3 +1,5 @@
+from ..repository.empleado_repository import EmpleadoRepository
+from ..exceptions.domain_exceptions import NotFoundException, BusinessException
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import (
     create_access_token,
@@ -5,9 +7,6 @@ from flask_jwt_extended import (
     get_jwt_identity,
     get_jwt,
 )
-
-from ..repository.empleado_repository import EmpleadoRepository
-from ..exceptions.domain_exceptions import NotFoundException, BusinessException
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 empleado_repo = EmpleadoRepository()

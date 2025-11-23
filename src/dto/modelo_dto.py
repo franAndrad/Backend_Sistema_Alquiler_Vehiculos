@@ -1,12 +1,5 @@
-from dataclasses import dataclass
 from .marca_dto import MarcaResponseDTO
-
-@dataclass
-class ModeloCreateDTO:
-    id_marca: int
-    nombre: str
-    descripcion: str
-
+from dataclasses import dataclass
 
 @dataclass
 class ModeloResponseDTO:

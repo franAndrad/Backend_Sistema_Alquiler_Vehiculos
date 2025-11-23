@@ -1,7 +1,6 @@
 from .base_repository import BaseRepository
 from ..models.marca import Marca
 
-
 class MarcaRepository(BaseRepository):
 
     def __init__(self):

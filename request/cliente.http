@@ -1,5 +1,6 @@
 @baseUrl = http://127.0.0.1:5000
 
+
 ### Login empleado
 # @name login
 POST {{baseUrl}}/auth/login
@@ -21,7 +22,6 @@ Authorization: Bearer {{login.response.body.access_token}}
 POST {{baseUrl}}/clientes
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.access_token}}
-
 
 {
     "nombre": "Francisco",

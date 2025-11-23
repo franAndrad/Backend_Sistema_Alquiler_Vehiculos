@@ -1,13 +1,5 @@
-from dataclasses import dataclass
 from .modelo_dto import ModeloResponseDTO
-@dataclass
-class VehiculoCreateDTO:
-    id_modelo: int
-    anio: int
-    tipo: str
-    patente: str
-    costo_diario: float
-
+from dataclasses import dataclass
 
 @dataclass
 class VehiculoResponseDTO:

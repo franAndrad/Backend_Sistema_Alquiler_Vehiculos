@@ -1,5 +1,6 @@
 @baseUrl = http://localhost:5000
 
+
 ### Login empleado
 # @name login
 POST {{baseUrl}}/auth/login

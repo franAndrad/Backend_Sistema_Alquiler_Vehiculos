@@ -1,5 +1,5 @@
-from flask import Blueprint, request, jsonify
 from ..services.marca_service import MarcasService
+from flask import Blueprint, request, jsonify
 from ..utils.auth_utils import roles_required
 
 marca_bp = Blueprint("marcas", __name__, url_prefix="/marcas")

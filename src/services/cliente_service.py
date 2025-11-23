@@ -1,18 +1,19 @@
-from datetime import date
 
-from ..repository.cliente_repository import ClienteRepository
 from ..exceptions.domain_exceptions import NotFoundException, BusinessException
+from ..repository.cliente_repository import ClienteRepository
 from ..models.cliente import Cliente
-from ..utils.mappers import cliente_to_response_dto
+from ..utils.mappers import (
+    cliente_to_response_dto
+    )
 from .utils.persona_utils import (
     normalizar_campos_basicos,
-    validar_campos_obligatorios,
-    validar_nombre_apellido,
-    validar_email_formato,
-    validar_dni_formato,
-    validar_telefono,
 )
-from .utils.cliente_utils import parsear_licencia_vencimiento, validar_categoria_licencia
+
+from .utils.cliente_utils import (
+    parsear_licencia_vencimiento,
+    validar_datos_cliente
+    )
+
 
 
 class ClienteService:
@@ -46,7 +47,6 @@ class ClienteService:
             raise NotFoundException("Cliente no encontrado")
         return cliente_to_response_dto(cliente)
 
-
     
     def eliminar_cliente(self, cliente_id):
         cliente = self.cliente_repo.get_by_id(cliente_id)
@@ -60,19 +60,8 @@ class ClienteService:
     def crear_cliente(self, body):
         body = dict(body)
         body = normalizar_campos_basicos(body)
-
-        campos_obligatorios = [
-            "nombre", "apellido", "dni", "email",
-            "licencia_numero", "licencia_categoria", "licencia_vencimiento"
-        ]
         
-        validar_campos_obligatorios(body, campos_obligatorios, "cliente")
-        validar_nombre_apellido(body["nombre"], body["apellido"])
-        validar_email_formato(body["email"])
-        validar_dni_formato(body["dni"], longitud_exacto=8)
-        validar_telefono(body["telefono"])
-        validar_categoria_licencia(body["licencia_categoria"])
-
+        validar_datos_cliente(body, es_update=False)
         licencia_vencimiento = parsear_licencia_vencimiento(body["licencia_vencimiento"])
 
         if self.cliente_repo.find_by_dni(body["dni"]):
@@ -104,18 +93,8 @@ class ClienteService:
 
         body = dict(body)
         body = normalizar_campos_basicos(body)
-
-        campos_obligatorios = [
-            "nombre", "apellido", "dni", "email",
-            "licencia_numero", "licencia_categoria", "licencia_vencimiento"
-        ]
         
-        validar_campos_obligatorios(body, campos_obligatorios, "cliente")
-        validar_nombre_apellido(body["nombre"], body["apellido"])
-        validar_email_formato(body["email"])
-        validar_dni_formato(body["dni"], longitud_exacto=8)
-        validar_telefono(body.get("telefono"))
-        validar_categoria_licencia(body["licencia_categoria"])
+        validar_datos_cliente(body, es_update=True)
         licencia_vencimiento = parsear_licencia_vencimiento(body["licencia_vencimiento"])
 
         existente_dni = self.cliente_repo.find_by_dni(body["dni"])

@@ -1,17 +1,15 @@
+from ..exceptions.domain_exceptions import ValidationException, NotFoundException, BusinessException
 from ..repository.vehiculo_repository import VehiculoRepository
 from ..repository.modelo_repository import ModeloRepository
-from ..exceptions.domain_exceptions import ValidationException, NotFoundException, BusinessException
-from ..models.vehiculo import Vehiculo
-from ..utils.mappers import vehiculo_to_response_dto
 from ..states.vehiculo_state import VehiculoStateMachine
+from ..models.vehiculo import Vehiculo
 from .utils.vehiculo_utils import (
     normalizar_campos,
-    validar_campos_obligatorios,
-    validar_anio,
-    validar_patente,
-    validar_costo,
-    validar_tipo,
-)
+    validar_datos_vehiculo
+    )
+from ..utils.mappers import (
+    vehiculo_to_response_dto
+    )
 
 
 class VehiculoService:
@@ -44,17 +42,10 @@ class VehiculoService:
         body = dict(body)
         body = normalizar_campos(body)
         
+        validar_datos_vehiculo(body)
+        
         maquina_estado = VehiculoStateMachine()
 
-        campos_obligatorios = [
-            "id_modelo", "anio", "tipo", "patente", "costo_diario"
-        ]
-        
-        validar_campos_obligatorios(body, campos_obligatorios, "vehiculo")
-        validar_anio(body)
-        validar_patente(body)
-        validar_costo(body)
-        validar_tipo(body)
 
         if self.vehiculo_repo.find_by_patente(body["patente"]):
             raise BusinessException("Ya existe un vehiculo con esa patente")
@@ -84,14 +75,7 @@ class VehiculoService:
         body = dict(body)
         body = normalizar_campos(body)
 
-        campos_obligatorios = [
-            "id_modelo", "anio", "tipo", "patente", "costo_diario"
-        ]
-        validar_campos_obligatorios(body, campos_obligatorios, "vehiculo")
-        validar_anio(body)
-        validar_patente(body)
-        validar_costo(body)
-        validar_tipo(body)
+        validar_datos_vehiculo(body)
 
         existente_patente = self.vehiculo_repo.find_by_patente(body["patente"])
         if existente_patente and existente_patente.patente != vehiculo.patente:

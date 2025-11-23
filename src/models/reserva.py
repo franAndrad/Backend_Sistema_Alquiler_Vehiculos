@@ -1,7 +1,6 @@
 from ..extensions.db import db
 from .enums import EstadoReserva
 
-
 class Reserva(db.Model):
     __tablename__ = "reservas"
 

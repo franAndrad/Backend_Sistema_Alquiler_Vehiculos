@@ -1,15 +1,7 @@
+from ..dto.vehiculo_dto import VehiculoResponseDTO
+from ..dto.cliente_dto import ClienteResponseDTO
 from dataclasses import dataclass
 from datetime import date
-from ..dto.cliente_dto import ClienteResponseDTO
-from ..dto.vehiculo_dto import VehiculoResponseDTO
-
-@dataclass
-class ReservaCreateDTO:
-    id_cliente: int
-    id_vehiculo: int
-    fecha_inicio: date
-    fecha_fin: date
-
 
 @dataclass
 class ReservaResponseDTO:

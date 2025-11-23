@@ -1,5 +1,6 @@
 @baseUrl = http://localhost:5000
 
+
 ### Login empleado
 # @name login
 POST {{baseUrl}}/auth/login
@@ -77,7 +78,7 @@ Authorization: Bearer {{login.response.body.access_token}}
     "id_empleado": 1,
     "id_vehiculo": 2,
     "fecha_inicio": "2026-01-12",
-    "fecha_fin": "2026-01-18",
+    "fecha_fin": "2026-01-18"
 }
 
 

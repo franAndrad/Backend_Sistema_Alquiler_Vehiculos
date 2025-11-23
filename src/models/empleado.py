@@ -1,7 +1,9 @@
+from werkzeug.security import (
+    generate_password_hash, 
+    check_password_hash
+    )
 from ..extensions.db import db
 from .enums import RolEmpleado
-from werkzeug.security import generate_password_hash, check_password_hash
-
 
 class Empleado(db.Model):
     __tablename__ = "empleados"

@@ -1,14 +1,16 @@
-from datetime import date
-
-from ..repository.marca_repository import MarcaRepository
 from ..exceptions.domain_exceptions import NotFoundException, BusinessException
+from ..repository.marca_repository import MarcaRepository
 from ..models.marca import Marca
-from ..utils.mappers import marca_to_response_dto
+from ..services.utils.comunes_utils import (
+    validar_campos_obligatorios,
+    )
 from .utils.marca_utils import (
     normalizar_campos_basicos, 
-    validar_campos_obligatorios,
-    validar_nombre
-)
+    validar_nombre,
+    )
+from ..utils.mappers import (
+    marca_to_response_dto
+    )
 
 class MarcasService:
 

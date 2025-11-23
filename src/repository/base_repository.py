@@ -1,6 +1,5 @@
 from ..extensions.db import db
 
-
 class BaseRepository:
 
     def __init__(self, model):

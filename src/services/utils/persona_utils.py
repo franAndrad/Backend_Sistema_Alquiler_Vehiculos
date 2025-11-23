@@ -1,24 +1,17 @@
 from ...exceptions.domain_exceptions import ValidationException
 from ...models.enums import RolEmpleado
+from .comunes_utils import (
+    normalizar_strings, 
+    validar_enum
+    )
+
 
 def normalizar_campos_basicos(body: dict) -> dict:
-    """Quita espacios y normaliza email a minúsculas si están presentes."""
-    if "nombre" in body and body["nombre"] is not None:
-        body["nombre"] = body["nombre"].strip()
-    if "apellido" in body and body["apellido"] is not None:
-        body["apellido"] = body["apellido"].strip()
-    if "email" in body and body["email"] is not None:
-        body["email"] = body["email"].strip().lower()
-    return body
-
-
-def validar_campos_obligatorios(body: dict, campos_obligatorios: list[str], entidad: str):
-    faltantes = [
-        c for c in campos_obligatorios if c not in body or not body[c]]
-    if faltantes:
-        raise ValidationException(
-            f"Faltan campos obligatorios para {entidad}: {', '.join(faltantes)}"
-        )
+    return normalizar_strings(
+        body,
+        campos=["nombre", "apellido", "email"],
+        to_lower=["email"]
+    )
 
 
 def validar_nombre_apellido(nombre, apellido):
@@ -50,13 +43,4 @@ def validar_telefono(telefono):
 
 
 def validar_rol(rol):
-    if not rol:
-        raise ValidationException("El rol es obligatorio")
-
-    try:
-        RolEmpleado(rol)
-    except ValueError:
-        raise ValidationException(
-            f"El rol '{rol}' no es válido. Roles válidos: "
-            + ", ".join([r.value for r in RolEmpleado])
-        )
+    validar_enum(rol, RolEmpleado, "rol de empleado")

@@ -1,6 +1,5 @@
-from ..extensions.db import db
 from .enums import EstadoAlquiler
-
+from ..extensions.db import db
 
 class Alquiler(db.Model):
     __tablename__ = "alquileres"

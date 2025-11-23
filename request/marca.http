@@ -10,10 +10,12 @@ Content-Type: application/json
     "password": "admin123"
 }
 
+
 ### Listar marcas
 GET {{baseUrl}}/marcas
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.access_token}}
+
 
 ### Crear marca
 POST {{baseUrl}}/marcas

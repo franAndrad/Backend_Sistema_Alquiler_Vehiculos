@@ -1,5 +1,5 @@
-from flask import Blueprint, request, jsonify
 from ..services.cliente_service import ClienteService
+from flask import Blueprint, request, jsonify
 from ..utils.auth_utils import roles_required
 
 cliente_bp = Blueprint("clientes", __name__, url_prefix="/clientes")

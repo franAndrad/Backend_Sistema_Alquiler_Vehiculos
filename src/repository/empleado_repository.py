@@ -1,7 +1,6 @@
 from .base_repository import BaseRepository
 from ..models.empleado import Empleado
 
-
 class EmpleadoRepository(BaseRepository):
 
     def __init__(self):

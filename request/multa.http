@@ -1,5 +1,6 @@
 @baseUrl = http://127.0.0.1:5000
 
+
 ### Login empleado
 # @name login
 POST {{baseUrl}}/auth/login
@@ -15,6 +16,7 @@ Content-Type: application/json
 GET {{baseUrl}}/multas
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.access_token}}
+
 
 ### Crear multa
 POST {{baseUrl}}/multas

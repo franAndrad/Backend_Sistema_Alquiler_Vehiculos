@@ -1,6 +1,5 @@
 from ..extensions.db import db
 
-
 class Marca(db.Model):
     __tablename__ = "marcas"
 

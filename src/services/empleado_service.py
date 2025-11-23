@@ -1,17 +1,21 @@
 # services/empleado_service.py
-from ..repository.empleado_repository import EmpleadoRepository
 from ..exceptions.domain_exceptions import NotFoundException, BusinessException
+from ..repository.empleado_repository import EmpleadoRepository
 from ..models.empleado import Empleado
-from ..utils.mappers import empleado_to_response_dto
+from ..utils.mappers import (
+    empleado_to_response_dto
+    )
 from .utils.persona_utils import (
     normalizar_campos_basicos,
-    validar_campos_obligatorios,
     validar_nombre_apellido,
     validar_email_formato,
     validar_dni_formato,
     validar_telefono,
     validar_rol,
-)
+    )
+from ..services.utils.comunes_utils import (
+    validar_campos_obligatorios,
+    )
 
 
 class EmpleadoService:

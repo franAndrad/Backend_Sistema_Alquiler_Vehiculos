@@ -1,11 +1,10 @@
-from datetime import date
-from sqlalchemy import func, or_
 from .base_repository import BaseRepository
-from ..extensions.db import db
-from ..models.alquiler import Alquiler
-from ..models.vehiculo import Vehiculo
 from ..models.enums import EstadoAlquiler
-
+from ..models.vehiculo import Vehiculo
+from ..models.alquiler import Alquiler
+from sqlalchemy import func, or_
+from ..extensions.db import db
+from datetime import date
 
 class AlquilerRepository(BaseRepository):
 

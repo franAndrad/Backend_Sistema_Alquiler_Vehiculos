@@ -3,25 +3,26 @@ from ...exceptions.domain_exceptions import ValidationException, BusinessExcepti
 from ...repository.cliente_repository import ClienteRepository
 from ...repository.reserva_repository import ReservaRepository
 from ...models.enums import EstadoReserva
+from .comunes_utils import (
+    validar_campos_obligatorios,
+    )
+from .vehiculo_utils import (
+    validar_vehiculo_disponible,
+    )
 
+def validar_datos_reserva(body: dict):
+    campos_obligatorios = ["id_cliente",
+                            "id_vehiculo", "fecha_inicio", "fecha_fin"]
 
-def normalizar_campos_reserva(body: dict) -> dict:
-    if "fecha_inicio" in body and isinstance(body["fecha_inicio"], str):
-        body["fecha_inicio"] = date.fromisoformat(body["fecha_inicio"])
-
-    if "fecha_fin" in body and isinstance(body["fecha_fin"], str):
-        body["fecha_fin"] = date.fromisoformat(body["fecha_fin"])
-    
-    return body
-
-
-def validar_campos_obligatorios(body: dict, campos_obligatorios: list[str], entidad: str):
-    faltantes = [
-        c for c in campos_obligatorios if c not in body or not body[c]]
-    if faltantes:
-        raise ValidationException(
-            f"Faltan campos obligatorios para {entidad}: {', '.join(faltantes)}"
-        )
+    validar_campos_obligatorios(body, campos_obligatorios, "reserva")
+    validar_fechas_reserva(body["fecha_inicio"], body["fecha_fin"])
+    validar_no_solapamiento(body["fecha_inicio"], body["fecha_fin"])
+    validar_cliente_existente(body["id_cliente"])
+    validar_vehiculo_disponible(
+        body["id_vehiculo"],
+        body["fecha_inicio"],
+        body["fecha_fin"],
+    )
 
 
 def validar_fechas_reserva(fecha_inicio: date, fecha_fin: date):
@@ -58,6 +59,11 @@ def validar_cliente_existente(id_cliente):
         raise ValidationException("El cliente indicado no existe")
     
     
-def validar_reserva_pendiente(reserva):
-    if reserva.estado != EstadoReserva.PENDIENTE:
-        raise BusinessException("Solo se pueden eliminar reservas en estado PENDIENTE")
+def normalizar_campos_reserva(body: dict) -> dict:
+    if "fecha_inicio" in body and isinstance(body["fecha_inicio"], str):
+        body["fecha_inicio"] = date.fromisoformat(body["fecha_inicio"])
+
+    if "fecha_fin" in body and isinstance(body["fecha_fin"], str):
+        body["fecha_fin"] = date.fromisoformat(body["fecha_fin"])
+    
+    return body

@@ -1,6 +1,5 @@
 from ..extensions.db import db
 
-
 class Multa(db.Model):
     __tablename__ = "multas"
 

@@ -1,5 +1,5 @@
-from flask import Blueprint, request, jsonify
 from ..services.multa_service import MultaService
+from flask import Blueprint, request, jsonify
 from ..utils.auth_utils import roles_required
 
 multa_bp = Blueprint("multas", __name__, url_prefix="/multas")

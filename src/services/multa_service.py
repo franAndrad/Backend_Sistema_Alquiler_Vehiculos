@@ -1,21 +1,23 @@
-from datetime import date
-
-from ..repository.multa_repository import MultaRepository
-from ..repository.alquiler_repository import AlquilerRepository
 from ..exceptions.domain_exceptions import NotFoundException, BusinessException
+from ..repository.alquiler_repository import AlquilerRepository
+from ..repository.multa_repository import MultaRepository
 from ..models.enums import EstadoAlquiler
 from ..models.multa import Multa
 from datetime import datetime
-from ..utils.mappers import multa_to_response_dto
-from .utils.multa_utils import (
-    normalizar_campos_basicos,
+from ..utils.mappers import (
+    multa_to_response_dto
+    )
+from ..services.utils.comunes_utils import (
     validar_campos_obligatorios,
+    )
+from .utils.multa_utils import (
+    validar_alquiler_existente,
+    normalizar_campos_basicos,
     validar_id_alquiler,
+    validar_descripcion,
     validar_monto,
     validar_fecha,
-    validar_descripcion,
-    validar_alquiler_existente,
-)
+    )
 
 class MultaService:
     
@@ -34,27 +36,6 @@ class MultaService:
         if not multa:
             raise NotFoundException("Multa no encontrada")
         return multa_to_response_dto(multa)
-    
-    
-    def multa_por_alquiler(self, alquiler_id):
-        multa = self.multa_repo.find_by_alquiler(alquiler_id)
-        if not multa:
-            raise NotFoundException("Multa no encontrada")
-        return multa_to_response_dto(multa)
-    
-    
-    def multa_por_fecha(self, fecha: date):
-        multas = self.multa_repo.find_by_fecha(fecha)
-        if not multas:
-            raise NotFoundException("No se encontraron multas en la fecha indicada")
-        return [multa_to_response_dto(m) for m in multas]
-    
-    
-    def multa_por_monto(self, monto: float):
-        multas = self.multa_repo.find_by_monto(monto)
-        if not multas:
-            raise NotFoundException("No se encontraron multas con el monto indicado")
-        return [multa_to_response_dto(m) for m in multas]
     
     
     def eliminar_multa(self, multa_id):

@@ -1,22 +1,14 @@
 from ...exceptions.domain_exceptions import ValidationException, NotFoundException
 from ...repository.marca_repository import MarcaRepository
+from .comunes_utils import normalizar_strings
 
 
 def normalizar_campos_basicos(body: dict) -> dict:
-    if "nombre" in body and body["nombre"] is not None:
-        body["nombre"] = body["nombre"].strip()
-    if "descripcion" in body and body["descripcion"] is not None:
-        body["descripcion"] = body["descripcion"].strip()
-    return body
-
-
-def validar_campos_obligatorios(body: dict, campos_obligatorios: list[str], entidad: str):
-    faltantes = [
-        c for c in campos_obligatorios if c not in body or not body[c]]
-    if faltantes:
-        raise ValidationException(
-            f"Faltan campos obligatorios para {entidad}: {', '.join(faltantes)}"
-        )
+    return normalizar_strings(
+        body,
+        campos=["nombre", "descripcion"],
+        to_lower=["nombre", "descripcion"]
+    )
 
 
 def validar_nombre(nombre):
