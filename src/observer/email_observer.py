@@ -4,7 +4,7 @@ from ..repository.empleado_repository import EmpleadoRepository
 
 class EmailClienteObserver(Observer):
     
-    def update(self, reserva) -> None:
+    def actualizar(self, reserva) -> None:
         cliente = reserva.cliente
         vehiculo = reserva.vehiculo
         fecha_inicio = reserva.fecha_inicio.strftime("%d/%m/%Y")
@@ -26,7 +26,7 @@ class EmailEmpleadosObserver(Observer):
     def __init__(self):
         self.empleado_repo = EmpleadoRepository()
     
-    def update(self, reserva) -> None:
+    def actualizar(self, reserva) -> None:
         empleados = self.empleado_repo.list_all()
         
         if not empleados:

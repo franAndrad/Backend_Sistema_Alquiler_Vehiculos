@@ -3,7 +3,7 @@ from .observer import Observer
 
 class SMSObserver(Observer):
 
-    def update(self, reserva) -> None:
+    def actualizar(self, reserva) -> None:
         cliente = reserva.cliente
         vehiculo = reserva.vehiculo
         fecha_inicio = reserva.fecha_inicio.strftime("%d/%m/%Y")

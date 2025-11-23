@@ -29,9 +29,9 @@ class ReservaService:
         
         # Configuración del patrón Observer
         self.sujeto_reserva = Sujeto()
-        self.sujeto_reserva.attach(SMSObserver())
-        self.sujeto_reserva.attach(EmailClienteObserver())
-        self.sujeto_reserva.attach(EmailEmpleadosObserver())
+        self.sujeto_reserva.suscribir(SMSObserver())
+        self.sujeto_reserva.suscribir(EmailClienteObserver())
+        self.sujeto_reserva.suscribir(EmailEmpleadosObserver())
         
         
     def listar_reservas(self):
@@ -98,7 +98,7 @@ class ReservaService:
         print("\n" + "="*80)
         print("🔔 NOTIFICACIONES DE RESERVA")
         print("="*80)
-        self.sujeto_reserva.notify(nueva_reserva)
+        self.sujeto_reserva.notificar(nueva_reserva)
         print("="*80 + "\n")
         
         return reserva_to_response_dto(nueva_reserva)

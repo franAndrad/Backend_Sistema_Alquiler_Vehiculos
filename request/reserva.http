@@ -20,9 +20,9 @@ Content-Type: application/json
 
 {
     "id_cliente": 2,
-    "id_vehiculo": 2,
-    "fecha_inicio": "2026-11-29",
-    "fecha_fin": "2026-11-30"
+    "id_vehiculo": 4,
+    "fecha_inicio": "2026-12-18",
+    "fecha_fin": "2026-12-20"
 }
 
 ### Obtener reserva por ID

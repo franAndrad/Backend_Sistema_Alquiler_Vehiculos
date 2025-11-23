@@ -11,7 +11,7 @@ Content-Type: application/json
     "id_modelo": 1,
     "anio": 2022,
     "tipo": "SEDAN",
-    "patente": "ABC123",
+    "patente": "TTM332",
     "costo_diario": 15000
 }
 
