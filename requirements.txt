@@ -28,3 +28,5 @@ flask-jwt-extended==4.4.4
 cryptography==41.0.3
 
 flask-cors==4.0.0
+
+flask-mail==0.9.1

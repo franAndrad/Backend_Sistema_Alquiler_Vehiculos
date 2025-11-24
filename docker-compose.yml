@@ -32,6 +32,13 @@ services:
       JWT_SECRET_KEY: super_key_123
       JWT_EXPIRES_IN: 900
       FLASK_ENV: development
+      MAIL_SERVER: smtp.mailtrap.io
+      MAIL_PORT: 2525
+      MAIL_USE_TLS: "true"
+      MAIL_USE_SSL: "false"
+      MAIL_USERNAME: "tu_mail_user"
+      MAIL_PASSWORD: "tu_mail_password"
+      MAIL_DEFAULT_SENDER: "auto_track_alquileres@gmail.com"
     ports:
       - "5000:5000"
     volumes:
