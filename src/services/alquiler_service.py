@@ -11,7 +11,8 @@ from ..models.alquiler import Alquiler
 from datetime import date
 from ..utils.mappers import (
     alquiler_to_response_dto, 
-    alquiler_finalizado_to_response_dto
+    alquiler_finalizado_to_response_dto,
+    facturacion_mensual_to_dto
     )
 from .helpers.alquiler_helpers import (
     normalizar_campos_basicos,
@@ -295,3 +296,44 @@ class AlquilerService:
         return alquiler_finalizado_to_response_dto(
             alquiler,dias_utilizados, costo_base, multas_validas
         )
+        
+    def facturacion_mensual(self, anio):
+        if anio is None or anio == "":
+            raise BusinessException("El parámetro 'anio' es obligatorio")
+
+        try:
+            anio_int = int(anio)
+        except Exception:
+            raise BusinessException("El parámetro 'anio' debe ser numérico")
+
+        resultados = self.alquiler_repo.facturacion_mensual(anio_int)
+
+        MESES_ES = {
+            1: "Enero",
+            2: "Febrero",
+            3: "Marzo",
+            4: "Abril",
+            5: "Mayo",
+            6: "Junio",
+            7: "Julio",
+            8: "Agosto",
+            9: "Septiembre",
+            10: "Octubre",
+            11: "Noviembre",
+            12: "Diciembre",
+        }
+
+        dtos = []
+
+        for mes_num, total in resultados:
+            mes_num = int(mes_num)
+            nombre_mes = MESES_ES.get(mes_num, str(mes_num))
+
+            dto = facturacion_mensual_to_dto(
+                mes=nombre_mes,
+                total=float(total or 0)
+            )
+
+            dtos.append(dto)
+
+        return dtos

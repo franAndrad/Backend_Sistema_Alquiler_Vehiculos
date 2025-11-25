@@ -10,7 +10,7 @@ from ..models.multa import Multa
 
 from ..dto.cliente_dto import ClienteResponseDTO
 from ..dto.vehiculo_dto import VehiculoResponseDTO
-from ..dto.alquiler_dto import AlquilerResponseDTO, AlquilerFinalizadoResponseDTO
+from ..dto.alquiler_dto import AlquilerResponseDTO, AlquilerFinalizadoResponseDTO, FacturacionMensualDTO
 from ..dto.reserva_dto import ReservaResponseDTO
 from ..dto.empleado_dto import EmpleadoResponseDTO
 from ..dto.marca_dto import MarcaResponseDTO
@@ -129,3 +129,9 @@ def multa_to_response_dto(multa: Multa) -> dict:
         fecha=multa.fecha
     )
 
+
+def facturacion_mensual_to_dto(mes: str, total: float) -> FacturacionMensualDTO:
+    return FacturacionMensualDTO(
+        mes=mes,
+        total=total
+    )

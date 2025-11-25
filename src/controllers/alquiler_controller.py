@@ -95,3 +95,13 @@ def actualizar_alquiler(alquiler_id):
 def finalizar_alquiler(alquiler_id):
     resultado = alquiler_service.finalizar_alquiler(alquiler_id)
     return jsonify(resultado), 200
+
+
+@alquiler_bp.get("/facturacion-mensual")
+@roles_required("ADMIN", "ATENCION")
+def facturacion_mensual():
+    anio = request.args.get("anio")
+    dtos = alquiler_service.facturacion_mensual(anio)
+    return jsonify([dto.__dict__ for dto in dtos]), 200
+
+

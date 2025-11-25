@@ -30,3 +30,9 @@ class AlquilerFinalizadoResponseDTO:
     costo_total_multas: float
     costo_total: float
     estado: str
+    
+
+@dataclass
+class FacturacionMensualDTO:
+    mes: str
+    total: float

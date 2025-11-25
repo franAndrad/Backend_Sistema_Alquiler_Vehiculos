@@ -98,3 +98,9 @@ Authorization: Bearer {{login.response.body.access_token}}
 PATCH {{baseUrl}}/alquileres/1/finalizar
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.access_token}}
+
+
+### Obtener facturación mensual de un año
+GET {{baseUrl}}/alquileres/facturacion-mensual?anio=2025
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.access_token}}
