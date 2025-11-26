@@ -1,15 +1,21 @@
-from ..exceptions.domain_exceptions import ValidationException, NotFoundException, BusinessException
+from sqlalchemy.exc import IntegrityError  # 👈 importa esto
+
+from ..exceptions.domain_exceptions import (
+    ValidationException,
+    NotFoundException,
+    BusinessException,
+)
 from ..repository.vehiculo_repository import VehiculoRepository
 from ..repository.modelo_repository import ModeloRepository
 from ..states.vehiculo_state import VehiculoStateMachine
 from ..models.vehiculo import Vehiculo
 from .helpers.vehiculo_helpers import (
     normalizar_campos,
-    validar_datos_vehiculo
-    )
+    validar_datos_vehiculo,
+)
 from ..utils.mappers import (
-    vehiculo_to_response_dto
-    )
+    vehiculo_to_response_dto,
+)
 
 
 class VehiculoService:
@@ -29,8 +35,8 @@ class VehiculoService:
         if not vehiculo:
             raise ValidationException("El vehículo no existe")
         return vehiculo_to_response_dto(vehiculo)
-    
-    
+
+
     def obtener_vehiculos_por_estado(self, estados):
         vehiculos = self.vehiculo_repo.list_by_estado(estados)
         if not vehiculos:
@@ -41,11 +47,10 @@ class VehiculoService:
     def crear_vehiculo(self, body):
         body = dict(body)
         body = normalizar_campos(body)
-        
-        validar_datos_vehiculo(body)
-        
-        maquina_estado = VehiculoStateMachine()
 
+        validar_datos_vehiculo(body)
+
+        maquina_estado = VehiculoStateMachine()
 
         if self.vehiculo_repo.find_by_patente(body["patente"]):
             raise BusinessException("Ya existe un vehiculo con esa patente")
@@ -53,25 +58,25 @@ class VehiculoService:
         modelo = self.modelo_repo.get_by_id(body["id_modelo"])
         if not modelo:
             raise NotFoundException("El modelo asociado no existe")
-        
-        vehiculo = Vehiculo (
+
+        vehiculo = Vehiculo(
             id_modelo=body["id_modelo"],
             anio=body["anio"],
             tipo=body["tipo"],
             patente=body["patente"],
             costo_diario=body["costo_diario"],
-            estado=maquina_estado.state_enum
+            estado=maquina_estado.state_enum,
         )
 
         self.vehiculo_repo.add(vehiculo)
         return vehiculo_to_response_dto(vehiculo)
-    
-    
+
+
     def actualizar_vehiculo(self, vehiculo_id, body):
         vehiculo = self.vehiculo_repo.get_by_id(vehiculo_id)
         if not vehiculo:
             raise NotFoundException("Vehiculo no encontrado")
-        
+
         body = dict(body)
         body = normalizar_campos(body)
 
@@ -80,7 +85,7 @@ class VehiculoService:
         existente_patente = self.vehiculo_repo.find_by_patente(body["patente"])
         if existente_patente and existente_patente.patente != vehiculo.patente:
             raise BusinessException("Ya existe otro vehiculo con esa patente")
-        
+
         vehiculo.id_modelo = body["id_modelo"]
         vehiculo.anio = body["anio"]
         vehiculo.tipo = body["tipo"]
@@ -96,5 +101,11 @@ class VehiculoService:
         if not vehiculo:
             raise ValidationException("El vehículo no existe")
 
-        self.vehiculo_repo.delete(vehiculo)
-        return {"message": "Vehículo eliminado correctamente"}
+        try:
+            self.vehiculo_repo.delete(vehiculo)
+        except IntegrityError:
+            raise BusinessException(
+                "No se puede eliminar el vehículo porque tiene alquileres o reservas asociados."
+            )
+
+        return {"mensaje": "Vehículo eliminado correctamente"}
