@@ -36,8 +36,8 @@ services:
       MAIL_PORT: 2525
       MAIL_USE_TLS: "true"
       MAIL_USE_SSL: "false"
-      MAIL_USERNAME: "96090a7fa14f2f"
-      MAIL_PASSWORD: "4f5e945456dc8f"
+      MAIL_USERNAME: "user"
+      MAIL_PASSWORD: "pass"
       MAIL_DEFAULT_SENDER: "auto_track_alquileres@gmail.com"
     ports:
       - "5000:5000"
